@@ -11,7 +11,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-현재 작업 폴더에서는 상위 폴더의 `ABP_CONTEST_DATA.csv`를 자동으로 찾습니다. 배포할 때는 CSV를 `data/raw/ABP_CONTEST_DATA.csv`에 두거나 앱 사이드바에서 업로드하세요. 원본 데이터는 Git에 포함되지 않도록 설정했습니다.
+현재 작업 폴더에서는 상위 폴더의 `ABP_CONTEST_DATA.csv`를 자동으로 찾습니다. 배포할 때는 CSV를 `data/raw/ABP_CONTEST_DATA.csv`에 두세요. 원본 데이터는 Git에 포함되지 않도록 설정했습니다.
 
 ## 구조
 
@@ -29,7 +29,7 @@ becurious/
 └─ requirements.txt
 ```
 
-같은 컬럼 레이아웃의 월별 CSV는 업로드만으로 교체할 수 있습니다. 장기적으로 데이터가 커지면 `src/data.py`의 입력 계층을 Parquet 또는 DB 쿼리로 교체하고 화면 코드는 그대로 유지할 수 있습니다.
+같은 컬럼 레이아웃의 월별 CSV로 백엔드 파일을 교체할 수 있습니다. 장기적으로 데이터가 커지면 `src/data.py`의 입력 계층을 Parquet 또는 DB 쿼리로 교체하고 화면 코드는 그대로 유지할 수 있습니다.
 
 ## 주요 기능
 

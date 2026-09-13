@@ -69,6 +69,12 @@ def compact_won(value: float) -> str:
     return f"{value:,.0f}원"
 
 
+def korean_money_ticks(max_value: float, count: int = 5) -> tuple[list[float], list[str]]:
+    if max_value <= 0:
+        return [0], ["0원"]
+    values = [max_value * index / count for index in range(count + 1)]
+    return values, [compact_won(value) for value in values]
+
+
 def safe_key(value: str) -> str:
     return re.sub(r"[^0-9A-Za-z가-힣_-]", "_", value)
-

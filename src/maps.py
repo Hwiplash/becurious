@@ -7,6 +7,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+from src.data import korean_money_ticks
+
 
 GEO_DIR = Path(__file__).resolve().parents[1] / "data" / "geo"
 
@@ -15,12 +17,14 @@ def _load_geo(name: str) -> dict:
     return json.loads((GEO_DIR / name).read_text(encoding="utf-8"))
 
 
-def _layout(fig: go.Figure, height: int = 560) -> go.Figure:
+def _layout(fig: go.Figure, max_value: float, height: int = 560) -> go.Figure:
+    tickvals, ticktext = korean_money_ticks(max_value, 4)
     fig.update_geos(fitbounds="locations", visible=False, bgcolor="rgba(0,0,0,0)")
     fig.update_layout(
         height=height, margin=dict(l=0, r=0, t=8, b=0),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        coloraxis_colorbar=dict(title="매출액", tickformat="~s", thickness=12),
+        font=dict(color="#344054"),
+        coloraxis_colorbar=dict(title="매출액", tickvals=tickvals, ticktext=ticktext, thickness=12),
         clickmode="event+select",
     )
     return fig
@@ -40,7 +44,7 @@ def sido_map(df: pd.DataFrame) -> go.Figure:
         hovertemplate="<b>%{customdata[0]}</b><br>매출 %{z:,.0f}원<br>건수 %{customdata[1]:,.0f}건<br>건당 %{customdata[2]:,.0f}원<extra></extra>",
         selected=dict(marker=dict(opacity=1)), unselected=dict(marker=dict(opacity=.62)),
     )
-    return _layout(fig)
+    return _layout(fig, float(grouped["amt"].max()))
 
 
 def sigungu_map(df: pd.DataFrame, sido: str) -> go.Figure:
@@ -57,4 +61,4 @@ def sigungu_map(df: pd.DataFrame, sido: str) -> go.Figure:
         marker_line_color="#07111F", marker_line_width=1,
         hovertemplate="<b>%{customdata[0]}</b><br>매출 %{z:,.0f}원<br>건수 %{customdata[1]:,.0f}건<br>건당 %{customdata[2]:,.0f}원<extra></extra>",
     )
-    return _layout(fig)
+    return _layout(fig, float(grouped["amt"].max()))

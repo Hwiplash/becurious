@@ -4,22 +4,23 @@ import pandas as pd
 import streamlit as st
 
 from src.charts import industry_bar, monthly_trend, regional_ranking, segment_chart
-from src.data import compact_won, default_data_path, load_csv, load_uploaded
+from src.data import compact_won, default_data_path, load_csv
 from src.maps import sido_map, sigungu_map
 
 
-st.set_page_config(page_title="ABP 상권 인사이트", page_icon="◈", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ABP 상권 인사이트", page_icon="◈", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""
 <style>
-    [data-testid="stAppViewContainer"] {background: radial-gradient(circle at 80% 0%, #102E3C 0, #07111F 38%, #050C16 100%);}
-    [data-testid="stSidebar"] {background:#0A1626; border-right:1px solid rgba(255,255,255,.08)}
-    .hero {padding:.4rem 0 1.1rem}.eyebrow{color:#22D3A7;font-size:.78rem;font-weight:700;letter-spacing:.16em}
-    .hero h1{font-size:2.25rem;margin:.3rem 0}.hero p{color:#91A4B8;margin:0}
-    [data-testid="stMetric"] {background:rgba(16,29,46,.78);border:1px solid rgba(255,255,255,.08);padding:1rem 1.1rem;border-radius:14px}
+    [data-testid="stAppViewContainer"] {background:radial-gradient(circle at 80% 0%,#E8FBF5 0,#F7F9FC 38%,#F3F6FA 100%)}
+    [data-testid="stSidebar"] {display:none}
+    .hero {padding:.4rem 0 1.1rem}.eyebrow{color:#0E9F7D;font-size:.78rem;font-weight:700;letter-spacing:.16em}
+    .hero h1{font-size:2.25rem;margin:.3rem 0;color:#172033}.hero p{color:#667085;margin:0}
+    [data-testid="stMetric"] {background:rgba(255,255,255,.92);border:1px solid #E4EAF1;box-shadow:0 6px 20px rgba(23,32,51,.05);padding:1rem 1.1rem;border-radius:14px}
     [data-testid="stMetricValue"] {font-size:1.55rem}
-    .section-label{font-size:.78rem;color:#22D3A7;font-weight:700;letter-spacing:.12em;margin-top:.4rem}
-    div[data-testid="stPlotlyChart"] {background:rgba(10,22,38,.62);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:4px}
-    .stDataFrame {border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden}
+    .section-label{font-size:.78rem;color:#0E9F7D;font-weight:700;letter-spacing:.12em;margin-top:.4rem}
+    div[data-testid="stVerticalBlockBorderWrapper"] {background:rgba(255,255,255,.9);border-color:#E4EAF1!important;box-shadow:0 6px 20px rgba(23,32,51,.04)}
+    div[data-testid="stPlotlyChart"] {background:rgba(255,255,255,.92);border:1px solid #E4EAF1;border-radius:16px;padding:4px}
+    .stDataFrame {border:1px solid #E4EAF1;border-radius:12px;overflow:hidden}
 </style>
 """, unsafe_allow_html=True)
 
@@ -35,38 +36,34 @@ def selected_point(event, field: str) -> str | None:
         return None
 
 
-with st.sidebar:
-    st.markdown("### ◈ ABP INSIGHT")
-    st.caption("BC카드 소비데이터 탐색기")
-    upload = st.file_uploader("새 CSV 불러오기", type="csv", help="같은 레이아웃의 후속 데이터를 바로 분석할 수 있습니다.")
-
 try:
-    if upload:
-        data = load_uploaded(upload.getvalue())
-        source_label = upload.name
-    else:
-        path = default_data_path()
-        if path is None:
-            st.error("데이터를 찾을 수 없습니다. 사이드바에서 CSV를 업로드하거나 data/raw/ABP_CONTEST_DATA.csv에 배치해주세요.")
-            st.stop()
-        data = load_csv(str(path.resolve()))
-        source_label = path.name
+    path = default_data_path()
+    if path is None:
+        st.error("데이터를 찾을 수 없습니다. data/raw/ABP_CONTEST_DATA.csv에 배치해주세요.")
+        st.stop()
+    data = load_csv(str(path.resolve()))
+    source_label = path.name
 except Exception as exc:
     st.error(f"데이터를 읽지 못했습니다: {exc}")
     st.stop()
 
-with st.sidebar:
-    st.divider()
-    st.markdown("#### 분석 조건")
-    min_month, max_month = data["month"].min(), data["month"].max()
-    available_months = sorted(data["month"].unique())
-    month_range = st.select_slider("기간", options=available_months, value=(available_months[0], available_months[-1]), format_func=lambda x: pd.Timestamp(x).strftime("%Y.%m"))
+st.markdown("<div class='hero'><div class='eyebrow'>AI FINANCIAL BIG DATA PLATFORM</div><h1>대한민국 소비 상권 인사이트</h1><p>지역을 선택해 전국에서 시군구까지 소비 흐름을 탐색하세요.</p></div>", unsafe_allow_html=True)
+
+min_month, max_month = data["month"].min(), data["month"].max()
+available_months = sorted(data["month"].unique())
+st.markdown("<div class='section-label'>ANALYSIS FILTERS</div>", unsafe_allow_html=True)
+with st.container(border=True):
+    filter_month, filter_industry, filter_gender, filter_age = st.columns([1.35, 1.2, 1, 1])
+    with filter_month:
+        month_range = st.select_slider("기간", options=available_months, value=(available_months[0], available_months[-1]), format_func=lambda x: pd.Timestamp(x).strftime("%Y.%m"))
     industries = sorted(data["TP_BUZ_NM"].unique())
-    industry = st.multiselect("업종", industries, placeholder="전체 업종")
-    genders = st.multiselect("성별", [x for x in ["남성", "여성", "외국인", "미상", "기타"] if x in set(data["gender"])], placeholder="전체 성별")
-    ages = st.multiselect("연령", [x for x in ["20대 이하", "20대", "30대", "40대", "50대", "60대 이상", "미상", "기타"] if x in set(data["age"])], placeholder="전체 연령")
-    st.divider()
-    st.caption(f"데이터 · {source_label}\n\n{len(data):,}행 · {min_month:%Y.%m}–{max_month:%Y.%m}")
+    with filter_industry:
+        industry = st.multiselect("업종", industries, placeholder="전체 업종")
+    with filter_gender:
+        genders = st.multiselect("성별", [x for x in ["남성", "여성", "외국인", "미상", "기타"] if x in set(data["gender"])], placeholder="전체 성별")
+    with filter_age:
+        ages = st.multiselect("연령", [x for x in ["20대 이하", "20대", "30대", "40대", "50대", "60대 이상", "미상", "기타"] if x in set(data["age"])], placeholder="전체 연령")
+    st.caption(f"데이터 · {source_label} · {len(data):,}행 · {min_month:%Y.%m}–{max_month:%Y.%m}")
 
 filtered = data[data["month"].between(pd.Timestamp(month_range[0]), pd.Timestamp(month_range[1]))]
 if industry:
@@ -75,8 +72,6 @@ if genders:
     filtered = filtered[filtered["gender"].isin(genders)]
 if ages:
     filtered = filtered[filtered["age"].isin(ages)]
-
-st.markdown("<div class='hero'><div class='eyebrow'>AI FINANCIAL BIG DATA PLATFORM</div><h1>대한민국 소비 상권 인사이트</h1><p>지역을 선택해 전국에서 시군구까지 소비 흐름을 탐색하세요.</p></div>", unsafe_allow_html=True)
 
 if filtered.empty:
     st.warning("선택한 조건에 해당하는 데이터가 없습니다.")
