@@ -4,3 +4,13 @@ __pycache__/
 data/raw/*.csv
 *.pyc
 
+# Regression analysis: keep compact review artifacts, not source-data derivatives
+analysis/structural_baseline_model/tables/analysis_input_*.csv
+analysis/structural_baseline_model/tables/external_region_features.csv
+analysis/structural_baseline_model/tables/oof_predictions*.csv*
+analysis/structural_baseline_model/tables/protected_*
+analysis/structural_baseline_model/tables/training_fold_audit.csv
+analysis/structural_baseline_model/tables/localdata_store_selection.csv
+analysis/structural_baseline_model/tables/count_ticket_decomposition.csv
+analysis/structural_baseline_model/tables/residual_*.csv
+

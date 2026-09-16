@@ -1,0 +1,14 @@
+﻿scenario,scope,industry,regions_any,regions_complete6,partial_regions_excluded,regions_total,observed_industries_min,coverage_status
+main,core9,core9,251,251,0,251,6,core
+main,all11_observed,all11_observed,251,251,0,251,6,core
+main,4004,대형할인점,194,193,1,251,1,core
+main,4010,편의점,251,251,0,251,1,core
+main,4020,슈퍼마켓,251,251,0,251,1,core
+main,8001,일반한식,251,251,0,251,1,core
+main,8002,갈비전문점,105,82,23,251,1,exploratory
+main,8003,한정식,39,16,23,251,1,exploratory
+main,8004,일식회집,248,239,9,251,1,core
+main,8005,중국음식,251,251,0,251,1,core
+main,8006,서양음식,251,251,0,251,1,core
+main,8021,스넥,251,251,0,251,1,core
+main,8301,제과점,251,250,1,251,1,core

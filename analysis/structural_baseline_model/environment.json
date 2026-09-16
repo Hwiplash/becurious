@@ -1,0 +1,22 @@
+{
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+  "numpy": "2.5.1",
+  "pandas": "3.0.5",
+  "sklearn": "1.9.0",
+  "seeds": [
+    20260913,
+    20260914,
+    20260915,
+    20260916,
+    20260917,
+    20260918,
+    20260919,
+    20260920,
+    20260921,
+    20260922
+  ],
+  "folds": 5,
+  "log_alpha": 1,
+  "raw_alpha": 10,
+  "primary_model": "M9 log_ridge_smear narrow supply; prespecified, no OOF model selection"
+}
