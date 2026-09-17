@@ -25,6 +25,17 @@ def metric_value(row: pd.Series, name: str) -> str:
     return f"{row[name]:,.1f}" if pd.notna(row[name]) else "-"
 
 
+def selected_sido(event) -> str | None:
+    try:
+        points = event.selection.points
+        if not points:
+            return None
+        custom = points[0].get("customdata")
+        return custom[0] if custom else points[0].get("location")
+    except (AttributeError, IndexError, TypeError):
+        return None
+
+
 try:
     raw_path, index_path = default_data_path(), default_indices_path()
     if raw_path is None:
@@ -58,26 +69,53 @@ if mode == "소비 현황":
     total_amt, total_cnt = filtered["amt"].sum(), filtered["cnt"].sum()
     monthly = filtered.groupby("month")["amt"].sum().sort_index()
     growth = (monthly.iloc[-1] / monthly.iloc[0] - 1) if len(monthly) > 1 and monthly.iloc[0] else 0
-    top_region = filtered.groupby("SIDO_NM")["amt"].sum().idxmax()
     k1, k2, k3, k4 = st.columns(4)
     k1.metric("총 매출액", compact_won(total_amt)); k2.metric("이용 건수", f"{total_cnt:,.0f}건")
     k3.metric("건당 결제액", compact_won(total_amt / total_cnt if total_cnt else 0)); k4.metric("기간 성장률", f"{growth:+.1%}")
-    map_col, detail_col = st.columns([1.16, .84], gap="large")
-    with map_col: st.subheader("전국 매출 지도"); st.plotly_chart(sido_map(filtered), width="stretch", key="sales_sido")
-    with detail_col:
-        st.subheader("지역 선택")
-        sido_options = sorted(filtered["SIDO_NM"].unique()); sido = st.selectbox("시도", sido_options, index=sido_options.index(top_region), key="sales_sido_select")
-        sido_df = filtered[filtered["SIDO_NM"] == sido]; ranking = regional_ranking(sido_df, "CCG_NM")
-        st.dataframe(ranking.head(8), hide_index=True, width="stretch", column_config={"매출액": st.column_config.NumberColumn(format="%,.0f원"), "이용건수": st.column_config.NumberColumn(format="%,.0f건"), "건당결제액": st.column_config.NumberColumn(format="%,.0f원"), "매출비중": st.column_config.ProgressColumn(format="%.1%%", min_value=0, max_value=1)})
-    local_map_col, trend_col = st.columns([.95, 1.25], gap="large")
-    with local_map_col:
-        st.subheader(f"{sido} 시군구 지도"); st.plotly_chart(sigungu_map(sido_df, sido), width="stretch", key="sales_local")
-        ccg = st.selectbox("시군구 상세", ["전체"] + sorted(sido_df["CCG_NM"].unique()), key="sales_ccg")
-    local_df = sido_df if ccg == "전체" else sido_df[sido_df["CCG_NM"] == ccg]
-    with trend_col: st.subheader(f"{sido} {'' if ccg == '전체' else ccg} 월별 추이"); st.plotly_chart(monthly_trend(local_df), width="stretch")
-    a, b = st.columns(2, gap="large")
-    with a: st.subheader("업종별 매출 TOP 10"); st.plotly_chart(industry_bar(local_df), width="stretch")
-    with b: st.subheader("연령·성별 소비 구성"); st.plotly_chart(segment_chart(local_df), width="stretch")
+    if "sales_page" not in st.session_state:
+        st.session_state.sales_page = "national"
+
+    if st.session_state.sales_page == "national":
+        st.markdown("<div class='section-label'>NATIONAL OVERVIEW</div>", unsafe_allow_html=True)
+        st.subheader("전국 매출 지도")
+        st.caption("지도를 클릭하면 해당 시도의 상세 분석으로 이동합니다.")
+        map_event = st.plotly_chart(sido_map(filtered), width="stretch", on_select="rerun", key="sales_national_map")
+        clicked = selected_sido(map_event)
+        if clicked in set(filtered["SIDO_NM"]):
+            st.session_state.sales_selected_sido = clicked
+            st.session_state.sales_page = "regional"
+            st.rerun()
+    else:
+        sido_options = sorted(filtered["SIDO_NM"].unique())
+        saved_sido = st.session_state.get("sales_selected_sido", sido_options[0])
+        if saved_sido not in sido_options:
+            saved_sido = sido_options[0]
+        nav_col, select_col = st.columns([.7, 2.3])
+        with nav_col:
+            if st.button("← 전국 지도로", width="stretch"):
+                st.session_state.sales_page = "national"
+                st.rerun()
+        with select_col:
+            sido = st.selectbox("분석 지역", sido_options, index=sido_options.index(saved_sido), key="sales_region_select")
+        st.session_state.sales_selected_sido = sido
+        sido_df = filtered[filtered["SIDO_NM"] == sido]
+        ranking = regional_ranking(sido_df, "CCG_NM")
+        st.markdown(f"<div class='section-label'>REGIONAL DETAIL</div>", unsafe_allow_html=True)
+        st.header(f"{sido} 소비 상권")
+        local_map_col, ranking_col = st.columns([1.12, .88], gap="large")
+        with local_map_col:
+            st.subheader("시군구 매출 지도")
+            st.plotly_chart(sigungu_map(sido_df, sido), width="stretch", key=f"sales_local_{sido}")
+        with ranking_col:
+            st.subheader("상위 상권")
+            st.dataframe(ranking.head(10), hide_index=True, width="stretch", column_config={"매출액": st.column_config.NumberColumn(format="%,.0f원"), "이용건수": st.column_config.NumberColumn(format="%,.0f건"), "건당결제액": st.column_config.NumberColumn(format="%,.0f원"), "매출비중": st.column_config.ProgressColumn(format="%.1%%", min_value=0, max_value=1)})
+        ccg = st.selectbox("시군구 상세", ["전체"] + sorted(sido_df["CCG_NM"].unique()), key=f"sales_ccg_{sido}")
+        local_df = sido_df if ccg == "전체" else sido_df[sido_df["CCG_NM"] == ccg]
+        st.subheader(f"{sido} {'' if ccg == '전체' else ccg} 월별 추이")
+        st.plotly_chart(monthly_trend(local_df), width="stretch")
+        a, b = st.columns(2, gap="large")
+        with a: st.subheader("업종별 매출 TOP 10"); st.plotly_chart(industry_bar(local_df), width="stretch")
+        with b: st.subheader("연령·성별 소비 구성"); st.plotly_chart(segment_chart(local_df), width="stretch")
 
 elif mode == "상권 종합지수":
     base, premium = indices["지역지수"], indices["프리미엄"]
