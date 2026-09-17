@@ -11,7 +11,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-현재 작업 폴더에서는 상위 폴더의 `ABP_CONTEST_DATA.csv`를 자동으로 찾습니다. 배포할 때는 CSV를 `data/raw/ABP_CONTEST_DATA.csv`에 두세요. 원본 데이터는 Git에 포함되지 않도록 설정했습니다.
+현재 작업 폴더에서는 상위 폴더의 `ABP_CONTEST_DATA.csv`와 `regional_indices_rank_final_v2_20260913.xlsx`를 자동으로 찾습니다. 배포할 때는 두 파일을 `data/raw/`에 두세요. 원본 및 파생 데이터는 Git에 포함되지 않도록 설정했습니다.
 
 ## 구조
 
@@ -38,7 +38,10 @@ becurious/
 - 선택 시도의 시군구 줌인 지도 및 지역 순위
 - 매출액·이용건수 월별 추이
 - 업종 TOP 10, 연령·성별 구성
-- 필터 결과 CSV 다운로드
+- 상권 규모·거래활력·소비 프리미엄·업종다양성 지도
+- 규모–프리미엄 사분면과 지역 유형
+- 2026년 6월 주민등록인구 보정 소비강도
+- 지역·업종별 전국 및 광역 순위
 
 ## 지도 데이터
 

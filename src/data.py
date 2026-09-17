@@ -28,6 +28,38 @@ def default_data_path() -> Path | None:
     return next((path for path in candidates if path.exists()), None)
 
 
+def default_indices_path() -> Path | None:
+    candidates = [
+        Path("data/raw/regional_indices_rank_final_v2_20260913.xlsx"),
+        Path("../regional_indices_rank_final_v2_20260913.xlsx"),
+        Path("regional_indices_rank_final_v2_20260913.xlsx"),
+    ]
+    return next((path for path in candidates if path.exists()), None)
+
+
+@st.cache_data(show_spinner="상권 지수를 불러오는 중입니다…")
+def load_indices(path: str) -> dict[str, pd.DataFrame]:
+    sheets = {
+        "지역지수": ("지역별지수", 3),
+        "프리미엄": ("지역별프리미엄", 3),
+        "인구보정": ("202606인구보정지수", 0),
+        "소비유형": ("202606업종별인구보정", 0),
+        "지역순위": ("지역총량핵심지수순위", 0),
+        "업종순위": ("업종별지역순위", 0),
+    }
+    result = {}
+    for key, (sheet, header) in sheets.items():
+        frame = pd.read_excel(path, sheet_name=sheet, header=header)
+        frame.columns = [str(column).strip() for column in frame.columns]
+        for column in ["시도", "시군구", "업종", "소비유형"]:
+            if column in frame:
+                frame[column] = frame[column].astype(str).str.strip()
+        if "업종" in frame:
+            frame["업종"] = frame["업종"].str.replace(r"\s+", "", regex=True)
+        result[key] = frame
+    return result
+
+
 @st.cache_data(show_spinner="소비 데이터를 불러오는 중입니다…")
 def load_csv(path: str) -> pd.DataFrame:
     return prepare(pd.read_csv(path, dtype={"STRD_YYMM": str, "GENDER_CD": str, "AGE_CD": str}))
