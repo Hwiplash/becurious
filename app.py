@@ -123,6 +123,16 @@ if mode == "소비 현황":
             st.session_state.sales_selected_ccg = clicked_ccg
             st.session_state.sales_page = "local"
             st.rerun()
+        st.markdown("<div class='section-label'>REGIONAL TRENDS</div>", unsafe_allow_html=True)
+        st.subheader(f"{sido} 월별 추이")
+        st.plotly_chart(monthly_trend(sido_df), width="stretch", key=f"regional_trend_{sido}")
+        regional_industry, regional_segment = st.columns(2, gap="large")
+        with regional_industry:
+            st.subheader("업종별 매출 TOP 10")
+            st.plotly_chart(industry_bar(sido_df), width="stretch", key=f"regional_industry_{sido}")
+        with regional_segment:
+            st.subheader("연령·성별 소비 구성")
+            st.plotly_chart(segment_chart(sido_df), width="stretch", key=f"regional_segment_{sido}")
     else:
         sido_options = sorted(filtered["SIDO_NM"].unique())
         sido = st.session_state.get("sales_selected_sido", sido_options[0])
