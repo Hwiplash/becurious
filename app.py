@@ -77,15 +77,21 @@ if mode == "소비 현황":
 
     if st.session_state.sales_page == "national":
         st.markdown("<div class='section-label'>NATIONAL OVERVIEW</div>", unsafe_allow_html=True)
-        st.subheader("전국 매출 지도")
-        st.caption("지도를 클릭하면 해당 시도의 상세 분석으로 이동합니다.")
-        map_event = st.plotly_chart(sido_map(filtered), width="stretch", on_select="rerun", key="sales_national_map")
+        national_map_col, national_rank_col = st.columns([1.18, .82], gap="large")
+        with national_map_col:
+            st.subheader("전국 매출 지도")
+            st.caption("시도를 클릭하면 해당 지역의 시군구 분석으로 이동합니다.")
+            map_event = st.plotly_chart(sido_map(filtered), width="stretch", on_select="rerun", key="sales_national_map")
+        with national_rank_col:
+            st.subheader("시도 비교")
+            sido_ranking = regional_ranking(filtered, "SIDO_NM")
+            st.dataframe(sido_ranking, hide_index=True, width="stretch", height=590, column_config={"SIDO_NM": "시도", "매출액": st.column_config.NumberColumn(format="%,.0f원"), "이용건수": st.column_config.NumberColumn(format="%,.0f건"), "건당결제액": st.column_config.NumberColumn(format="%,.0f원"), "매출비중": st.column_config.ProgressColumn(format="%.1%%", min_value=0, max_value=1)})
         clicked = selected_sido(map_event)
         if clicked in set(filtered["SIDO_NM"]):
             st.session_state.sales_selected_sido = clicked
             st.session_state.sales_page = "regional"
             st.rerun()
-    else:
+    elif st.session_state.sales_page == "regional":
         sido_options = sorted(filtered["SIDO_NM"].unique())
         saved_sido = st.session_state.get("sales_selected_sido", sido_options[0])
         if saved_sido not in sido_options:
@@ -97,6 +103,8 @@ if mode == "소비 현황":
                 st.rerun()
         with select_col:
             sido = st.selectbox("분석 지역", sido_options, index=sido_options.index(saved_sido), key="sales_region_select")
+        if sido != st.session_state.get("sales_selected_sido"):
+            st.session_state.pop("sales_selected_ccg", None)
         st.session_state.sales_selected_sido = sido
         sido_df = filtered[filtered["SIDO_NM"] == sido]
         ranking = regional_ranking(sido_df, "CCG_NM")
@@ -105,13 +113,48 @@ if mode == "소비 현황":
         local_map_col, ranking_col = st.columns([1.12, .88], gap="large")
         with local_map_col:
             st.subheader("시군구 매출 지도")
-            st.plotly_chart(sigungu_map(sido_df, sido), width="stretch", key=f"sales_local_{sido}")
+            st.caption("시군구를 클릭하면 해당 지역의 상세 분석으로 이동합니다.")
+            local_event = st.plotly_chart(sigungu_map(sido_df, sido), width="stretch", on_select="rerun", key=f"sales_local_{sido}")
         with ranking_col:
-            st.subheader("상위 상권")
-            st.dataframe(ranking.head(10), hide_index=True, width="stretch", column_config={"매출액": st.column_config.NumberColumn(format="%,.0f원"), "이용건수": st.column_config.NumberColumn(format="%,.0f건"), "건당결제액": st.column_config.NumberColumn(format="%,.0f원"), "매출비중": st.column_config.ProgressColumn(format="%.1%%", min_value=0, max_value=1)})
-        ccg = st.selectbox("시군구 상세", ["전체"] + sorted(sido_df["CCG_NM"].unique()), key=f"sales_ccg_{sido}")
-        local_df = sido_df if ccg == "전체" else sido_df[sido_df["CCG_NM"] == ccg]
-        st.subheader(f"{sido} {'' if ccg == '전체' else ccg} 월별 추이")
+            st.subheader("시군구 비교")
+            st.dataframe(ranking, hide_index=True, width="stretch", height=590, column_config={"CCG_NM": "시군구", "매출액": st.column_config.NumberColumn(format="%,.0f원"), "이용건수": st.column_config.NumberColumn(format="%,.0f건"), "건당결제액": st.column_config.NumberColumn(format="%,.0f원"), "매출비중": st.column_config.ProgressColumn(format="%.1%%", min_value=0, max_value=1)})
+        clicked_ccg = selected_sido(local_event)
+        if clicked_ccg in set(sido_df["CCG_NM"]):
+            st.session_state.sales_selected_ccg = clicked_ccg
+            st.session_state.sales_page = "local"
+            st.rerun()
+    else:
+        sido_options = sorted(filtered["SIDO_NM"].unique())
+        sido = st.session_state.get("sales_selected_sido", sido_options[0])
+        if sido not in sido_options:
+            sido = sido_options[0]
+        sido_df = filtered[filtered["SIDO_NM"] == sido]
+        ccg_options = sorted(sido_df["CCG_NM"].unique())
+        ccg = st.session_state.get("sales_selected_ccg", ccg_options[0])
+        if ccg not in ccg_options:
+            ccg = ccg_options[0]
+        back_national, back_region, select_col = st.columns([.62, .72, 1.66])
+        with back_national:
+            if st.button("← 전국", width="stretch"):
+                st.session_state.sales_page = "national"
+                st.rerun()
+        with back_region:
+            if st.button(f"← {sido}", width="stretch"):
+                st.session_state.sales_page = "regional"
+                st.rerun()
+        with select_col:
+            ccg = st.selectbox("시군구", ccg_options, index=ccg_options.index(ccg), key=f"sales_local_select_{sido}")
+        st.session_state.sales_selected_ccg = ccg
+        local_df = sido_df[sido_df["CCG_NM"] == ccg]
+        local_amt, local_cnt = local_df["amt"].sum(), local_df["cnt"].sum()
+        local_monthly = local_df.groupby("month")["amt"].sum().sort_index()
+        local_growth = (local_monthly.iloc[-1] / local_monthly.iloc[0] - 1) if len(local_monthly) > 1 and local_monthly.iloc[0] else 0
+        st.markdown("<div class='section-label'>LOCAL DETAIL</div>", unsafe_allow_html=True)
+        st.header(f"{sido} {ccg}")
+        l1, l2, l3, l4 = st.columns(4)
+        l1.metric("매출액", compact_won(local_amt)); l2.metric("이용 건수", f"{local_cnt:,.0f}건")
+        l3.metric("건당 결제액", compact_won(local_amt / local_cnt if local_cnt else 0)); l4.metric("기간 성장률", f"{local_growth:+.1%}")
+        st.subheader("월별 추이")
         st.plotly_chart(monthly_trend(local_df), width="stretch")
         a, b = st.columns(2, gap="large")
         with a: st.subheader("업종별 매출 TOP 10"); st.plotly_chart(industry_bar(local_df), width="stretch")
