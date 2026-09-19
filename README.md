@@ -1,15 +1,55 @@
-# ABP 상권 인사이트 대시보드
+# ABP 상권 인사이트 및 정책 제안 에이전트
 
-BC카드 공모전 소비 집계 데이터를 전국 → 시도 → 시군구 단위로 탐색하는 Streamlit 대시보드입니다.
+BC카드 공모전 소비 집계 데이터를 전국 → 시도 → 시군구 단위로 탐색하고, 지역별 Pain Point·Advantage와 PDF 사례를 결합해 정책을 제안하는 Streamlit 앱입니다.
 
 ## 실행
 
 ```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-streamlit run app.py
+scripts\setup.ps1
+..\.venv\Scripts\python.exe -m streamlit run app.py
 ```
+
+`.env`의 `OPENAI_API_KEY`를 설정하면 AI 정책 제안 기능이 활성화됩니다. 기본 조합은 Small 임베딩과 Luna 근거 재정렬·최종 제안입니다.
+
+## PDF RAG 준비
+
+1. 정책·상권 사례 PDF를 `data/pdfs/`에 넣습니다.
+2. 출처 상태와 중복·OCR 필요 문서를 점검합니다.
+
+```powershell
+..\.venv\Scripts\python.exe scripts\audit_pdfs.py
+```
+
+3. PDF를 문서 목록, 검색 조각, 사례 카드로 변환합니다.
+
+```powershell
+..\.venv\Scripts\python.exe scripts\build_local_corpus.py
+```
+
+이 상태만으로도 앱의 로컬 근거 검색이 작동합니다. `OPENAI_API_KEY`를 설정하면 AI 정책 제안이 활성화되고, 아래 명령으로 의미 기반 임베딩 검색도 추가할 수 있습니다.
+
+```powershell
+..\.venv\Scripts\python.exe scripts\build_rag_index.py --dry-run
+..\.venv\Scripts\python.exe scripts\build_rag_index.py
+```
+
+생성된 `data/processed/`와 `data/rag_index/`를 제출물에 포함하면 심사 환경에서 PDF 전체를 다시 처리할 필요가 없습니다. OCR 검토 대상은 `data/qa/ingestion_report.csv`, 전체 출처 목록은 `outputs/source_catalog/지역외식산업_AI_출처관리대장.xlsx`에서 확인합니다.
+
+검수에 통과한 OCR PDF는 원본을 덮어쓰지 않고 `data/ocr_output/overrides.json`에 원본 파일명과 OCR 결과 경로를 등록합니다. 말뭉치 생성 시 등록된 OCR 결과가 우선 사용됩니다.
+
+검색은 키워드 후보 20개와 Small 벡터 후보 20개를 순위 융합한 뒤, Luna가 최종 6개 근거를 재정렬합니다. API 오류가 발생하면 자동으로 로컬 순위 결과를 사용합니다.
+
+슬라이드·연구보고서 혼합 자료의 처리 기준과 구조는 [`docs/INGESTION_WORKFLOW.md`](docs/INGESTION_WORKFLOW.md)에 정리되어 있습니다.
+
+## Docker 실행
+
+```powershell
+Copy-Item .env.example .env
+# .env에 API 키 입력
+docker compose up --build
+```
+
+브라우저에서 `http://localhost:8501`로 접속합니다.
 
 현재 작업 폴더에서는 상위 폴더의 `ABP_CONTEST_DATA.csv`와 `regional_indices_rank_final_v2_20260913.xlsx`를 자동으로 찾습니다. 배포할 때는 두 파일을 `data/raw/`에 두세요. 원본 및 파생 데이터는 Git에 포함되지 않도록 설정했습니다.
 
@@ -24,7 +64,19 @@ becurious/
 │  └─ charts.py           # 추이·업종·고객군 차트
 ├─ data/
 │  ├─ geo/                # 앱에 포함된 행정구역 경계
+│  ├─ pdfs/               # 정책·사례 원본 PDF
+│  ├─ processed/          # 문서 목록·검색 조각·사례 카드
+│  ├─ qa/                 # PDF 및 수집 품질 점검 결과
+│  ├─ rag_index/          # 제출 시 포함할 사전 생성 검색 인덱스
 │  └─ raw/                # 원본/추가 CSV (Git 제외)
+├─ scripts/build_rag_index.py
+├─ config/                # 수집·검색 기본 설정
+├─ docs/                  # 구축 및 제출 문서
+├─ src/ingestion/         # 자동 PDF 프로파일링·추출·청킹·검수
+├─ tests/                 # 전처리 및 검색 회귀 테스트
+├─ .env.example
+├─ Dockerfile
+├─ compose.yaml
 ├─ .streamlit/config.toml # 테마와 앱 설정
 └─ requirements.txt
 ```

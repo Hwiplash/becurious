@@ -21,7 +21,7 @@ def _layout(fig: go.Figure, max_value: float, height: int = 560) -> go.Figure:
     tickvals, ticktext = korean_money_ticks(max_value, 4)
     fig.update_geos(fitbounds="locations", visible=False, bgcolor="rgba(0,0,0,0)")
     fig.update_layout(
-        height=height, margin=dict(l=0, r=0, t=8, b=0),
+        height=height, margin=dict(l=8, r=8, t=14, b=28),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#344054"),
         coloraxis_colorbar=dict(title="매출액", tickvals=tickvals, ticktext=ticktext, thickness=12),
@@ -87,7 +87,7 @@ def index_map(df: pd.DataFrame, value: str, title: str, sido: str | None = None)
     )
     fig.update_geos(fitbounds="locations", visible=False, bgcolor="rgba(0,0,0,0)")
     fig.update_layout(
-        height=570, margin=dict(l=0, r=0, t=8, b=0), font=dict(color="#344054"),
+        height=590, margin=dict(l=8, r=8, t=14, b=28), font=dict(color="#344054"),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         coloraxis_colorbar=dict(title=title, thickness=12), clickmode="event+select",
     )

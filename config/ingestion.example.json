@@ -1,0 +1,36 @@
+{
+  "pdf_directory": "data/pdfs",
+  "processed_directory": "data/processed",
+  "index_directory": "data/rag_index",
+  "qa_directory": "data/qa",
+  "text_threshold_for_ocr": 150,
+  "chunk_target_characters": 2400,
+  "chunk_overlap_characters": 300,
+  "case_keywords": [
+    "사례",
+    "정책",
+    "전략",
+    "활성화",
+    "개선",
+    "대책",
+    "방안",
+    "성과",
+    "효과",
+    "제안",
+    "로드맵",
+    "시사점"
+  ],
+  "embedding_model": "text-embedding-3-small",
+  "metadata_model": "gpt-5.6-luna",
+  "rerank_model": "gpt-5.6-luna",
+  "generation_model": "gpt-5.6-luna",
+  "retrieval": {
+    "dense_weight": 0.55,
+    "keyword_weight": 0.20,
+    "metadata_weight": 0.15,
+    "evidence_weight": 0.05,
+    "recency_weight": 0.05,
+    "candidate_count": 15,
+    "final_count": 6
+  }
+}
