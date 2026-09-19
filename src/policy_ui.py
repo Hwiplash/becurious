@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from src.agent import EVIDENCE_GROUP_LABELS, generate_proposal, retrieve_evidence_groups
-from src.analytics import diagnose_region
+from src.analytics import diagnose_region, find_similar_districts
 
 
 @st.dialog("✨ AI 상권 부흥 정책 제안", width="large")
@@ -54,6 +54,9 @@ def policy_dialog(
         diagnosis = diagnose_region(data, sido, ccg, industry)
         diagnosis_payload = diagnosis.to_dict()
         if indices:
+            diagnosis_payload["similar_districts"] = find_similar_districts(
+                data, indices, sido, ccg, industry, top_k=5
+            )
             base = indices["지역지수"]
             premium = indices["프리미엄"]
             population = indices["인구보정"]
@@ -93,6 +96,13 @@ def policy_dialog(
                 budget, question,
             )
         st.markdown(proposal)
+        similar = diagnosis_payload.get("similar_districts", [])
+        if similar:
+            st.markdown("#### 정량 유사 상권")
+            st.caption("상권 체력 55% · 업종 성과 30% · 고객 연령구조 15%를 표준화해 비교했습니다.")
+            st.markdown(" · ".join(
+                f"**{item['region']}** {item['match_score']:.1f}점" for item in similar
+            ))
         with st.expander("제안에 사용된 근거 확인"):
             for group, items in evidence.items():
                 st.markdown(f"**{EVIDENCE_GROUP_LABELS[group]}**")

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
+import numpy as np
 import pandas as pd
 
 
@@ -95,3 +96,99 @@ def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> R
         advantages=advantages,
     )
 
+
+def find_similar_districts(
+    data: pd.DataFrame,
+    indices: dict[str, pd.DataFrame],
+    sido: str,
+    ccg: str,
+    industry: str,
+    top_k: int = 5,
+) -> list[dict]:
+    """전국 시군구를 체력지수·업종추이·연령구조로 비교한다."""
+    base = indices["지역지수"][[
+        "시도", "시군구", "결제금액 규모지수", "거래활력지수", "업종다양성지수",
+    ]].copy()
+    premium = indices["프리미엄"][["시도", "시군구", "6개월 통합 프리미엄지수"]].copy()
+    population = indices["인구보정"][[
+        "시도", "시군구", "개인 금액 지수(평균=100)", "개인 건수 지수(평균=100)",
+    ]].copy()
+    features = base.merge(premium, on=["시도", "시군구"], how="inner").merge(
+        population, on=["시도", "시군구"], how="inner"
+    )
+
+    industry_data = data[data["TP_BUZ_NM"] == industry].copy()
+    if industry_data.empty:
+        return []
+    keys = ["SIDO_NM", "CCG_NM"]
+    monthly = industry_data.groupby(keys + ["month"])[["amt", "cnt"]].sum().reset_index()
+    first = monthly.sort_values("month").groupby(keys).first()
+    last = monthly.sort_values("month").groupby(keys).last()
+    dynamics = pd.DataFrame(index=first.index)
+    dynamics["업종매출변화"] = last["amt"].div(first["amt"].replace(0, np.nan)).sub(1)
+    dynamics["업종거래변화"] = last["cnt"].div(first["cnt"].replace(0, np.nan)).sub(1)
+    first_ticket = first["amt"].div(first["cnt"].replace(0, np.nan))
+    last_ticket = last["amt"].div(last["cnt"].replace(0, np.nan))
+    dynamics["업종객단가변화"] = last_ticket.div(first_ticket.replace(0, np.nan)).sub(1)
+    dynamics["업종관측월수"] = monthly.groupby(keys)["month"].nunique()
+    dynamics = dynamics.reset_index().rename(columns={"SIDO_NM": "시도", "CCG_NM": "시군구"})
+
+    industry_amount = industry_data.groupby(keys)["amt"].sum()
+    total_amount = data.groupby(keys)["amt"].sum()
+    share = industry_amount.div(total_amount.replace(0, np.nan)).rename("업종매출비중").reset_index()
+    share = share.rename(columns={"SIDO_NM": "시도", "CCG_NM": "시군구"})
+
+    age_amount = industry_data.groupby(keys + ["age"])["amt"].sum()
+    age_share = age_amount.div(age_amount.groupby(level=keys).transform("sum")).unstack(fill_value=0)
+    age_share.columns = [f"연령비중_{column}" for column in age_share.columns]
+    age_share = age_share.reset_index().rename(columns={"SIDO_NM": "시도", "CCG_NM": "시군구"})
+
+    features = features.merge(dynamics, on=["시도", "시군구"], how="inner")
+    features = features[features["업종관측월수"] >= 4].copy()
+    features = features.merge(share, on=["시도", "시군구"], how="inner")
+    features = features.merge(age_share, on=["시도", "시군구"], how="left")
+    target_mask = (features["시도"] == sido) & (features["시군구"] == ccg)
+    if not target_mask.any() or len(features) < 2:
+        return []
+
+    index_columns = [
+        "결제금액 규모지수", "거래활력지수", "6개월 통합 프리미엄지수", "업종다양성지수",
+        "개인 금액 지수(평균=100)", "개인 건수 지수(평균=100)",
+    ]
+    dynamics_columns = ["업종매출변화", "업종거래변화", "업종객단가변화", "업종매출비중"]
+    age_columns = [column for column in features if column.startswith("연령비중_")]
+    feature_columns = index_columns + dynamics_columns + age_columns
+    numeric = features[feature_columns].apply(pd.to_numeric, errors="coerce")
+    medians = numeric.median()
+    numeric = numeric.fillna(medians)
+    scale = numeric.quantile(.75).sub(numeric.quantile(.25)).replace(0, 1).fillna(1)
+    normalized = numeric.sub(medians).div(scale).clip(-5, 5)
+
+    weights = pd.Series(0.0, index=feature_columns)
+    weights[index_columns] = 0.55 / len(index_columns)
+    weights[dynamics_columns] = 0.30 / len(dynamics_columns)
+    if age_columns:
+        weights[age_columns] = 0.15 / len(age_columns)
+    target_vector = normalized.loc[target_mask].iloc[0]
+    distances = np.sqrt(normalized.sub(target_vector).pow(2).mul(weights, axis=1).sum(axis=1))
+    ranked = features.loc[~target_mask, ["시도", "시군구"]].copy()
+    ranked["distance"] = distances.loc[~target_mask]
+    ranked = ranked.sort_values("distance").head(top_k)
+
+    results = []
+    for row_index, row in ranked.iterrows():
+        values = numeric.loc[row_index]
+        results.append({
+            "region": f"{row['시도']} {row['시군구']}",
+            "distance": round(float(row["distance"]), 4),
+            "match_score": round(float(100 / (1 + row["distance"])), 1),
+            "scale_index": round(float(values["결제금액 규모지수"]), 1),
+            "activity_index": round(float(values["거래활력지수"]), 1),
+            "premium_index": round(float(values["6개월 통합 프리미엄지수"]), 1),
+            "diversity_index": round(float(values["업종다양성지수"]), 1),
+            "industry_sales_change": round(float(values["업종매출변화"]), 4),
+            "industry_transaction_change": round(float(values["업종거래변화"]), 4),
+            "industry_ticket_change": round(float(values["업종객단가변화"]), 4),
+            "industry_sales_share": round(float(values["업종매출비중"]), 4),
+        })
+    return results

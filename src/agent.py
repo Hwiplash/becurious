@@ -20,6 +20,7 @@ SYSTEM_PROMPT = """당신은 지역 음식상권 활성화 전략 컨설턴트�
    - Weakness: 대상 지역·업종 내부의 Pain Point
    - Opportunity: 유사 지역·업종이 강점을 활용했거나 성과를 낸 외부 사례
    - Threat: 유사 지역·업종에서 같은 문제를 악화시킨 조건과 주의점
+   - 유사 지역은 정량 지표로 계산된 similar_districts를 우선 사용한다.
 3) 교차 전략:
    - SO: 강점을 활용해 기회를 확대
    - WO: 유사 성공사례를 적용해 약점을 보완
@@ -88,11 +89,12 @@ def retrieve_evidence_groups(
     industry = diagnosis["industry"]
     pains = " ".join(diagnosis.get("pain_points", []))
     advantages = " ".join(diagnosis.get("advantages", []))
+    similar_regions = " ".join(item.get("region", "") for item in diagnosis.get("similar_districts", []))
     queries = {
         "local": f"{region} 외식 상권 현황 활성화 정책 음식점 {question}",
-        "industry": f"{industry} 음식점 경쟁력 메뉴 고객 유입 매출 개선 사례 {question}",
-        "pain": f"외식 상권 유사 문제 해결 사례 {pains} {industry} {question}",
-        "advantage": f"외식 상권 강점 활용 성공 사례 {advantages} {industry} {question}",
+        "industry": f"{industry} 음식점 경쟁력 메뉴 고객 유입 매출 개선 사례 유사상권 {similar_regions} {question}",
+        "pain": f"외식 상권 유사 문제 해결 사례 {pains} {industry} 정량 유사지역 {similar_regions} {question}",
+        "advantage": f"외식 상권 강점 활용 성공 사례 {advantages} {industry} 정량 유사지역 {similar_regions} {question}",
     }
     groups: dict[str, list[dict]] = {}
     used: set[str] = set()
