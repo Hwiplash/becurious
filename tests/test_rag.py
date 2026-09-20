@@ -30,6 +30,16 @@ class LocalRagTest(unittest.TestCase):
         results = search_local_knowledge("짜장면 업종 코드는 무엇인가", top_k=5)
         self.assertEqual(results[0].get("industry_code"), "8005")
 
+    def test_local_search_can_be_limited_to_selected_sources(self) -> None:
+        unrestricted = search_local_knowledge("외식 마케팅 고객 만족", top_k=10)
+        self.assertTrue(unrestricted)
+        allowed = {unrestricted[0]["source"]}
+        restricted = search_local_knowledge(
+            "외식 마케팅 고객 만족", top_k=10, allowed_sources=allowed
+        )
+        self.assertTrue(restricted)
+        self.assertTrue(all(item.get("source") in allowed for item in restricted))
+
 
 if __name__ == "__main__":
     unittest.main()

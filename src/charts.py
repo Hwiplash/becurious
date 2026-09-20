@@ -34,6 +34,37 @@ def _axis_ticks(max_value: float, kind: str = "money", count: int = 5) -> tuple[
     return values, labels, unit
 
 
+def _trend_axis_ticks(
+    values: list[float], kind: str = "money", count: int = 5
+) -> tuple[list[float], list[str], str, list[float] | None]:
+    """촘촘한 추이는 확대하되 눈금 간격은 1·2·5 계열을 유지한다."""
+    finite = [float(value) for value in values if pd.notna(value)]
+    if not finite:
+        ticks, labels, unit = _axis_ticks(0, kind, count)
+        return ticks, labels, unit, None
+    minimum, maximum = min(finite), max(finite)
+    if minimum <= 0 or maximum <= 0 or (maximum - minimum) / maximum >= 0.35:
+        ticks, labels, unit = _axis_ticks(maximum, kind, count)
+        return ticks, labels, unit, None
+
+    if kind == "money":
+        scales = [(1_0000_0000_0000, "조원"), (1_0000_0000, "억원"), (1_0000, "만원"), (1, "원")]
+    else:
+        scales = [(1_0000_0000, "억건"), (1_0000, "만건"), (1_000, "천건"), (1, "건")]
+    divisor, unit = next(((scale, label) for scale, label in scales if maximum >= scale), scales[-1])
+    scaled_min, scaled_max = minimum / divisor, maximum / divisor
+    step = _nice_step((scaled_max - scaled_min) / count)
+    axis_min = math.floor(scaled_min / step) * step
+    axis_max = math.ceil(scaled_max / step) * step
+    if axis_min == axis_max:
+        axis_min, axis_max = max(0, axis_min - step), axis_max + step
+    tick_count = int(round((axis_max - axis_min) / step))
+    scaled_values = [axis_min + step * index for index in range(tick_count + 1)]
+    decimals = max(0, -math.floor(math.log10(step))) if step < 1 else 0
+    labels = [f"{value:,.{decimals}f}" for value in scaled_values]
+    return [value * divisor for value in scaled_values], labels, unit, [axis_min * divisor, axis_max * divisor]
+
+
 def style(fig: go.Figure, height: int = 340) -> go.Figure:
     fig.update_layout(
         height=height, margin=dict(l=12, r=12, t=48, b=46),
@@ -48,6 +79,11 @@ def style(fig: go.Figure, height: int = 340) -> go.Figure:
 
 def monthly_sales_trend(df: pd.DataFrame, forecast: pd.DataFrame | None = None) -> go.Figure:
     monthly = df.groupby("month", as_index=False).agg(매출액=("amt", "sum"), 이용건수=("cnt", "sum"))
+    axis_values = monthly["매출액"].astype(float).tolist()
+    if forecast is not None and not forecast.empty:
+        axis_values.extend(forecast["lower90_amt"].dropna().astype(float).tolist())
+        axis_values.extend(forecast["upper90_amt"].dropna().astype(float).tolist())
+    tickvals, ticktext, money_unit, axis_range = _trend_axis_ticks(axis_values, "money")
     fig = go.Figure()
     if forecast is not None and not forecast.empty:
         fig.add_trace(go.Scatter(
@@ -64,13 +100,9 @@ def monthly_sales_trend(df: pd.DataFrame, forecast: pd.DataFrame | None = None) 
             mode="lines", line=dict(color="#D89A32", width=2, dash="dash"),
             hovertemplate="회귀 기대매출 %{y:,.0f}원<extra></extra>",
         ))
-    fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["매출액"], name="매출액", mode="lines+markers", line=dict(color=PALETTE[0], width=3), fill="tozeroy", fillcolor="rgba(34,211,167,.10)"))
-    money_max = float(monthly["매출액"].max())
-    if forecast is not None and not forecast.empty:
-        money_max = max(money_max, float(forecast["upper90_amt"].max()))
-    tickvals, ticktext, money_unit = _axis_ticks(money_max, "money")
+    fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["매출액"], name="매출액", mode="lines+markers", line=dict(color=PALETTE[0], width=3), fill="none" if axis_range else "tozeroy", fillcolor="rgba(34,211,167,.10)"))
     fig.update_layout(
-        yaxis=dict(title=f"매출액 ({money_unit})", tickvals=tickvals, ticktext=ticktext),
+        yaxis=dict(title=f"매출액 ({money_unit})", tickvals=tickvals, ticktext=ticktext, range=axis_range),
         hovermode="x unified",
         showlegend=False,
     )
@@ -81,16 +113,18 @@ def monthly_sales_trend(df: pd.DataFrame, forecast: pd.DataFrame | None = None) 
 
 def monthly_count_trend(df: pd.DataFrame) -> go.Figure:
     monthly = df.groupby("month", as_index=False).agg(이용건수=("cnt", "sum"))
+    countvals, counttext, count_unit, axis_range = _trend_axis_ticks(
+        monthly["이용건수"].astype(float).tolist(), "count"
+    )
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=monthly["month"], y=monthly["이용건수"], name="이용건수",
         mode="lines+markers", line=dict(color=PALETTE[1], width=3),
-        fill="tozeroy", fillcolor="rgba(77,163,255,.10)",
+        fill="none" if axis_range else "tozeroy", fillcolor="rgba(77,163,255,.10)",
         hovertemplate="이용건수 %{y:,.0f}건<extra></extra>",
     ))
-    countvals, counttext, count_unit = _axis_ticks(float(monthly["이용건수"].max()), "count")
     fig.update_layout(
-        yaxis=dict(title=f"이용건수 ({count_unit})", tickvals=countvals, ticktext=counttext),
+        yaxis=dict(title=f"이용건수 ({count_unit})", tickvals=countvals, ticktext=counttext, range=axis_range),
         hovermode="x unified",
         showlegend=False,
     )

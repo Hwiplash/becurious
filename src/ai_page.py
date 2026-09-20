@@ -7,6 +7,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from src.agent import EVIDENCE_GROUP_LABELS, generate_proposal, retrieve_evidence_groups
+from src.api_access import api_calls_enabled
 from src.analytics import diagnose_region
 from src.rag import INDEX_DIR, index_ready, local_corpus_ready
 
@@ -39,15 +40,13 @@ def render_ai_agent(data: pd.DataFrame) -> None:
     local = local[local["CCG_NM"] == ccg]
     industry = c3.selectbox("업종", sorted(local["TP_BUZ_NM"].unique()), key="ai_industry")
 
-    c4, c5 = st.columns(2)
-    role = c4.radio(
+    role = st.radio(
         "답변 형식",
         ["지자체 정책담당자", "가게 사장님"],
         horizontal=True,
         key="ai_role_v2",
         help="선택한 대상의 권한과 실행 범위에 맞춰 답변 구조가 달라집니다.",
     )
-    budget = c5.select_slider("실행 예산", ["최소", "낮음", "중간", "높음"], value="중간")
     question = st.text_input("추가 요청", placeholder="예: 40대 가족 고객을 다시 유입할 수 있는 전략을 제안해줘")
 
     try:
@@ -76,8 +75,9 @@ def render_ai_agent(data: pd.DataFrame) -> None:
         st.info("현재 로컬 키워드 검색으로 작동합니다. API 임베딩을 만들면 의미 기반 검색이 추가됩니다.")
     elif not local_corpus_ready():
         st.info(f"PDF 말뭉치가 없습니다. `python scripts/build_local_corpus.py`를 실행하세요.\n\n인덱스 위치: {INDEX_DIR}")
-    if not os.getenv("OPENAI_API_KEY"):
-        st.warning("OPENAI_API_KEY가 설정되지 않아 AI 제안 생성은 비활성화됩니다.")
+    api_enabled = api_calls_enabled()
+    if not api_enabled:
+        st.info("현재 공개 데모에서는 유료 API 검색과 AI 제안 생성이 비활성화되어 있습니다.")
 
     per_group = int(os.getenv("RAG_RESULTS_PER_GROUP", "3"))
     if st.button("지역·업종·Pain·Advantage 근거 검색", width="stretch"):
@@ -85,6 +85,7 @@ def render_ai_agent(data: pd.DataFrame) -> None:
             diagnosis.to_dict(), question,
             os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
             per_group,
+            role=role,
         )
         st.subheader("유형별 PDF 근거")
         for group, items in evidence_groups.items():
@@ -97,14 +98,15 @@ def render_ai_agent(data: pd.DataFrame) -> None:
                 st.caption(_score_label(item))
                 st.caption(item.get("text", "")[:700])
 
-    if st.button("AI 정책 제안 생성", type="primary", disabled=not os.getenv("OPENAI_API_KEY"), width="stretch"):
+    if st.button("AI 정책 제안 생성", type="primary", disabled=not api_enabled, width="stretch"):
         with st.spinner("지역 진단과 유사 사례를 결합하는 중입니다…"):
             evidence_groups = retrieve_evidence_groups(
                 diagnosis.to_dict(), question,
                 os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
                 per_group,
+                role=role,
             )
-            proposal = generate_proposal(diagnosis.to_dict(), evidence_groups, role, budget, question)
+            proposal = generate_proposal(diagnosis.to_dict(), evidence_groups, role, question=question)
         st.subheader("제안 결과")
         st.markdown(proposal)
         with st.expander("검색된 PDF 근거", expanded=True):

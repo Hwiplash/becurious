@@ -43,25 +43,48 @@ def signal_items(frame: pd.DataFrame, index_context: dict | None = None) -> tupl
     changes = sorted((str(name), growth(group.groupby("month")["amt"].sum())) for name, group in frame.groupby("TP_BUZ_NM"))
     changes.sort(key=lambda item: item[1])
     strengths, weaknesses = [], []
-    (strengths if sales_growth >= 0 else weaknesses).append(f"기간 매출이 {sales_growth:+.1%} {'성장했습니다.' if sales_growth >= 0 else '감소했습니다.'}")
-    (strengths if count_growth >= 0 else weaknesses).append(f"이용 건수가 {count_growth:+.1%} {'늘었습니다.' if count_growth >= 0 else '줄었습니다.'}")
-    (strengths if ticket_growth >= 0 else weaknesses).append(f"건당 결제액이 {ticket_growth:+.1%} {'상승했습니다.' if ticket_growth >= 0 else '낮아졌습니다.'}")
+    index_strengths: list[str] = []
+    index_weaknesses: list[str] = []
+    (strengths if sales_growth >= 0 else weaknesses).append(
+        f"기간 매출이 {sales_growth:+.1%} 늘어 업종 소비 규모가 확대되는 흐름입니다."
+        if sales_growth >= 0 else f"기간 매출이 {abs(sales_growth):.1%} 줄어 업종 소비 규모의 회복이 필요합니다."
+    )
+    (strengths if count_growth >= 0 else weaknesses).append(
+        f"이용 건수가 {count_growth:+.1%} 늘어 고객의 결제 활동이 활발해지는 흐름입니다."
+        if count_growth >= 0 else f"이용 건수가 {abs(count_growth):.1%} 줄어 고객 유입과 재이용을 높일 필요가 있습니다."
+    )
+    (strengths if ticket_growth >= 0 else weaknesses).append(
+        f"건당 결제액이 {ticket_growth:+.1%} 올라 한 번의 결제에서 지출하는 규모가 커졌습니다."
+        if ticket_growth >= 0 else f"건당 결제액이 {abs(ticket_growth):.1%} 낮아져 세트 구성과 추가 구매 유도 전략을 점검할 필요가 있습니다."
+    )
     if len(changes) > 1:
-        strengths.append(f"성장 신호가 가장 큰 업종은 {changes[-1][0]}({changes[-1][1]:+.1%})입니다.")
-        weaknesses.append(f"회복이 가장 필요한 업종은 {changes[0][0]}({changes[0][1]:+.1%})입니다.")
+        strengths.append(f"비교 업종 중 {changes[-1][0]}에서 {changes[-1][1]:+.1%}로 가장 뚜렷한 성장 흐름이 나타납니다.")
+        weaknesses.append(f"비교 업종 중 {changes[0][0]}은 {changes[0][1]:+.1%}로 상대적으로 회복 필요성이 가장 큽니다.")
     if index_context:
+        scale, activity = index_context.get("scale"), index_context.get("activity")
+        if scale is not None and activity is not None and not pd.isna(scale) and not pd.isna(activity):
+            if scale >= 100 and activity >= 100:
+                index_strengths.append(f"결제규모 {scale:.1f}, 거래활력 {activity:.1f}로 기준 100을 함께 웃돌아 안정적인 고객 수요 기반을 갖추고 있습니다.")
+            elif scale < 100 and activity < 100:
+                index_weaknesses.append(f"결제규모 {scale:.1f}, 거래활력 {activity:.1f}로 기준 100보다 낮아 신규 고객 유입과 재이용 회복이 함께 필요합니다.")
+            elif scale >= 100:
+                index_strengths.append(f"결제규모는 {scale:.1f}로 기준보다 크고 거래활력은 {activity:.1f}로 낮아 기존 고객의 재이용을 늘릴 여지가 있습니다.")
+            else:
+                index_weaknesses.append(f"거래활력은 {activity:.1f}로 기준보다 높지만 결제규모는 {scale:.1f}로 낮아 세트·추가 구매로 소비 규모를 키울 여지가 있습니다.")
         comparisons = [
-            ("소비 프리미엄", index_context.get("premium")),
-            ("거래활력", index_context.get("activity")),
-            ("업종다양성", index_context.get("diversity")),
-            ("주민 소비강도", index_context.get("population_intensity")),
+            ("소비 프리미엄", index_context.get("premium"), "상대적으로 고액 소비 성향이 강합니다.", "기대 수준보다 결제 규모가 낮아 상품 구성과 부가 구매를 점검할 필요가 있습니다."),
+            ("업종다양성", index_context.get("diversity"), "업종 구성이 비교적 고르게 분산돼 있습니다.", "특정 업종 의존도가 높아 수요 변화에 취약할 수 있습니다."),
+            ("주민 소비강도", index_context.get("population_intensity"), "인구 규모를 고려해도 지역 내 소비가 활발합니다.", "인구 규모에 비해 소비금액이 낮아 지역 수요를 붙잡을 전략이 필요합니다."),
+            ("주민 거래강도", index_context.get("transaction_intensity"), "주민 수에 비해 거래가 활발해 생활권 수요가 탄탄합니다.", "주민 수에 비해 거래가 적어 생활권 고객의 이용 빈도를 높일 필요가 있습니다."),
         ]
-        for label, value in comparisons:
+        if scale is None or activity is None or pd.isna(scale) or pd.isna(activity):
+            comparisons.insert(0, ("거래활력", activity, "거래가 비교적 활발해 고객 접점이 충분합니다.", "거래 빈도가 낮아 고객 유입과 재이용 회복이 필요합니다."))
+        for label, value, high_text, low_text in comparisons:
             if value is None or pd.isna(value):
                 continue
-            target = strengths if value >= 100 else weaknesses
-            target.append(f"{label}지수는 {value:.1f}로 전국 기준 100보다 {'높습니다.' if value >= 100 else '낮습니다.'}")
-    return strengths[:4], weaknesses[:4]
+            target = index_strengths if value >= 100 else index_weaknesses
+            target.append(f"{label}은 {value:.1f}로 기준 100과 비교하면 {high_text if value >= 100 else low_text}")
+    return [*index_strengths, *strengths][:5], [*index_weaknesses, *weaknesses][:5]
 
 
 def render_signals(frame: pd.DataFrame, index_context: dict | None = None) -> None:
@@ -142,11 +165,37 @@ def index_snapshot(indices: dict[str, pd.DataFrame], sido: str, ccg: str | None 
     return result
 
 
+def industry_index_snapshot(data: pd.DataFrame, industry: str) -> dict:
+    """선택 업종의 전국 실적을 외식 업종 평균(100)과 비교한다."""
+    grouped = data.groupby("TP_BUZ_NM").agg(amt=("amt", "sum"), cnt=("cnt", "sum"))
+    grouped["ticket"] = grouped["amt"].div(grouped["cnt"].replace(0, pd.NA))
+    if industry not in grouped.index or grouped.empty:
+        return {"selected_industry": industry, "scope": "industry"}
+    row = grouped.loc[industry]
+
+    def relative(value: float, benchmark: float) -> float | None:
+        return float(value / benchmark * 100) if benchmark and not pd.isna(benchmark) else None
+
+    return {
+        "selected_industry": industry,
+        "scope": "industry",
+        "scale": relative(row["amt"], grouped["amt"].mean()),
+        "activity": relative(row["cnt"], grouped["cnt"].mean()),
+        "premium": relative(row["ticket"], grouped["ticket"].mean()),
+        "diversity": None,
+        "population_intensity": None,
+        "transaction_intensity": None,
+    }
+
+
 def render_index_cards(context: dict, regional: bool = False) -> None:
     st.markdown("<div class='section-kicker'>COMMERCIAL VITALITY INDEX</div><div class='section-title'>상권 체력 지수</div>", unsafe_allow_html=True)
-    note = "해당 시도 내 시군구 중앙값 · 전국 기준 100" if regional else "선택한 시군구 지수 · 전국 기준 100"
+    if context.get("scope") == "industry":
+        note = "선택 업종의 전국 실적 · 외식 업종 평균 100"
+    else:
+        note = "해당 시도 내 시군구 중앙값 · 전국 기준 100" if regional else "선택한 시군구 지수 · 전국 기준 100"
     st.markdown(f"<div class='index-note'>{note}</div>", unsafe_allow_html=True)
-    if context.get("selected_industry") not in (None, "업종 전체"):
+    if context.get("selected_industry") not in (None, "업종 전체") and context.get("scope") != "industry":
         st.caption(f"상권 체력 지수는 지역 전체 기준이며, 아래 상세 정보에 {context['selected_industry']} 동일 업종 순위를 함께 표시합니다.")
     descriptions = {
         "scale": "결제금액 규모를 전국 시군구와 비교한 지수입니다. 100은 전국 기준 수준이며, 높을수록 관측된 소비시장 규모가 큽니다.",
@@ -156,7 +205,14 @@ def render_index_cards(context: dict, regional: bool = False) -> None:
         "population_intensity": "주민등록인구 1인당 개인 BC 결제금액을 전국 시군구와 비교한 지수입니다. 100보다 높으면 주민 수를 고려해도 소비금액이 전국 기준보다 큽니다.",
         "transaction_intensity": "주민등록인구 1인당 개인 BC 결제건수를 전국 시군구와 비교한 지수입니다. 100보다 높으면 주민 수 대비 거래 빈도가 전국 기준보다 높습니다.",
     }
+    if context.get("scope") == "industry":
+        descriptions.update({
+            "scale": "선택 업종의 전국 결제금액을 외식 업종별 평균과 비교합니다. 100보다 높으면 평균 업종보다 소비시장 규모가 큽니다.",
+            "activity": "선택 업종의 전국 결제건수를 외식 업종별 평균과 비교합니다. 100보다 높으면 평균 업종보다 거래가 활발합니다.",
+            "premium": "선택 업종의 건당결제액을 외식 업종별 평균과 비교합니다. 100보다 높으면 한 번의 결제에서 지출하는 규모가 상대적으로 큽니다.",
+        })
     cards = [("결제규모", "scale"), ("거래활력", "activity"), ("소비 프리미엄", "premium"), ("업종다양성", "diversity"), ("주민 소비강도", "population_intensity"), ("주민 거래강도", "transaction_intensity")]
+    cards = [(label, key) for label, key in cards if context.get(key) is not None and not pd.isna(context.get(key))]
     card_html = []
     for label, key in cards:
         value = context.get(key)

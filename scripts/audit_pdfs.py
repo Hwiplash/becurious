@@ -115,6 +115,9 @@ def main() -> None:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+    (QA_DIR / "pdf_inventory.json").write_text(
+        json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
     valid = [row for row in rows if row["status"] == "ok"]
     topic_counts = Counter()
@@ -141,4 +144,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

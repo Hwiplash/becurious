@@ -6,11 +6,12 @@ import pandas as pd
 import streamlit as st
 
 from src.agent import EVIDENCE_GROUP_LABELS, generate_proposal, retrieve_evidence_groups
-from src.analytics import diagnose_region, find_similar_districts
+from src.api_access import api_calls_enabled
+from src.analytics import diagnose_scope, find_similar_districts
 from src.industry_taxonomy import resolve_industry_name
 
 
-@st.dialog("✨ AI 상권 부흥 정책 제안", width="large")
+@st.dialog("✨ 상권 활성화 솔루션 제안", width="large")
 def policy_dialog(
     data: pd.DataFrame,
     indices: dict[str, pd.DataFrame] | None = None,
@@ -19,59 +20,67 @@ def policy_dialog(
     default_industry: str | None = None,
     initial_question: str = "",
 ) -> None:
-    sido_options = sorted(data["SIDO_NM"].unique())
+    all_regions = "전체 지역"
+    sido_options = [all_regions, *sorted(data["SIDO_NM"].unique())]
     sido = st.selectbox(
         "시도", sido_options,
         index=sido_options.index(default_sido) if default_sido in sido_options else 0,
-        key="policy_sido",
+        key=f"policy_sido_{default_sido or 'all'}_{default_ccg or 'all'}",
     )
-    local = data[data["SIDO_NM"] == sido]
-    ccg_options = sorted(local["CCG_NM"].unique())
+    local = data if sido == all_regions else data[data["SIDO_NM"] == sido]
+    ccg_options = [all_regions] if sido == all_regions else [all_regions, *sorted(local["CCG_NM"].unique())]
     ccg = st.selectbox(
         "시군구", ccg_options,
         index=ccg_options.index(default_ccg) if default_ccg in ccg_options else 0,
-        key="policy_ccg",
+        key=f"policy_ccg_{default_sido or 'all'}_{default_ccg or 'all'}",
+        disabled=sido == all_regions,
     )
-    local = local[local["CCG_NM"] == ccg]
+    if ccg != all_regions:
+        local = local[local["CCG_NM"] == ccg]
     industry_options = sorted(local["TP_BUZ_NM"].unique())
     industry = st.selectbox(
         "업종", industry_options,
         index=industry_options.index(default_industry) if default_industry in industry_options else 0,
-        key="policy_industry",
+        key=f"policy_industry_{default_sido or 'all'}_{default_ccg or 'all'}_{default_industry or 'all'}",
     )
-    role_col, budget_col = st.columns(2)
-    role = role_col.segmented_control(
+    role = st.segmented_control(
         "답변 형식",
         ["지자체", "점주"],
         default="지자체",
         key="policy_role_v2",
         help="지자체는 정책·집행 중심, 점주는 매장 운영·메뉴 실행 중심으로 답변합니다.",
     )
-    budget = budget_col.select_slider("실행 여건", ["최소", "낮음", "중간", "높음"], value="중간")
     question = st.text_area(
         "추가 요청",
         value=initial_question,
         placeholder="예: 약해진 30대 고객층을 회복하면서 강점 고객층을 활용할 정책을 제안해줘",
         height=90,
     )
-    if not os.getenv("OPENAI_API_KEY"):
-        st.warning("OPENAI_API_KEY가 없어 제안을 생성할 수 없습니다.")
-        return
-    if st.button("SWOT 기반 정책 분석 시작", type="primary", width="stretch"):
-        diagnosis = diagnose_region(data, sido, ccg, industry)
+    api_enabled = api_calls_enabled()
+    if not api_enabled:
+        st.info("현재 공개 데모에서는 AI 분석 기능이 비활성화되어 있습니다. 지역·업종과 요청 내용을 선택해 화면 구성을 체험할 수 있습니다.")
+    if st.button(
+        "분석 시작" if api_enabled else "분석 시작 · 데모에서는 비활성화",
+        type="primary",
+        width="stretch",
+        disabled=not api_enabled,
+    ):
+        selected_sido = None if sido == all_regions else sido
+        selected_ccg = None if ccg == all_regions else ccg
+        diagnosis = diagnose_scope(data, industry, selected_sido, selected_ccg)
         diagnosis_payload = diagnosis.to_dict()
-        if indices:
+        if indices and selected_sido is not None and selected_ccg is not None:
             diagnosis_payload["similar_districts"] = find_similar_districts(
-                data, indices, sido, ccg, industry, top_k=5
+                data, indices, selected_sido, selected_ccg, industry, top_k=5
             )
             base = indices["지역지수"]
             premium = indices["프리미엄"]
             population = indices["인구보정"]
             industry_rank = indices["업종순위"]
-            base_row = base[(base["시도"] == sido) & (base["시군구"] == ccg)]
-            premium_row = premium[(premium["시도"] == sido) & (premium["시군구"] == ccg)]
-            population_row = population[(population["시도"] == sido) & (population["시군구"] == ccg)]
-            industry_row = industry_rank[(industry_rank["시도"] == sido) & (industry_rank["시군구"] == ccg) & (industry_rank["업종"] == industry)]
+            base_row = base[(base["시도"] == selected_sido) & (base["시군구"] == selected_ccg)]
+            premium_row = premium[(premium["시도"] == selected_sido) & (premium["시군구"] == selected_ccg)]
+            population_row = population[(population["시도"] == selected_sido) & (population["시군구"] == selected_ccg)]
+            industry_row = industry_rank[(industry_rank["시도"] == selected_sido) & (industry_rank["시군구"] == selected_ccg) & (industry_rank["업종"] == industry)]
             if not base_row.empty and not premium_row.empty and not population_row.empty:
                 b, p, pop = base_row.iloc[0], premium_row.iloc[0], population_row.iloc[0]
                 diagnosis_payload["commercial_indices"] = {
@@ -96,11 +105,12 @@ def policy_dialog(
                 diagnosis_payload, question,
                 os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
                 int(os.getenv("RAG_RESULTS_PER_GROUP", "3")),
+                role=role or "지자체",
             )
             proposal = generate_proposal(
                 diagnosis_payload, evidence,
                 {"지자체": "지자체 정책담당자", "점주": "가게 사장님"}[role or "지자체"],
-                budget, question,
+                question=question,
             )
         st.markdown(proposal)
         similar = diagnosis_payload.get("similar_districts", [])

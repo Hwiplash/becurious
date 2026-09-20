@@ -21,7 +21,6 @@ def main() -> None:
     parser.add_argument("--ccg", default="유성구")
     parser.add_argument("--industry", default="갈비전문점")
     parser.add_argument("--role", default="지자체 정책담당자")
-    parser.add_argument("--budget", default="중간")
     args = parser.parse_args()
 
     load_dotenv()
@@ -30,10 +29,10 @@ def main() -> None:
         raise FileNotFoundError("ABP_CONTEST_DATA.csv를 찾을 수 없습니다.")
     data = load_csv(str(data_path))
     diagnosis = diagnose_region(data, args.sido, args.ccg, args.industry).to_dict()
-    evidence = retrieve_evidence_groups(diagnosis, per_group=3)
+    evidence = retrieve_evidence_groups(diagnosis, per_group=3, role=args.role)
     proposal = generate_proposal(
-        diagnosis, evidence, args.role, args.budget,
-        "지역과 업종의 약점과 강점을 결합한 우선 전략을 제시해 주세요.",
+        diagnosis, evidence, args.role,
+        question="지역과 업종의 약점과 강점을 결합한 우선 전략을 제시해 주세요.",
     )
     print("DIAGNOSIS")
     print(json.dumps(diagnosis, ensure_ascii=False, indent=2))

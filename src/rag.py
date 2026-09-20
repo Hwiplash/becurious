@@ -9,6 +9,8 @@ from pathlib import Path
 import numpy as np
 from openai import OpenAI
 
+from src.api_access import api_calls_enabled
+
 
 INDEX_DIR = Path(__file__).resolve().parents[1] / "data" / "rag_index"
 PROCESSED_DIR = Path(__file__).resolve().parents[1] / "data" / "processed"
@@ -37,13 +39,19 @@ def _tokens(text: str) -> set[str]:
     return {token.lower() for token in re.findall(r"[가-힣A-Za-z0-9]{2,}", text)}
 
 
-def search_local_knowledge(query: str, top_k: int = 6) -> list[dict]:
+def search_local_knowledge(
+    query: str,
+    top_k: int = 6,
+    allowed_sources: set[str] | None = None,
+) -> list[dict]:
     if not local_corpus_ready():
         return []
     cards, chunks, specialties = _local_corpus()
     query_tokens = _tokens(query)
     scored: list[tuple[float, dict]] = []
     for card in cards:
+        if allowed_sources is not None and card.get("source") not in allowed_sources:
+            continue
         haystack = " ".join([
             card.get("source", ""), card.get("section", ""),
             " ".join(card.get("topics", [])), " ".join(card.get("regions", [])),
@@ -57,6 +65,8 @@ def search_local_knowledge(query: str, top_k: int = 6) -> list[dict]:
         chunk = chunks.get(card["chunk_id"], {})
         scored.append((score, {**chunk, **card, "score": score, "keyword_score": score, "search_type": "local-keyword"}))
     for chunk in specialties:
+        if allowed_sources is not None and chunk.get("source") not in allowed_sources:
+            continue
         haystack = " ".join([
             chunk.get("specialty", ""), chunk.get("industry_name", ""), chunk.get("source", ""), chunk.get("section", ""),
             " ".join(chunk.get("topics", [])), " ".join(chunk.get("regions", [])), chunk.get("text", ""),
@@ -112,11 +122,12 @@ def search_knowledge(
     top_k: int = 6,
     index_dir: Path = INDEX_DIR,
     embedding_model: str = "text-embedding-3-small",
+    allowed_sources: set[str] | None = None,
 ) -> list[dict]:
     keyword_count = int(os.getenv("RAG_KEYWORD_CANDIDATES", "20"))
     dense_count = int(os.getenv("RAG_DENSE_CANDIDATES", "20"))
-    keyword = search_local_knowledge(query, keyword_count)
-    if not index_ready(index_dir):
+    keyword = search_local_knowledge(query, keyword_count, allowed_sources=allowed_sources)
+    if not index_ready(index_dir) or not api_calls_enabled():
         return keyword[:top_k]
     chunks = json.loads((index_dir / "chunks.json").read_text(encoding="utf-8"))
     matrix = np.load(index_dir / "embeddings.npy")
@@ -126,6 +137,11 @@ def search_knowledge(
     )
     query_vector /= np.linalg.norm(query_vector) or 1
     scores = matrix @ query_vector
-    positions = np.argsort(scores)[::-1][: min(dense_count, len(chunks))]
+    ranked_positions = np.argsort(scores)[::-1]
+    if allowed_sources is not None:
+        ranked_positions = np.asarray([
+            pos for pos in ranked_positions if chunks[int(pos)].get("source") in allowed_sources
+        ])
+    positions = ranked_positions[: min(dense_count, len(ranked_positions))]
     dense = [{**chunks[int(pos)], "dense_score": float(scores[int(pos)])} for pos in positions]
     return _rrf_merge(keyword, dense, top_k)

@@ -32,8 +32,21 @@ def _change(series: pd.Series) -> float:
     return float(series.iloc[-1] / series.iloc[0] - 1)
 
 
-def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> RegionDiagnosis:
-    region = data[(data["SIDO_NM"] == sido) & (data["CCG_NM"] == ccg)]
+def diagnose_scope(
+    data: pd.DataFrame,
+    industry: str,
+    sido: str | None = None,
+    ccg: str | None = None,
+) -> RegionDiagnosis:
+    if sido is None:
+        region = data
+        region_name = "전국"
+    elif ccg is None:
+        region = data[data["SIDO_NM"] == sido]
+        region_name = sido
+    else:
+        region = data[(data["SIDO_NM"] == sido) & (data["CCG_NM"] == ccg)]
+        region_name = f"{sido} {ccg}"
     target = region[region["TP_BUZ_NM"] == industry]
     if target.empty:
         raise ValueError("선택한 지역과 업종에 해당하는 데이터가 없습니다.")
@@ -82,7 +95,7 @@ def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> R
         advantages.append("현재 데이터에서 뚜렷한 성장 신호가 없어 인접 상권·유사 업종 비교가 필요합니다.")
 
     return RegionDiagnosis(
-        region=f"{sido} {ccg}",
+        region=region_name,
         industry=industry,
         start_month=monthly.index.min().strftime("%Y-%m"),
         end_month=monthly.index.max().strftime("%Y-%m"),
@@ -95,6 +108,10 @@ def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> R
         pain_points=pains,
         advantages=advantages,
     )
+
+
+def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> RegionDiagnosis:
+    return diagnose_scope(data, industry, sido, ccg)
 
 
 def find_similar_districts(

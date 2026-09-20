@@ -7,15 +7,19 @@ from pathlib import Path
 
 from openai import OpenAI
 
+from src.api_access import api_calls_enabled, require_api_calls_enabled
 from src.industry_taxonomy import load_industry_taxonomy
 from src.rag import search_knowledge
 
 SPECIALTY_CHUNKS_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "specialty_chunks.json"
+MARKETING_PDF_DIR = Path(__file__).resolve().parents[1] / "data" / "pdfs" / "마케팅"
 
 
 SYSTEM_PROMPT = """당신은 지역 음식상권 활성화 전략 컨설턴트다.
 제공된 매출 진단과 분류된 PDF 검색 근거만 사용하고 수치를 임의로 만들지 않는다.
 매출 변화율은 start_month에서 end_month까지의 변화다. 12개월 전 비교 자료가 없으면 절대로 '전년 동기 대비'라고 쓰지 않는다.
+답변은 확인된 강점, 활용 가능한 기회, 실행 가능한 성공 조건을 중심으로 긍정적이고 자신감 있게 구성한다.
+주의점이나 불확실성은 실제 의사결정에 꼭 필요한 경우에만 실행 보완책과 함께 짧게 언급하고, 경고·오류·한계를 반복하거나 별도 장으로 강조하지 않는다.
 
 분석 구조:
 1) 핵심 진단: 선택 지역·업종의 정량 신호를 짧게 설명한다.
@@ -56,25 +60,26 @@ ROLE_INSTRUCTIONS = {
 - 3개 안팎의 사업을 제안하고 각 사업마다 대상, 지원 방식, 담당 주체, 선정 기준, 집행 절차를 적는다.
 - 메뉴·특산품 사업이면 해당 지역·업종에 맞는 특산품 후보와 공공 지원 방식을 함께 제시한다.
 ## 예산 수준별 집행안
-- 주어진 예산 수준에서 가능한 범위와 민간 자부담·연계기관 필요 여부를 설명한다. 근거 없는 금액은 만들지 않는다.
-## 성과관리와 위험 통제
-- 측정 가능한 성과지표, 데이터 수집 방법, 형평성·중복지원·지속가능성 위험을 적는다.
+- 최소 실행안과 확대 실행안을 구분하고 민간 자부담·연계기관 필요 여부를 설명한다. 근거 없는 금액은 만들지 않는다.
+## 성과관리와 실행 안정성
+- 측정 가능한 성과지표와 데이터 수집 방법을 적고, 실행 안정성을 높일 보완책을 간결하게 제시한다.
 ## 우선 추진 3단계
 - 담당 부서 관점에서 순서, 협업 주체, 착수 조건을 제시한다.
 점주에게 직접 명령하는 체크리스트나 점포 한 곳의 레시피·가격·홍보 문구 중심으로 답하지 않는다.""",
     "가게 사장님": """답변 대상은 음식점·식품 점포의 점주다. 행정사업 설계가 아니라 점주가 매장에서 직접 실행할 수 있는 의사결정을 지원한다.
+점주 마케팅 연구 근거가 제공되면 고객 유입, 메뉴·가격, SNS, 브랜드, 만족, 재방문 전략에서 이를 우선 참고하고 해당 논문을 인용한다.
 반드시 다음 순서와 제목으로 작성한다.
 ## 매장 진단 요약
 - 매출, 거래, 객단가, 고객 신호가 매장에 뜻하는 바를 쉬운 말로 3문장 이내로 설명한다.
-## 기회와 주의점
-- 활용할 강점과 먼저 막아야 할 약점을 나누어 적는다.
+## 강점 활용과 보완점
+- 활용할 강점을 먼저 설명하고, 보완점은 실행 가능한 개선 방향과 함께 적는다.
 ## 실행 메뉴·상품 전략
 - 실행안 3개 안팎을 제시하고 각 실행안마다 대상 고객, 판매 방식, 필요한 준비, 기대 신호를 적는다.
 - 특산품이 관련된 요청이면 해당 지역·업종에 맞는 후보를 제시하되 근거 없는 레시피나 효능을 만들지 않는다.
 ## 고객 유입·재방문 방법
 - 매장 채널, 시간대, 세트·포장·홍보 등 점주가 통제할 수 있는 행동으로 구체화한다.
 ## 비용·운영 난이도
-- 주어진 실행 여건에 맞춰 최소 실행안과 확장 조건을 설명한다. 근거 없는 금액은 만들지 않는다.
+- 작게 시작할 최소 실행안과 성과 확인 후의 확장 조건을 설명한다. 근거 없는 금액은 만들지 않는다.
 ## 이번 주 우선 행동 3가지
 - 바로 확인하거나 시험할 일, 관찰할 지표, 중단·확대 판단 기준을 적는다.
 조례, 공모사업 운영, 지원대상 선정, 부서 간 협업처럼 지자체만 수행할 수 있는 일을 점주의 실행안으로 제시하지 않는다.""",
@@ -98,6 +103,7 @@ EVIDENCE_GROUP_LABELS = {
     "pain": "유사 Pain Point 사례",
     "advantage": "유사 Advantage 활용 사례",
     "specialty_menu": "지역 특산품·메뉴 근거",
+    "marketing": "점주 마케팅 연구 근거",
 }
 
 
@@ -106,13 +112,13 @@ def _page_of(item: dict) -> str:
 
 
 def rerank_evidence(query: str, evidence: list[dict], final_count: int = 6) -> list[dict]:
-    if not evidence or os.getenv("ENABLE_LLM_RERANK", "true").lower() != "true":
+    if not evidence or not api_calls_enabled() or os.getenv("ENABLE_LLM_RERANK", "true").lower() != "true":
         return evidence[:final_count]
     candidates = "\n\n".join(
         f"ID={index}\n출처={item.get('source')} p.{_page_of(item)}\n{item.get('text', '')[:1200]}"
         for index, item in enumerate(evidence)
     )
-    prompt = f"""질의와 직접 관련되고 실행 가능한 정책 근거를 고르시오.
+    prompt = f"""질의와 직접 관련되고 실행 가능한 근거를 고르시오.
 지역·업종·고객층·문제 원인·실행수단·측정 성과를 우선한다.
 일반론, 목차, 참고문헌, 질의와 다른 지역·업종은 낮게 평가한다.
 가장 관련 있는 ID를 최대 {final_count}개, 쉼표로만 구분해 출력한다.
@@ -124,7 +130,7 @@ def rerank_evidence(query: str, evidence: list[dict], final_count: int = 6) -> l
     try:
         response = OpenAI().responses.create(
             model=os.getenv("OPENAI_RERANK_MODEL", "gpt-5.6-luna"),
-            instructions="당신은 한국어 정책 근거 검색 재정렬기다. 요청한 ID 목록 외에는 출력하지 않는다.",
+            instructions="당신은 한국어 외식·상권 근거 검색 재정렬기다. 요청한 ID 목록 외에는 출력하지 않는다.",
             input=prompt,
         )
         ids = [int(value) for value in re.findall(r"\d+", response.output_text)]
@@ -198,6 +204,7 @@ def retrieve_evidence_groups(
     question: str = "",
     embedding_model: str = "text-embedding-3-small",
     per_group: int = 4,
+    role: str = "지자체 정책담당자",
 ) -> dict[str, list[dict]]:
     """지역·업종·약점·강점 근거를 독립적으로 검색해 한 유형의 문서 쏠림을 줄인다."""
     region = diagnosis["region"]
@@ -228,6 +235,22 @@ def retrieve_evidence_groups(
     groups["specialty_menu"] = retrieve_specialty_menu_evidence(
         diagnosis, question, embedding_model, limit=max(per_group, 5)
     )
+    if ROLE_ALIASES.get(role, role) == "가게 사장님" and MARKETING_PDF_DIR.exists():
+        marketing_sources = {path.name for path in MARKETING_PDF_DIR.rglob("*.pdf")}
+        marketing_query = (
+            f"{industry} 점주 매장 마케팅 고객 만족 재방문 구매의도 메뉴 가격 "
+            f"SNS 브랜드 충성도 시장세분화 판촉 실행 전략 {question}"
+        )
+        marketing_candidates = search_knowledge(
+            marketing_query,
+            top_k=max(per_group * 4, 12),
+            embedding_model=embedding_model,
+            allowed_sources=marketing_sources,
+        )
+        groups["marketing"] = [
+            {**item, "evidence_group": "marketing"}
+            for item in rerank_evidence(marketing_query, marketing_candidates, per_group)
+        ]
     return groups
 
 
@@ -239,9 +262,9 @@ def generate_proposal(
     diagnosis: dict,
     evidence: dict[str, list[dict]] | list[dict],
     role: str,
-    budget: str,
-    question: str,
+    question: str = "",
 ) -> str:
+    require_api_calls_enabled()
     specialized_instructions = role_instructions(role)
     if isinstance(evidence, list):
         evidence = {"general": evidence}
@@ -254,7 +277,6 @@ def generate_proposal(
         sections.append(f"### {label}\n{body}")
     evidence_text = "\n\n".join(sections)
     prompt = f"""사용자 역할: {ROLE_ALIASES.get(role, role)}
-예산 수준: {budget}
 추가 요청: {question or '없음'}
 
 정량 진단:

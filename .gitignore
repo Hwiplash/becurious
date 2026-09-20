@@ -4,6 +4,8 @@ __pycache__/
 .streamlit/secrets.toml
 data/raw/*.csv
 data/raw/*.xlsx
+!data/raw/ABP_CONTEST_DATA.csv
+!data/raw/regional_indices_rank_final_v2_20260913.xlsx
 data/pdfs/
 data/ocr_output/
 data/processed/*

@@ -11,6 +11,7 @@ from src.dashboard_components import (
     chart_label,
     filter_industry,
     go_to,
+    industry_index_snapshot,
     index_snapshot,
     industry_picker,
     region_industry_filter,
@@ -179,7 +180,11 @@ else:
     industries=sorted(data["TP_BUZ_NM"].unique()); industry=industry_picker(industries); frame=data if industry=="업종 전체" else data[data["TP_BUZ_NM"]==industry]
     heading="업종별 전국 비교" if industry=="업종 전체" else f"{industry} 전국 분석"
     st.markdown(f"<div class='section-kicker'>INDUSTRY VIEW</div><div class='section-title'>{html.escape(heading)}</div>",unsafe_allow_html=True)
-    render_metrics(frame); st.markdown("<div class='section-kicker'>INDUSTRY SIGNALS</div><div class='section-title'>업종의 강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(frame)
+    render_metrics(frame)
+    industry_indices = industry_index_snapshot(data, industry) if industry != "업종 전체" else None
+    if industry_indices:
+        render_index_cards(industry_indices)
+    st.markdown("<div class='section-kicker'>INDUSTRY SIGNALS</div><div class='section-title'>업종의 강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(frame, industry_indices)
     chart_label("월별 매출액 추이")
     st.plotly_chart(monthly_sales_trend(frame),width="stretch",key=f"industry_sales_trend_{industry}")
     chart_label("월별 이용건수 추이")
@@ -195,7 +200,7 @@ else:
         if industry == "업종 전체":
             st.dataframe(ranking,hide_index=True,width="stretch",height=390,column_config={"SIDO_NM":"지역","매출액":st.column_config.NumberColumn(format="%,.0f원"),"이용건수":st.column_config.NumberColumn(format="%,.0f건"),"건당결제액":st.column_config.NumberColumn(format="%,.0f원"),"매출비중":st.column_config.ProgressColumn(format="%.1%%",min_value=0,max_value=1)})
         else:
-            st.dataframe(ranking[["SIDO_NM","시군구","매출액","건당결제","전국 동일업종 지역순위","광역 동일업종 지역순위"]].head(20),hide_index=True,width="stretch",height=390,column_config={"SIDO_NM":"시도","매출액":st.column_config.NumberColumn(format="%,.0f원"),"건당결제":st.column_config.NumberColumn(format="%,.0f원")})
+            st.dataframe(ranking[["SIDO_NM","시군구","매출액","건당결제","전국 동일업종 지역순위","광역 동일업종 지역순위"]].head(20),hide_index=True,width="stretch",height=390,column_config={"SIDO_NM":"시도","매출액":st.column_config.NumberColumn(format="%,.0f원"),"건당결제":st.column_config.NumberColumn(format="%,.0f원"),"전국 동일업종 지역순위":"전국 순위","광역 동일업종 지역순위":"광역 순위"})
     with right:
         chart_label("연령·성별 소비 구성")
         st.plotly_chart(segment_chart(frame),width="stretch",key=f"industry_segment_{industry}")
