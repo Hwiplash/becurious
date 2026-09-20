@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Completed M9 food diagnosis: one sigungu",
+  "type": "object",
+  "required": ["schema_version", "analysis_version", "region_key", "sido", "sigungu", "analysis_period", "region_status", "food_aggregate", "final_signals", "industry_signals", "monthly", "customer_composition", "customer_composition_source", "grocery_context", "model_warnings", "interpretation_boundary"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "analysis_version": {"const": "final_food_problem_detection"},
+    "region_key": {"type": "string", "pattern": "^[^|]+[|][^|]+$"},
+    "sido": {"type": "string"}, "sigungu": {"type": "string"},
+    "analysis_period": {"const": {"start": "202601", "end": "202606"}},
+    "region_status": {
+      "type": "object", "required": ["is_final_candidate", "candidate_types", "confidence_tier", "final_signal_count", "hold_reason"],
+      "properties": {
+        "is_final_candidate": {"type": "boolean"},
+        "candidate_types": {"type": "array", "uniqueItems": true, "items": {"enum": ["F1_food_wide_low", "F2_industry_specific_low"]}},
+        "confidence_tier": {"enum": ["Tier A", "Tier B", "Tier C", "Hold", "No signal"]},
+        "final_signal_count": {"type": "integer", "minimum": 0},
+        "hold_reason": {"type": ["string", "null"]}
+      }
+    },
+    "food_aggregate": {"$ref": "#/$defs/evidence"},
+    "final_signals": {"type": "array", "items": {"$ref": "#/$defs/signal"}},
+    "industry_signals": {"type": "array", "items": {"allOf": [{"$ref": "#/$defs/evidence"}, {"required": ["industry", "is_final_signal"], "properties": {"is_final_signal": {"type": "boolean"}, "industry": {"type": "string"}}}]}},
+    "monthly": {"type": "array", "items": {"type": "object", "required": ["scope", "food_scope", "month", "level", "industry", "actual_amt", "expected_amt"], "properties": {
+      "month": {"type": "string", "pattern": "^20260[1-6]$"}, "level": {"enum": ["aggregate", "industry"]},
+      "actual_amt": {"$ref": "#/$defs/nullableNumber"}, "expected_amt": {"$ref": "#/$defs/nullableNumber"}
+    }}},
+    "customer_composition": {"type": "array", "items": {"type": "object", "required": ["scope", "industry", "dimension", "code", "display_name", "complete6", "mean_index_amt", "mean_index_cnt"], "properties": {"complete6": {"type": "boolean"}, "mean_index_amt": {"$ref": "#/$defs/nullableNumber"}, "mean_index_cnt": {"$ref": "#/$defs/nullableNumber"}}}},
+    "customer_composition_source": {"type": "string"},
+    "grocery_context": {"allOf": [{"$ref": "#/$defs/evidence"}, {"required": ["grocery_low_signal", "comparison_context", "interpretation"], "properties": {"grocery_low_signal": {"type": "boolean"}}}]},
+    "model_warnings": {"type": "array", "items": {"type": "string"}},
+    "interpretation_boundary": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "nullableNumber": {"type": ["number", "null"]},
+    "evidence": {
+      "type": "object",
+      "required": ["actual_amount", "expected_amount", "amount_ratio", "actual_count", "expected_count", "count_ratio", "shortfall_amount", "months_both_low", "repeat_low_fraction", "prediction_interval_below", "food_industry_breadth_count", "weak_industries", "food_scope", "scope", "observed_complete6"],
+      "properties": {
+        "actual_amount": {"$ref": "#/$defs/nullableNumber"}, "expected_amount": {"$ref": "#/$defs/nullableNumber"}, "amount_ratio": {"$ref": "#/$defs/nullableNumber"},
+        "actual_count": {"$ref": "#/$defs/nullableNumber"}, "expected_count": {"$ref": "#/$defs/nullableNumber"}, "count_ratio": {"$ref": "#/$defs/nullableNumber"},
+        "shortfall_amount": {"$ref": "#/$defs/nullableNumber"}, "months_both_low": {"$ref": "#/$defs/nullableNumber"}, "repeat_low_fraction": {"$ref": "#/$defs/nullableNumber"},
+        "prediction_interval_below": {"type": ["boolean", "null"]}, "food_industry_breadth_count": {"$ref": "#/$defs/nullableNumber"},
+        "weak_industries": {"type": "array", "items": {"type": "string"}}, "observed_complete6": {"type": "boolean"}
+      }
+    },
+    "signal": {
+      "type": "object", "required": ["region", "industry", "scope", "detection_type", "confidence_tier", "amount_actual", "amount_expected", "amount_ratio", "count_actual", "count_expected", "count_ratio", "candidate_order"],
+      "properties": {
+        "confidence_tier": {"enum": ["Tier A", "Tier B"]}, "detection_type": {"enum": ["F1_food_wide_low", "F2_industry_specific_low"]},
+        "amount_actual": {"type": "number"}, "amount_expected": {"type": "number"}, "amount_ratio": {"type": "number"},
+        "count_actual": {"type": "number"}, "count_expected": {"type": "number"}, "count_ratio": {"type": "number"},
+        "candidate_order": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

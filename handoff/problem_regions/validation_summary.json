@@ -1,0 +1,11 @@
+{
+  "tests_run": 18,
+  "passed": 18,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "failures": [],
+  "network_calls": "mocked; no paid LLM calls",
+  "success": true,
+  "scope": "final_food_integration"
+}
