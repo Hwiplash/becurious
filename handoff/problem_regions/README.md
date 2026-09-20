@@ -75,13 +75,79 @@ region_key = df["SIDO_NM"].str.strip() + "|" + df["CCG_NM"].str.strip()
 - `food_aggregate`: 외식 합계의 실제·기대 금액과 건수
 - `final_signals`: 최종 외식 전반·특정 업종 신호
 - `industry_signals`: 외식업종별 구조보정 결과
-- `monthly`: 월별 실제·기대 소비
+- `monthly`: 전체 9개 업종·전체 업종 합계·외식 합계의 월별 실제·기대 소비와 90% 예측구간
 - `customer_composition`: 연령·성별 결제 구성
 - `grocery_context`: 장보기 업종과의 동반 저조 여부
 - `model_warnings`: 보정과 해석 시 주의사항
 - `interpretation_boundary`: 화면과 LLM에 함께 전달할 해석 한계
 
 값이 없는 경우는 JSON `null`이다. `null`을 숫자 0으로 바꾸지 않는다. 금액 단위는 원, 거래건수 단위는 건이다.
+
+### 월별 그래프와 예측구간 밴드
+
+#### UI의 고객 모집단 계약
+
+실제선·기대값·예측구간·실제/기대 비율·차이·건당금액·거래 경로·월별 증감률은 모두 **내국인 개인 BC 결제** 기준이다. 원본 코드값을 문자열로 정규화(공백 제거, 영문 대문자, 숫자형 `1.0` → `1`)한 후 `GENDER_CD ∈ {1,2}`, `AGE_CD ∈ {1,2,3,4,5,6}`을 적용한다. 전체 업종은 아래 9업종만 포함하며 한정식·갈비전문점은 포함하지 않는다. 전국 평균 개인 비중을 곱하는 보정은 하지 않는다.
+
+현재 앱은 `src.data.load_problem_regions` → `comparison_monthly` → `src.problem_ui.render_comparison` → `src.charts.prediction_trend`로 연결된다. 시군구 화면의 업종 버튼은 `core9` 또는 업종코드를 선택하고, 같은 지역 객체·같은 월 행의 `actual_amt/cnt`, `pi_center_amt/cnt`, `lower90_amt/cnt`, `upper90_amt/cnt`를 사용한다. 비율은 JSON의 `I_amt/cnt`, 거래 경로는 `amount_count_ticket_path`, 건당금액비는 `ticket_ratio`를 그대로 사용한다. 차이와 전월비처럼 JSON에 없는 값만 같은 개인 실제·기대값에서 계산한다. 전월이 미관측이면 전월비도 빈 값이다.
+
+화면의 기대선은 `pi_center_*`(구간 중심), 비율·차이의 기대값은 `expected_*`(반복 평균)다. 후자는 범례에서 켤 수 있는 별도 선으로 제공하며 두 정의를 혼용하지 않는다. JSON이 없는 지역·업종은 비교 자료 없음으로 표시한다. 원본 전체 소비로 대체하지 않는다. 미관측 월의 실제선을 연결하지 않고, 부분관측 추론 구간과 보정 경고는 기존 JSON대로 표시한다.
+
+전국·시도 및 전국 업종 현황은 전 코드 기준을 유지하며 “전체 BC카드 이용금액”으로 표시한다. 이 화면에는 개인 기대구간을 겹치지 않는다. 시군구의 원본 기반 업종·성별·연령 보조차트와 정책 설명용 소비는 개인 9업종으로 제한한다. 기존 지수 파일이 없어도 원본·문제지역 JSON으로 화면을 이용할 수 있다.
+
+검증은 저장소 루트에서 다음 명령으로 실행한다. 기존 JSON·모형을 재산출하거나 변경하지 않는다. 원본은 `BC_RAW_PATH`, 서비스 JSON은 `BC_SERVICE_PATH` 환경변수로 지정할 수도 있다.
+
+```powershell
+.venv/Scripts/python.exe -B -X utf8 -m unittest discover -s tests -p test_population.py -v
+```
+
+검증 대상은 문제지역 월별 16,566행, 기존 서비스 월별 15,060행, 251지역 × 10선택(전체+9업종), 개인 코드 정규화·오염 배제·미관측·부분관측 구간, 두 고성군의 화면 선택이다. 원본 및 기존 서비스/전달 산출물의 실행 전후 SHA-256도 확인한다.
+
+모든 지역 객체의 `monthly`에는 지역당 66개 행이 있다. 구성은 `core9` 전체 업종 합계 6개월, 외식 합계 6개월, 9개 개별 업종 54개 행이다. 따라서 251개 지역 전체에는 16,566개 월별 행이 존재한다.
+
+| scope | 화면 표시 |
+|---|---|
+| `core9` | 전체 업종(9개) |
+| `4004` | 대형할인점 |
+| `4010` | 편의점 |
+| `4020` | 슈퍼마켓 |
+| `8001` | 일반한식 |
+| `8004` | 일식회집 |
+| `8005` | 중국음식 |
+| `8006` | 서양음식 |
+| `8021` | 스넥 |
+| `8301` | 제과점 |
+
+관측되지 않은 지역×업종×월 조합도 행을 유지한다. 이 경우 `data_available=false`, 실제·기대값과 구간값은 `null`이며 0으로 바꾸지 않는다.
+
+월별 실제금액·건수 선에는 `actual_amt`, `actual_cnt`를 사용한다. 90% 예측구간 밴드는 각각 `lower90_amt`~`upper90_amt`, `lower90_cnt`~`upper90_cnt`를 사용하고, 밴드 중심선은 `pi_center_amt`, `pi_center_cnt`를 사용한다. `scope=core9` 행을 사용하면 시군구별 전체 9개 업종 합계의 월별 상·하한을 그릴 수 있다. 전체 업종 구간은 개별 업종 상·하한의 합이 아니라 별도 합계모형에서 산출한 값이다. 기존 `expected_amt`, `expected_cnt`는 반복 OOF 평균이므로 구간 중심과 정확히 같지 않다.
+
+밴드는 실제값이 아니라 구간 중심을 둘러싸도록 그린다. `prediction_interval_available=false`이면 밴드를 표시하지 않으며, `calibration_ok_amt` 또는 `calibration_ok_cnt`가 거짓이면 툴팁에 보정 주의를 표시한다. 이 구간은 미래 월 예측이 아니라 같은 월의 지역 간 구조 차이를 반영한 진단용 split-conformal 구간이다.
+
+### 부분관측 지역의 밴드
+
+6개월 중 4개월 이상 관측되고 1~3월과 4~6월에 각각 최소 1개월이 있으며 M9 설명변수가 모두 준비된 지역×업종은 서비스용 부분관측 추론을 제공한다. 문제지역 후보 판정에는 계속 6개월 완전관측 자료만 사용하므로 기존 후보 결과는 바뀌지 않는다.
+
+- 관측 월: 실제값, 기대값, 90% 밴드를 함께 표시한다.
+- 미관측 월: 실제값을 `null`로 유지하고 기대값과 90% 밴드만 표시한다. 실제선은 앞뒤 월을 연결하지 않는다.
+- `band_status=partial_observation_inference`: 위 기준을 통과한 부분관측 시계열이다.
+- `band_status=insufficient_observation`: 1~3개월만 관측되어 밴드를 만들지 않은 시계열이다.
+- `band_status=no_observation`: 6개월 모두 관측되지 않아 밴드를 만들지 않은 시계열이다.
+- `extrapolation_warning=true`: 일부 설명변수가 해당 업종 학습자료의 관측 범위를 벗어난 경우다. 밴드는 표시하되 `band_message`를 툴팁에 함께 보여준다.
+
+부분관측 밴드는 다른 완전관측 지역에서 학습·보정한 M9 모형을 적용한 구조 기반 예상범위다. 부분관측 집단에서 별도로 90% 포함률이 검증됐다는 의미는 아니다.
+
+```javascript
+if (row.prediction_interval_available) {
+  drawBand(row.lower90_amt, row.upper90_amt);
+}
+if (row.data_available) {
+  drawActualPoint(row.actual_amt);
+}
+if (row.band_message) {
+  showTooltip(row.band_message);
+}
+```
 
 ## LLM 연결
 

@@ -25,33 +25,30 @@ def load_problem_regions() -> dict[str, dict]:
 
 
 def prediction_band(sido: str, ccg: str, industry: str) -> pd.DataFrame | None:
-    """선택 업종의 월별 회귀 기대값과 6개월 90% 범위를 월별 비중으로 배분해 반환한다."""
-    if not industry or industry == "업종 전체":
+    """선택 범위의 월별 예측구간 중심과 90% 밴드를 반환한다."""
+    if not industry:
         return None
     record = load_problem_regions().get(f"{sido.strip()}|{ccg.strip()}")
     if not record:
         return None
-    evidence = next(
-        (item for item in record.get("industry_signals", []) if item.get("industry", "").replace(" ", "") == industry.replace(" ", "")),
-        None,
-    )
-    if not evidence or evidence.get("lower90_amt") is None or evidence.get("upper90_amt") is None:
-        return None
-    rows = [
-        item for item in record.get("monthly", [])
-        if item.get("level") == "industry"
-        and item.get("industry", "").replace(" ", "") == industry.replace(" ", "")
-        and item.get("expected_amt") is not None
-    ]
+    if industry == "업종 전체":
+        rows = [item for item in record.get("monthly", []) if item.get("scope") == "core9"]
+    else:
+        normalized_industry = industry.replace(" ", "")
+        rows = [
+            item for item in record.get("monthly", [])
+            if item.get("level") == "industry"
+            and item.get("industry", "").replace(" ", "") == normalized_industry
+        ]
     if not rows:
         return None
     frame = pd.DataFrame(rows)
     frame["month"] = pd.to_datetime(frame["month"], format="%Y%m", errors="coerce")
-    frame["expected_amt"] = pd.to_numeric(frame["expected_amt"], errors="coerce")
-    frame = frame.dropna(subset=["month", "expected_amt"]).sort_values("month")
-    expected_total = float(frame["expected_amt"].sum())
-    if frame.empty or expected_total <= 0:
+    center_column = "pi_center_amt" if "pi_center_amt" in frame else "expected_amt"
+    for column in [center_column, "lower90_amt", "upper90_amt"]:
+        frame[column] = pd.to_numeric(frame[column], errors="coerce")
+    frame = frame.dropna(subset=["month", center_column, "lower90_amt", "upper90_amt"]).sort_values("month")
+    if frame.empty:
         return None
-    frame["lower90_amt"] = frame["expected_amt"] * float(evidence["lower90_amt"]) / expected_total
-    frame["upper90_amt"] = frame["expected_amt"] * float(evidence["upper90_amt"]) / expected_total
+    frame["expected_amt"] = frame[center_column]
     return frame[["month", "expected_amt", "lower90_amt", "upper90_amt"]].reset_index(drop=True)

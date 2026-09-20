@@ -14,7 +14,7 @@ class ProblemRegionHandoffTest(unittest.TestCase):
         self.assertEqual(len(records), 251)
         self.assertTrue(all("|" in key for key in records))
 
-    def test_prediction_band_preserves_aggregate_bounds(self) -> None:
+    def test_prediction_band_uses_monthly_handoff_bounds(self) -> None:
         record = next(
             row for row in load_problem_regions().values()
             if row.get("industry_signals")
@@ -27,14 +27,25 @@ class ProblemRegionHandoffTest(unittest.TestCase):
         self.assertIsNotNone(band)
         assert band is not None
         self.assertEqual(len(band), 6)
-        self.assertAlmostEqual(float(band["lower90_amt"].sum()), float(evidence["lower90_amt"]), places=2)
-        self.assertAlmostEqual(float(band["upper90_amt"].sum()), float(evidence["upper90_amt"]), places=2)
+        monthly = [
+            item for item in record["monthly"]
+            if item.get("level") == "industry"
+            and item.get("industry", "").replace(" ", "") == evidence["industry"].replace(" ", "")
+        ]
+        self.assertEqual(float(band.iloc[0]["lower90_amt"]), monthly[0]["lower90_amt"])
+        self.assertEqual(float(band.iloc[0]["upper90_amt"]), monthly[0]["upper90_amt"])
         self.assertTrue((band["lower90_amt"] <= band["expected_amt"]).all())
         self.assertTrue((band["expected_amt"] <= band["upper90_amt"]).all())
 
-    def test_all_industries_does_not_mix_in_food_aggregate(self) -> None:
+    def test_all_industries_uses_core9_monthly_band(self) -> None:
         record = next(iter(load_problem_regions().values()))
-        self.assertIsNone(prediction_band(record["sido"], record["sigungu"], "업종 전체"))
+        band = prediction_band(record["sido"], record["sigungu"], "업종 전체")
+        self.assertIsNotNone(band)
+        assert band is not None
+        self.assertEqual(len(band), 6)
+        core9 = [item for item in record["monthly"] if item.get("scope") == "core9"]
+        self.assertEqual(float(band.iloc[0]["lower90_amt"]), core9[0]["lower90_amt"])
+        self.assertEqual(float(band.iloc[0]["upper90_amt"]), core9[0]["upper90_amt"])
 
     def test_sales_and_count_charts_are_separate_without_legends(self) -> None:
         frame = pd.DataFrame({

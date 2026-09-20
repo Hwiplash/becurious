@@ -1,11 +1,54 @@
 {
-  "tests_run": 18,
-  "passed": 18,
+  "tests_run": 51,
+  "passed": 51,
   "failed": 0,
   "errors": 0,
   "skipped": 0,
   "failures": [],
-  "network_calls": "mocked; no paid LLM calls",
+  "network_calls": "none",
   "success": true,
-  "scope": "final_food_integration"
+  "scope": "full_monthly_grid_with_partial_observation_inference",
+  "regions": 251,
+  "months": 6,
+  "industry_scopes": 9,
+  "monthly_rows": 16566,
+  "industry_grid_rows": 13554,
+  "core9_aggregate_rows": 1506,
+  "monthly_interval_available_rows": 16200,
+  "monthly_interval_coverage": 0.9779065555957986,
+  "partial_inference_series": 11,
+  "partial_inference_rows": 66,
+  "insufficient_observation_series": 1,
+  "partial_inference_rule": "observed months >=4 of 6 and at least one observed month in both 202601-202603 and 202604-202606",
+  "candidate_logic_changed": false,
+  "nonmonthly_diagnosis_fields_unchanged": true,
+  "band_status_rows": {
+    "insufficient_observation": 6,
+    "no_observation": 360,
+    "observed_complete": 16134,
+    "partial_observation_inference": 66
+  },
+  "unobserved_industry_rows_by_scope": {
+    "4004": 344,
+    "4010": 0,
+    "4020": 0,
+    "8001": 0,
+    "8004": 34,
+    "8005": 0,
+    "8006": 0,
+    "8021": 0,
+    "8301": 2
+  },
+  "prediction_interval_unavailable_rows_by_scope": {
+    "4004": 342,
+    "4010": 0,
+    "4020": 0,
+    "8001": 0,
+    "8004": 24,
+    "8005": 0,
+    "8006": 0,
+    "8021": 0,
+    "8301": 0
+  },
+  "max_existing_food_reconciliation_error": 0.0
 }

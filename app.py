@@ -156,7 +156,7 @@ if mode == "지역별":
         chart_label("월별 매출액 및 회귀 기대범위")
         st.plotly_chart(monthly_sales_trend(local, forecast),width="stretch",key=f"local_sales_trend_{sido}_{ccg}_{industry}")
         if forecast is not None:
-            st.caption("초록 실선은 실제 매출, 주황 점선은 구조보정 회귀 기대매출입니다. 주황 음영은 6개월 합계의 90% 예측범위를 월별 기대매출 비중으로 배분한 참고 범위이며, 월별 독립 예측구간은 아닙니다.")
+            st.caption("초록 실선은 실제 매출, 주황 점선은 예측구간 중심입니다. 주황 음영은 해당 지역·월의 90% 진단용 예측구간이며 미래 매출 예측이 아닙니다.")
         chart_label("월별 이용건수 추이")
         st.plotly_chart(monthly_count_trend(local),width="stretch",key=f"local_count_trend_{sido}_{ccg}_{industry}")
         left,right=st.columns(2,gap="large")
