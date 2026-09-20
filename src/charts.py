@@ -46,12 +46,30 @@ def style(fig: go.Figure, height: int = 340) -> go.Figure:
     return fig
 
 
-def monthly_trend(df: pd.DataFrame) -> go.Figure:
+def monthly_trend(df: pd.DataFrame, forecast: pd.DataFrame | None = None) -> go.Figure:
     monthly = df.groupby("month", as_index=False).agg(매출액=("amt", "sum"), 이용건수=("cnt", "sum"))
     fig = go.Figure()
+    if forecast is not None and not forecast.empty:
+        fig.add_trace(go.Scatter(
+            x=forecast["month"], y=forecast["lower90_amt"], name="90% 범위 하한",
+            mode="lines", line=dict(width=0), hoverinfo="skip", showlegend=False,
+        ))
+        fig.add_trace(go.Scatter(
+            x=forecast["month"], y=forecast["upper90_amt"], name="회귀 기대범위(90%)",
+            mode="lines", line=dict(width=0), fill="tonexty", fillcolor="rgba(243,183,91,.20)",
+            hovertemplate="90% 참고 상한 %{y:,.0f}원<extra></extra>",
+        ))
+        fig.add_trace(go.Scatter(
+            x=forecast["month"], y=forecast["expected_amt"], name="회귀 기대매출",
+            mode="lines", line=dict(color="#D89A32", width=2, dash="dash"),
+            hovertemplate="회귀 기대매출 %{y:,.0f}원<extra></extra>",
+        ))
     fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["매출액"], name="매출액", mode="lines+markers", line=dict(color=PALETTE[0], width=3), fill="tozeroy", fillcolor="rgba(34,211,167,.10)"))
     fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["이용건수"], name="이용건수", mode="lines+markers", line=dict(color=PALETTE[1], width=2), yaxis="y2"))
-    tickvals, ticktext, money_unit = _axis_ticks(float(monthly["매출액"].max()), "money")
+    money_max = float(monthly["매출액"].max())
+    if forecast is not None and not forecast.empty:
+        money_max = max(money_max, float(forecast["upper90_amt"].max()))
+    tickvals, ticktext, money_unit = _axis_ticks(money_max, "money")
     countvals, counttext, count_unit = _axis_ticks(float(monthly["이용건수"].max()), "count")
     fig.update_layout(
         yaxis=dict(title=f"매출액 ({money_unit})", tickvals=tickvals, ticktext=ticktext),

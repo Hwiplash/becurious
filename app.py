@@ -23,6 +23,7 @@ from src.dashboard_components import (
 )
 from src.maps import sido_map, sigungu_map
 from src.policy_ui import render_chat_launcher
+from src.problem_regions import prediction_band
 
 load_dotenv()
 st.set_page_config(page_title="상권 활성화 대책 제안 AI", page_icon="✦", layout="wide", initial_sidebar_state="collapsed")
@@ -149,7 +150,11 @@ if mode == "지역별":
         render_index_cards(local_indices)
         st.markdown("<div class='section-kicker'>LOCAL SIGNALS</div><div class='section-title'>강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(local, local_indices)
         chart_label("월별 매출·이용 건수 추이")
-        st.plotly_chart(monthly_trend(local),width="stretch",key=f"local_trend_{sido}_{ccg}_{industry}"); left,right=st.columns(2,gap="large")
+        forecast = prediction_band(sido, ccg, industry)
+        st.plotly_chart(monthly_trend(local, forecast),width="stretch",key=f"local_trend_{sido}_{ccg}_{industry}")
+        if forecast is not None:
+            st.caption("점선은 구조보정 회귀 기대매출입니다. 음영은 6개월 합계의 90% 예측범위를 월별 기대매출 비중으로 배분한 참고 범위이며, 월별 독립 예측구간은 아닙니다.")
+        left,right=st.columns(2,gap="large")
         with left:
             chart_label("업종별 매출 TOP 10" if industry == "업종 전체" else f"{industry} 매출 규모")
             st.plotly_chart(industry_bar(local),width="stretch",key=f"local_industry_{sido}_{ccg}_{industry}")

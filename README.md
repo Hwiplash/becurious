@@ -67,6 +67,7 @@ becurious/
 │  ├─ rag.py              # 정책·특산품·업종분류 통합 검색
 │  ├─ agent.py            # 역할별 정책 제안 생성
 │  ├─ policy_ui.py        # RAG 챗봇 및 정책 제안 대화상자
+│  ├─ problem_regions.py  # 문제지역 handoff 및 회귀 기대범위 연결
 │  └─ industry_taxonomy.py # 업종 코드·별칭 정규화
 ├─ data/
 │  ├─ geo/                # 앱에 포함된 행정구역 경계
@@ -76,6 +77,7 @@ becurious/
 │  ├─ rag_index/          # 제출 시 포함할 사전 생성 검색 인덱스
 │  └─ raw/                # 원본/추가 CSV (Git 제외)
 ├─ output/                # 크롤링 PDF 등 재생성 가능한 결과물 (Git 제외)
+├─ handoff/problem_regions/ # 문제지역 판정·회귀 기대값 전달 데이터
 ├─ scripts/               # 수집·말뭉치·인덱스 생성 및 점검 명령
 ├─ config/                # 업종분류 등 검색 기본 설정
 ├─ docs/                  # 구축 및 제출 문서
