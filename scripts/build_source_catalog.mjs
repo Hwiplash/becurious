@@ -3,223 +3,138 @@ import path from "node:path";
 import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
 
 const root = path.resolve(import.meta.dirname, "..");
-const inventory = JSON.parse(await fs.readFile(path.join(root, "data", "qa", "pdf_inventory.json"), "utf8"));
-const summary = JSON.parse(await fs.readFile(path.join(root, "data", "qa", "pdf_inventory_summary.json"), "utf8"));
+const readJson = async (...parts) => JSON.parse(await fs.readFile(path.join(root, ...parts), "utf8"));
+const catalog = await readJson("data", "processed", "catalog.json");
+const chunks = await readJson("data", "rag_index", "chunks.json");
+const audit = await readJson("data", "qa", "pdf_inventory_summary.json");
 const outputDir = path.join(root, "outputs", "source_catalog");
 await fs.mkdir(outputDir, { recursive: true });
 
-const regions = [
-  "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "제주",
-  "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남",
-  "포항", "안양", "부천", "청주", "군산", "서산", "부평", "영주", "태안",
-  "담양", "영암", "인제", "함양", "구례", "부여", "태백", "춘천", "관악",
-  "강동", "강북", "금정", "나주", "정읍", "익산", "철원", "화성", "옥천"
-];
-
-function inferRegion(filename) {
-  const found = regions.filter((region) => filename.includes(region));
-  return found.length ? [...new Set(found)].join(", ") : "전국/확인 필요";
-}
-
-function inferYear(filename) {
-  const matches = filename.match(/(?:19|20)\d{2}/g) ?? [];
-  const years = matches.map(Number).filter((year) => year >= 1990 && year <= 2026);
-  return years.length ? Math.max(...years) : null;
-}
-
-function titleFromFilename(filename) {
-  return filename
-    .replace(/\.pdf$/i, "")
-    .replace(/_compressed|_optimize|_opt|_final/gi, "")
-    .replace(/\s*\(\d+\)\s*$/, "")
-    .replace(/\[[^\]]*\]/g, "")
-    .replace(/[_]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function classify(row) {
-  if (row.status !== "ok") return { priority: "제외", enabled: "아니오", reason: row.error || "열기 실패" };
-  if (Number(row.duplicate_count) > 1) return { priority: "검토", enabled: "보류", reason: "완전 중복 후보" };
-  const topics = row.topics ?? "";
-  const core = ["외식산업", "대표음식·메뉴", "상권활성화", "관광·특화거리"];
-  if (core.some((topic) => topics.includes(topic)) && Number(row.text_page_ratio) >= 0.5) {
-    return { priority: "A", enabled: "예", reason: "핵심 주제·텍스트 추출 양호" };
+const countBy = (items, keyFn) => {
+  const result = new Map();
+  for (const item of items) {
+    const key = keyFn(item);
+    result.set(key, (result.get(key) ?? 0) + 1);
   }
-  if (core.some((topic) => topics.includes(topic))) {
-    return { priority: "B", enabled: "예", reason: "핵심 주제·OCR 또는 추가 검수 필요" };
-  }
-  return { priority: "C", enabled: "보류", reason: "보조 주제 또는 관련성 검토 필요" };
-}
+  return result;
+};
+const join = (value) => Array.isArray(value) ? value.join(", ") : (value ?? "");
+const policyChunks = chunks.filter((x) => x.chunk_type === "body" || x.chunk_type === "slide");
+const specialtyChunks = chunks.filter((x) => x.chunk_type === "regional-specialty");
+const taxonomyChunks = chunks.filter((x) => x.chunk_type === "industry-taxonomy");
+const policyChunkCounts = countBy(policyChunks, (x) => x.document_id);
 
-const rows = inventory.map((row, index) => {
-  const cls = classify(row);
-  return [
-    index + 1,
-    cls.priority,
-    cls.enabled,
-    row.filename,
-    titleFromFilename(row.filename),
-    inferYear(row.filename),
-    inferRegion(row.filename),
-    "",
-    row.parser_type,
-    (row.topics ?? "").replaceAll("|", ", "),
-    Number(row.pages),
-    Number(row.size_mb),
-    Number(row.text_page_ratio),
-    Number(row.ocr_pages),
-    Number(row.duplicate_count),
-    row.status === "ok" ? "정상" : "오류",
-    cls.reason,
-    "",
-    row.sha256,
-    ""
-  ];
+const policyRows = catalog.map((doc, index) => {
+  const indexed = policyChunkCounts.get(doc.document_id) ?? 0;
+  return [index + 1, indexed > 0 ? "사용" : "제외/미색인", doc.priority ?? "", doc.filename,
+    doc.document_id, doc.year ?? "", join(doc.regions), join(doc.topics), doc.parser_type ?? "",
+    Number(doc.pages ?? 0), indexed, doc.status ?? "", doc.ocr_override ? "예" : "아니오",
+    `data/pdfs/${doc.filename}`, doc.sha256 ?? "", doc.exclude_reason ?? ""];
 });
-
-const headers = [
-  "번호", "우선순위", "사용여부", "파일명", "문서제목", "발행연도", "지역", "발행기관",
-  "문서유형", "주제", "페이지", "용량MB", "텍스트비율", "OCR후보페이지", "동일파일수",
-  "파일상태", "판정사유", "원문URL", "파일해시", "검수메모"
-];
+const specialtyRows = specialtyChunks.map((item, index) => [index + 1, "사용", item.specialty ?? item.section ?? "",
+  item.document_id ?? "", join(item.regions), join(item.foods), item.extraction_confidence ?? "",
+  item.source_status ?? "", item.source_url ?? item.source ?? "", item.pdf_path ?? "", item.id ?? "", item.text?.length ?? 0]);
+const taxonomyRows = taxonomyChunks.map((item, index) => [index + 1, "사용", item.industry_code ?? "",
+  item.industry_name ?? "", join(item.aliases), item.document_id ?? "", item.source ?? "업종 분류 상세", item.id ?? ""]);
 
 const workbook = Workbook.create();
 const summarySheet = workbook.worksheets.add("요약");
-const docsSheet = workbook.worksheets.add("문서목록");
-const rulesSheet = workbook.worksheets.add("분류기준");
+const policySheet = workbook.worksheets.add("정책PDF");
+const specialtySheet = workbook.worksheets.add("지역특산품");
+const taxonomySheet = workbook.worksheets.add("업종분류");
+const rulesSheet = workbook.worksheets.add("관리기준");
+for (const sheet of [summarySheet, policySheet, specialtySheet, taxonomySheet, rulesSheet]) sheet.showGridLines = false;
 
-for (const sheet of [summarySheet, docsSheet, rulesSheet]) {
-  sheet.showGridLines = false;
-}
+const title = (sheet, end, text, subtitle) => {
+  sheet.getRange(`A1:${end}1`).merge();
+  sheet.getRange("A1").values = [[text]];
+  sheet.getRange(`A2:${end}2`).merge();
+  sheet.getRange("A2").values = [[subtitle]];
+  sheet.getRange("A1").format.font = { name: "Arial", size: 15, bold: true, color: "#172033" };
+  sheet.getRange("A2").format.font = { name: "Arial", size: 10, italic: true, color: "#667085" };
+};
+const addTable = (sheet, headers, rows, name) => {
+  sheet.getRange("A4").write([headers, ...rows]);
+  const lastColumn = String.fromCharCode(64 + headers.length);
+  const lastRow = rows.length + 4;
+  const table = sheet.tables.add(`A4:${lastColumn}${lastRow}`, true, name);
+  table.style = "TableStyleMedium2";
+  sheet.freezePanes.freezeRows(4);
+  sheet.getRange(`A4:${lastColumn}${lastRow}`).format.verticalAlignment = "center";
+  sheet.getRange(`A5:${lastColumn}${lastRow}`).format.font = { name: "Arial", size: 9 };
+  return { lastColumn, lastRow };
+};
 
-summarySheet.getRange("A1:F1").merge();
-summarySheet.getRange("A1").values = [["지역 외식산업 컨설팅 AI 출처 관리"]];
-summarySheet.getRange("A2:F2").merge();
-summarySheet.getRange("A2").values = [["PDF 원본의 상태와 전처리 우선순위를 관리합니다. 발행기관·연도·원문 URL은 검수 과정에서 보완하세요."]];
-summarySheet.getRange("A4:B10").values = [
-  ["항목", "값"],
-  ["전체 PDF", summary.files],
-  ["정상 PDF", summary.valid_files],
-  ["오류 PDF", summary.invalid_files],
-  ["총 페이지", summary.total_pages],
-  ["OCR 후보 페이지", summary.ocr_candidate_pages],
-  ["완전 중복 파일", summary.exact_duplicate_files]
+title(summarySheet, "F", "RAG 전체 출처 관리 대장", "현재 data/rag_index/chunks.json에 실제 포함된 근거와 원본 문서 상태를 기준으로 생성했습니다.");
+summarySheet.getRange("A4:B12").values = [
+  ["항목", "값"], ["전체 RAG 청크", chunks.length], ["정책·연구 PDF 청크", policyChunks.length],
+  ["지역 특산품 청크", specialtyChunks.length], ["업종분류 청크", taxonomyChunks.length],
+  ["PDF 원본", catalog.length], ["RAG 색인 PDF", policyChunkCounts.size], ["PDF 총 페이지", audit.total_pages],
+  ["마지막 갱신일", new Date().toISOString().slice(0, 10)]
 ];
-summarySheet.getRange("D4:E8").values = [
-  ["문서유형", "파일 수"],
-  ...Object.entries(summary.parser_types)
+summarySheet.getRange("D4:F8").values = [
+  ["출처군", "관리 단위", "기준 파일"], ["정책·연구 PDF", "문서", "data/processed/catalog.json"],
+  ["지역 특산품", "특산품 항목", "data/processed/specialty_chunks.json"],
+  ["업종분류", "업종 코드", "data/processed/industry_taxonomy_chunks.json"],
+  ["실제 검색 인덱스", "청크", "data/rag_index/chunks.json"]
 ];
-summarySheet.getRange("D11:E19").values = [
-  ["주제", "관련 문서 수"],
-  ...Object.entries(summary.topics)
+for (const range of ["A4:B4", "D4:F4"]) summarySheet.getRange(range).format = { fill: "#25364D", font: { name: "Arial", bold: true, color: "#FFFFFF" } };
+summarySheet.getRange("A4:F12").format.font = { name: "Arial", size: 10 };
+summarySheet.getRange("B5:B11").format.numberFormat = "#,##0";
+[24, 18, 3, 24, 18, 42].forEach((w, i) => summarySheet.getRangeByIndexes(0, i, 12, 1).format.columnWidth = w);
+
+title(policySheet, "P", "정책·연구 PDF 출처", "PDF 원본 248건과 실제 색인 청크 수를 연결했습니다. '사용'은 현재 RAG 인덱스에 포함된 문서입니다.");
+const policy = addTable(policySheet,
+  ["번호", "RAG상태", "우선순위", "파일명", "문서ID", "발행연도", "지역", "주제", "문서유형", "페이지", "RAG청크", "처리상태", "OCR대체", "로컬경로", "SHA-256", "제외사유"], policyRows, "PolicySources");
+policySheet.getRange(`D5:H${policy.lastRow}`).format.wrapText = true;
+policySheet.getRange(`N5:P${policy.lastRow}`).format.wrapText = true;
+[7, 12, 10, 44, 20, 10, 20, 30, 12, 10, 11, 12, 10, 48, 20, 28].forEach((w, i) => policySheet.getRangeByIndexes(0, i, policy.lastRow, 1).format.columnWidth = w);
+policySheet.getRange(`B5:B${policy.lastRow}`).conditionalFormats.add("containsText", { text: "미색인", format: { fill: "#FDE2E2", font: { color: "#A61B1B" } } });
+
+title(specialtySheet, "L", "지역 특산품 출처", "특산품·지역·활용 음식과 원문 URL을 항목별로 관리합니다.");
+const specialty = addTable(specialtySheet,
+  ["번호", "RAG상태", "특산품", "문서ID", "지역", "활용음식", "추출신뢰도", "원문상태", "원문URL", "PDF경로", "청크ID", "본문글자수"], specialtyRows, "SpecialtySources");
+specialtySheet.getRange(`C5:J${specialty.lastRow}`).format.wrapText = true;
+[7, 10, 20, 24, 22, 30, 12, 12, 48, 42, 28, 12].forEach((w, i) => specialtySheet.getRangeByIndexes(0, i, specialty.lastRow, 1).format.columnWidth = w);
+
+title(taxonomySheet, "H", "업종분류 출처", "정책 메뉴 추천에 사용하는 표준 업종 코드와 검색 별칭입니다.");
+const taxonomy = addTable(taxonomySheet,
+  ["번호", "RAG상태", "업종코드", "표준업종명", "검색별칭", "문서ID", "출처", "청크ID"], taxonomyRows, "IndustrySources");
+taxonomySheet.getRange(`D5:H${taxonomy.lastRow}`).format.wrapText = true;
+[7, 10, 12, 18, 70, 26, 22, 30].forEach((w, i) => taxonomySheet.getRangeByIndexes(0, i, taxonomy.lastRow, 1).format.columnWidth = w);
+
+title(rulesSheet, "D", "출처 관리 및 갱신 기준", "앱 검색 결과와 이 대장의 수치가 다르면 실제 검색 인덱스(data/rag_index/chunks.json)를 우선합니다.");
+rulesSheet.getRange("A4:D13").values = [
+  ["구분", "판정 기준", "관리 파일", "갱신 방법"],
+  ["정책 PDF", "body 또는 slide 청크가 존재", "catalog.json / chunks.json", "audit_pdfs.py → build_local_corpus.py → 인덱스 추가"],
+  ["지역 특산품", "regional-specialty 청크가 존재", "specialty_chunks.json / chunks.json", "특산품 전처리 후 인덱스 추가"],
+  ["업종분류", "industry-taxonomy 청크가 존재", "industry_taxonomy_chunks.json / chunks.json", "분류표 전처리 후 인덱스 추가"],
+  ["사용", "현재 RAG 인덱스에 하나 이상의 청크 포함", "chunks.json", "검색 회귀 테스트 수행"],
+  ["제외/미색인", "원본은 있으나 현재 인덱스에 없음", "catalog.json", "오류·중복·품질 사유 확인"],
+  ["원문 URL", "공식 기관 또는 원 게시 페이지", "지역특산품 탭", "접속 불가 시 URL 상태 갱신"],
+  ["로컬 경로", "저장소 루트 기준 상대 경로", "정책PDF/지역특산품 탭", "파일 이동 시 대장 재생성"],
+  ["재생성", "인덱스 갱신 후 실행", "scripts/build_source_catalog.mjs", "node scripts/build_source_catalog.mjs"],
+  ["검증", "수식 오류 없음·시트 렌더 정상", "data/qa/*source-preview.png", "미리보기와 자동 검사를 함께 확인"]
 ];
-summarySheet.getRange("A12:B17").values = [
-  ["다음 작업", "설명"],
-  ["1", "A등급 문서의 발행기관·발행연도·원문 URL 확인"],
-  ["2", "중복 후보에서 사용할 대표 파일 한 개 지정"],
-  ["3", "오류 파일은 재다운로드하거나 사용여부를 아니오로 유지"],
-  ["4", "스캔 문서는 OCR 우선순위를 확인"],
-  ["5", "검수 완료 후 자동 전처리·임베딩 실행"]
-];
+rulesSheet.getRange("A4:D4").format = { fill: "#25364D", font: { name: "Arial", bold: true, color: "#FFFFFF" } };
+rulesSheet.getRange("A4:D13").format.wrapText = true;
+rulesSheet.getRange("A4:D13").format.verticalAlignment = "top";
+[18, 38, 42, 52].forEach((w, i) => rulesSheet.getRangeByIndexes(0, i, 13, 1).format.columnWidth = w);
+rulesSheet.freezePanes.freezeRows(4);
 
-summarySheet.getRange("A1:F1").format.font = { name: "Arial", size: 16, bold: true, color: "#172033" };
-summarySheet.getRange("A2:F2").format.font = { name: "Arial", size: 10, italic: true, color: "#667085" };
-for (const range of ["A4:B4", "D4:E4", "D11:E11", "A12:B12"]) {
-  summarySheet.getRange(range).format = { fill: "#25364D", font: { name: "Arial", bold: true, color: "#FFFFFF" } };
-}
-summarySheet.getRange("A4:E19").format.font = { name: "Arial", size: 10 };
-summarySheet.getRange("B5:B10").format.numberFormat = "#,##0";
-summarySheet.getRange("E5:E19").format.numberFormat = "#,##0";
-summarySheet.getRange("A1:F19").format.autofitRows();
-summarySheet.getRange("A:A").format.columnWidth = 22;
-summarySheet.getRange("B:B").format.columnWidth = 50;
-summarySheet.getRange("C:C").format.columnWidth = 3;
-summarySheet.getRange("D:D").format.columnWidth = 24;
-summarySheet.getRange("E:E").format.columnWidth = 14;
-
-docsSheet.getRange("A1:T1").merge();
-docsSheet.getRange("A1").values = [["문서 출처 목록"]];
-docsSheet.getRange("A2:T2").merge();
-docsSheet.getRange("A2").values = [["노란색 열은 검수·보완 대상입니다. 원문 URL과 발행기관은 확인된 정보만 입력하세요."]];
-docsSheet.getRange("A4").write([headers, ...rows]);
-const table = docsSheet.tables.add(`A4:T${rows.length + 4}`, true, "SourceDocuments");
-table.style = "TableStyleMedium2";
-docsSheet.freezePanes.freezeRows(4);
-docsSheet.freezePanes.freezeColumns(4);
-docsSheet.getRange("A1:T1").format.font = { name: "Arial", size: 15, bold: true, color: "#172033" };
-docsSheet.getRange("A2:T2").format.font = { name: "Arial", size: 10, italic: true, color: "#667085" };
-docsSheet.getRange(`A5:T${rows.length + 4}`).format.font = { name: "Arial", size: 9 };
-docsSheet.getRange(`F5:F${rows.length + 4}`).format.numberFormat = "0";
-docsSheet.getRange(`K5:L${rows.length + 4}`).format.numberFormat = "#,##0.00";
-docsSheet.getRange(`M5:M${rows.length + 4}`).format.numberFormat = "0.0%";
-docsSheet.getRange(`N5:O${rows.length + 4}`).format.numberFormat = "#,##0";
-docsSheet.getRange(`B5:C${rows.length + 4}`).format.fill = "#FFF4CC";
-docsSheet.getRange(`F5:H${rows.length + 4}`).format.fill = "#FFF9E8";
-docsSheet.getRange(`R5:R${rows.length + 4}`).format.fill = "#FFF4CC";
-docsSheet.getRange(`T5:T${rows.length + 4}`).format.fill = "#FFF9E8";
-docsSheet.getRange(`B5:B${rows.length + 4}`).dataValidation = { rule: { type: "list", values: ["A", "B", "C", "검토", "제외"] } };
-docsSheet.getRange(`C5:C${rows.length + 4}`).dataValidation = { rule: { type: "list", values: ["예", "보류", "아니오"] } };
-docsSheet.getRange(`A4:T${rows.length + 4}`).format.verticalAlignment = "center";
-docsSheet.getRange(`D5:J${rows.length + 4}`).format.wrapText = true;
-docsSheet.getRange(`Q5:T${rows.length + 4}`).format.wrapText = true;
-
-const widths = [7, 10, 10, 45, 42, 10, 18, 20, 12, 32, 10, 10, 12, 14, 12, 10, 28, 35, 18, 28];
-widths.forEach((width, index) => docsSheet.getRangeByIndexes(0, index, rows.length + 4, 1).format.columnWidth = width);
-
-docsSheet.getRange(`B5:B${rows.length + 4}`).conditionalFormats.add("containsText", { text: "A", format: { fill: "#DDF4E8", font: { bold: true, color: "#146C43" } } });
-docsSheet.getRange(`B5:B${rows.length + 4}`).conditionalFormats.add("containsText", { text: "제외", format: { fill: "#FDE2E2", font: { color: "#A61B1B" } } });
-docsSheet.getRange(`P5:P${rows.length + 4}`).conditionalFormats.add("containsText", { text: "오류", format: { fill: "#FDE2E2", font: { color: "#A61B1B" } } });
-
-rulesSheet.getRange("A1:D1").merge();
-rulesSheet.getRange("A1").values = [["분류 및 검수 기준"]];
-rulesSheet.getRange("A3:D9").values = [
-  ["구분", "사용 목적", "기준", "권장 처리"],
-  ["A", "핵심 컨설팅 근거", "외식·상권 핵심 주제이며 텍스트 추출 양호", "우선 전처리·사례 카드 생성"],
-  ["B", "핵심 보조 근거", "핵심 주제이나 OCR 또는 추가 검수 필요", "선택적 OCR 후 사용"],
-  ["C", "일반 참고", "간접 관련 또는 보조 주제", "시간이 남으면 처리"],
-  ["검토", "중복·품질 확인", "동일 파일 또는 판정 불확실", "대표본 지정"],
-  ["제외", "사용하지 않음", "0바이트·손상·무관 자료", "재다운로드 또는 제외"],
-  ["근거 수준", "답변 신뢰도", "실측 성과·평가·계획·의견을 구분", "성과가 없는 계획은 제안으로 표시"]
-];
-rulesSheet.getRange("A11:D16").values = [
-  ["필드", "입력 책임", "입력 기준", "예시"],
-  ["발행연도", "검수자", "표지 또는 발간정보 확인", "2024"],
-  ["지역", "자동+검수", "연구대상 지역. 전국 자료는 전국", "대전 유성구"],
-  ["발행기관", "검수자", "발주기관 또는 공식 발행기관", "농림축산식품부"],
-  ["원문URL", "검수자", "공식 기관 원문 페이지 우선", "https://..."],
-  ["검수메모", "검수자", "OCR·중복·최신성 관련 메모", "2022년 개정본 우선"]
-];
-for (const range of ["A3:D3", "A11:D11"]) {
-  rulesSheet.getRange(range).format = { fill: "#25364D", font: { name: "Arial", bold: true, color: "#FFFFFF" } };
-}
-rulesSheet.getRange("A1:D1").format.font = { name: "Arial", size: 15, bold: true, color: "#172033" };
-rulesSheet.getRange("A3:D16").format.font = { name: "Arial", size: 10 };
-rulesSheet.getRange("A3:D16").format.wrapText = true;
-rulesSheet.getRange("A3:D16").format.verticalAlignment = "top";
-rulesSheet.getRange("A:A").format.columnWidth = 15;
-rulesSheet.getRange("B:B").format.columnWidth = 22;
-rulesSheet.getRange("C:C").format.columnWidth = 42;
-rulesSheet.getRange("D:D").format.columnWidth = 42;
-rulesSheet.freezePanes.freezeRows(3);
-
-const inspect = await workbook.inspect({ kind: "table", sheetId: "문서목록", range: "A1:T12", include: "values,formulas", tableMaxRows: 12, tableMaxCols: 20 });
+const inspect = await workbook.inspect({ kind: "table", sheetId: "요약", range: "A1:F12", include: "values,formulas", tableMaxRows: 12, tableMaxCols: 6 });
 console.log(inspect.ndjson);
-
 const errors = await workbook.inspect({ kind: "match", searchTerm: "#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A|#NUM!|#NULL!|#SPILL!|#CALC!", options: { useRegex: true, maxResults: 100 }, summary: "final formula error scan" });
 console.log(errors.ndjson);
-
 for (const [sheetName, range, file] of [
-  ["요약", "A1:F19", "summary-preview.png"],
-  ["문서목록", "A1:T18", "documents-preview.png"],
-  ["분류기준", "A1:D16", "rules-preview.png"]
+  ["요약", "A1:F12", "source-summary-preview.png"], ["정책PDF", "A1:P14", "source-policy-preview.png"],
+  ["지역특산품", "A1:L14", "source-specialty-preview.png"], ["업종분류", "A1:H15", "source-taxonomy-preview.png"],
+  ["관리기준", "A1:D13", "source-rules-preview.png"]
 ]) {
-  const preview = await workbook.render({ sheetName, range, scale: 1.3, format: "png" });
+  const preview = await workbook.render({ sheetName, range, scale: 1.2, format: "png" });
   await fs.writeFile(path.join(root, "data", "qa", file), new Uint8Array(await preview.arrayBuffer()));
 }
-
 const output = await SpreadsheetFile.exportXlsx(workbook);
 const outputPath = path.join(outputDir, "지역외식산업_AI_출처관리대장.xlsx");
 await output.save(outputPath);
 console.log(outputPath);
-

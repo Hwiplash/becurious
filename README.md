@@ -11,7 +11,17 @@ scripts\setup.ps1
 
 `.env`의 `OPENAI_API_KEY`를 설정하면 AI 정책 제안 기능이 활성화됩니다. 기본 조합은 Small 임베딩과 Luna 근거 재정렬·최종 제안입니다.
 
-## PDF RAG 준비
+## RAG 출처와 갱신
+
+RAG는 세 종류의 근거를 함께 검색합니다.
+
+- 정책·연구 PDF: 지역경제, 외식산업, 상권 및 정책 사례
+- 지역 특산품: 특산품의 특징과 제공되는 활용 음식
+- 업종분류: 11개 표준 업종 코드와 검색 별칭
+
+현재 인덱스에는 총 26,087개 청크가 있으며 정책·연구 PDF 24,355개, 지역 특산품 1,721개, 업종분류 11개입니다. 실제 검색에 포함된 전체 출처는 `outputs/source_catalog/지역외식산업_AI_출처관리대장.xlsx`에서 확인합니다.
+
+### 정책 PDF 갱신
 
 1. 정책·상권 사례 PDF를 `data/pdfs/`에 넣습니다.
 2. 출처 상태와 중복·OCR 필요 문서를 점검합니다.
@@ -26,20 +36,34 @@ scripts\setup.ps1
 ..\.venv\Scripts\python.exe scripts\build_local_corpus.py
 ```
 
-이 상태만으로도 앱의 로컬 근거 검색이 작동합니다. `OPENAI_API_KEY`를 설정하면 AI 정책 제안이 활성화되고, 아래 명령으로 의미 기반 임베딩 검색도 추가할 수 있습니다.
+이 상태만으로도 앱의 로컬 근거 검색이 작동합니다. `OPENAI_API_KEY`를 설정하면 AI 정책 제안이 활성화되고, 전체 인덱스를 새로 만들 때는 아래 명령을 사용합니다.
 
 ```powershell
 ..\.venv\Scripts\python.exe scripts\build_rag_index.py --dry-run
 ..\.venv\Scripts\python.exe scripts\build_rag_index.py
 ```
 
-생성된 `data/processed/`와 `data/rag_index/`를 제출물에 포함하면 심사 환경에서 PDF 전체를 다시 처리할 필요가 없습니다. OCR 검토 대상은 `data/qa/ingestion_report.csv`, 전체 출처 목록은 `outputs/source_catalog/지역외식산업_AI_출처관리대장.xlsx`에서 확인합니다.
+기존 인덱스를 유지하면서 새 말뭉치만 추가할 때는 다음 명령을 사용합니다.
+
+```powershell
+..\.venv\Scripts\python.exe scripts\append_specialties_to_rag.py --input data\processed\chunks.json
+..\.venv\Scripts\python.exe scripts\append_specialties_to_rag.py --input data\processed\specialty_chunks.json
+..\.venv\Scripts\python.exe scripts\append_specialties_to_rag.py --input data\processed\industry_taxonomy_chunks.json
+```
+
+인덱스 갱신 후 출처 관리 대장을 재생성합니다.
+
+```powershell
+node scripts\build_source_catalog.mjs
+```
+
+생성된 `data/processed/`와 `data/rag_index/`를 제출물에 포함하면 심사 환경에서 원본 전체를 다시 처리할 필요가 없습니다. OCR 검토 대상은 `data/qa/ingestion_report.csv`에서 확인합니다.
 
 검수에 통과한 OCR PDF는 원본을 덮어쓰지 않고 `data/ocr_output/overrides.json`에 원본 파일명과 OCR 결과 경로를 등록합니다. 말뭉치 생성 시 등록된 OCR 결과가 우선 사용됩니다.
 
 검색은 키워드 후보 20개와 Small 벡터 후보 20개를 순위 융합한 뒤, Luna가 최종 6개 근거를 재정렬합니다. API 오류가 발생하면 자동으로 로컬 순위 결과를 사용합니다.
 
-슬라이드·연구보고서 혼합 자료의 처리 기준과 구조는 [`docs/INGESTION_WORKFLOW.md`](docs/INGESTION_WORKFLOW.md)에 정리되어 있습니다.
+슬라이드·연구보고서 혼합 자료의 처리 기준은 [`docs/INGESTION_WORKFLOW.md`](docs/INGESTION_WORKFLOW.md), 출처별 기준 파일과 갱신 순서는 [`docs/RAG_SOURCE_MANAGEMENT.md`](docs/RAG_SOURCE_MANAGEMENT.md)에 정리되어 있습니다.
 
 ## Docker 실행
 
@@ -76,12 +100,13 @@ becurious/
 │  ├─ qa/                 # PDF 및 수집 품질 점검 결과
 │  ├─ rag_index/          # 제출 시 포함할 사전 생성 검색 인덱스
 │  └─ raw/                # 원본/추가 CSV (Git 제외)
-├─ output/                # 크롤링 PDF 등 재생성 가능한 결과물 (Git 제외)
+├─ output/                # 크롤링 PDF 등 중간 산출물 (Git 제외)
+├─ outputs/               # 검수·공유용 최종 산출물
 ├─ handoff/problem_regions/ # 문제지역 판정·회귀 기대값 전달 데이터
 ├─ scripts/               # 수집·말뭉치·인덱스 생성 및 점검 명령
 ├─ config/                # 업종분류 등 검색 기본 설정
-├─ docs/                  # 구축 및 제출 문서
-├─ src/ingestion/         # 자동 PDF 프로파일링·추출·청킹·검수
+├─ docs/                  # 운영·출처·제출 문서
+├─ src/ingestion/         # PDF 프로파일링·추출·청킹·검수
 ├─ tests/                 # 전처리 및 검색 회귀 테스트
 ├─ .env.example
 ├─ Dockerfile
