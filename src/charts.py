@@ -109,6 +109,48 @@ def industry_bar(df: pd.DataFrame, n: int = 10) -> go.Figure:
     return style(fig, 380)
 
 
+def performance_change_compare(df: pd.DataFrame, industry: str, scope_label: str) -> go.Figure:
+    """선택 업종과 같은 지역 전체의 기간 변화를 매출·건수·객단가로 비교한다."""
+    def changes(frame: pd.DataFrame) -> list[float]:
+        monthly = frame.groupby("month", as_index=False).agg(amt=("amt", "sum"), cnt=("cnt", "sum")).sort_values("month")
+        monthly["ticket"] = monthly["amt"].div(monthly["cnt"].replace(0, pd.NA))
+
+        def rate(column: str) -> float:
+            valid = monthly[column].dropna()
+            return float(valid.iloc[-1] / valid.iloc[0] - 1) if len(valid) > 1 and valid.iloc[0] else 0.0
+
+        return [rate("amt"), rate("cnt"), rate("ticket")]
+
+    selected = df[df["TP_BUZ_NM"] == industry]
+    metrics = ["매출액", "이용건수", "건당결제"]
+    figure = go.Figure()
+    for name, values, color in (
+        (industry, changes(selected), PALETTE[0]),
+        (scope_label, changes(df), "#A7B4AE"),
+    ):
+        figure.add_trace(go.Bar(
+            x=metrics,
+            y=values,
+            name=name,
+            marker_color=color,
+            text=[f"{value:+.1%}" for value in values],
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate=f"<b>{name}</b><br>%{{x}} %{{y:+.1%}}<extra></extra>",
+        ))
+    all_values = [float(value) for trace in figure.data for value in trace.y]
+    extent = max([abs(value) for value in all_values] or [0.1])
+    figure.add_hline(y=0, line_color="#98A2B3", line_width=1)
+    figure.update_layout(
+        barmode="group",
+        yaxis_title="1월 → 6월 변화율",
+        yaxis_tickformat="+.0%",
+        yaxis_range=[-extent * 1.35, extent * 1.35],
+        legend=dict(orientation="h", yanchor="bottom", y=1.04, xanchor="left", x=0),
+    )
+    return style(figure, 380)
+
+
 def segment_chart(df: pd.DataFrame) -> go.Figure:
     grouped = df.groupby(["age", "gender"], as_index=False).agg(매출액=("amt", "sum"))
     age_order = ["20대 이하", "20대", "30대", "40대", "50대", "60대 이상", "미상", "기타"]

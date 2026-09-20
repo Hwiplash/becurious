@@ -5,7 +5,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
-from src.charts import industry_bar, monthly_count_trend, monthly_sales_trend, regional_ranking, segment_chart
+from src.charts import industry_bar, monthly_count_trend, monthly_sales_trend, performance_change_compare, regional_ranking, segment_chart
 from src.data import default_data_path, default_indices_path, load_csv, load_indices
 from src.dashboard_components import (
     chart_label,
@@ -132,8 +132,12 @@ if mode == "지역별":
         st.plotly_chart(monthly_count_trend(region),width="stretch",key=f"region_count_trend_{sido}_{industry}")
         left,right=st.columns(2,gap="large")
         with left:
-            chart_label("업종별 매출 TOP 10" if industry == "업종 전체" else f"{industry} 매출 규모")
-            st.plotly_chart(industry_bar(region),width="stretch",key=f"region_industry_{sido}_{industry}")
+            if industry == "업종 전체":
+                chart_label("업종별 매출 TOP 10")
+                st.plotly_chart(industry_bar(region),width="stretch",key=f"region_industry_{sido}_{industry}")
+            else:
+                chart_label(f"{industry} vs {sido} 전체 변화")
+                st.plotly_chart(performance_change_compare(region_all, industry, f"{sido} 전체"),width="stretch",key=f"region_performance_{sido}_{industry}")
         with right:
             chart_label("연령·성별 소비 구성")
             st.plotly_chart(segment_chart(region),width="stretch",key=f"region_segment_{sido}_{industry}")
@@ -161,8 +165,12 @@ if mode == "지역별":
         st.plotly_chart(monthly_count_trend(local),width="stretch",key=f"local_count_trend_{sido}_{ccg}_{industry}")
         left,right=st.columns(2,gap="large")
         with left:
-            chart_label("업종별 매출 TOP 10" if industry == "업종 전체" else f"{industry} 매출 규모")
-            st.plotly_chart(industry_bar(local),width="stretch",key=f"local_industry_{sido}_{ccg}_{industry}")
+            if industry == "업종 전체":
+                chart_label("업종별 매출 TOP 10")
+                st.plotly_chart(industry_bar(local),width="stretch",key=f"local_industry_{sido}_{ccg}_{industry}")
+            else:
+                chart_label(f"{industry} vs {ccg} 전체 변화")
+                st.plotly_chart(performance_change_compare(local_all, industry, f"{ccg} 전체"),width="stretch",key=f"local_performance_{sido}_{ccg}_{industry}")
         with right:
             chart_label("연령·성별 소비 구성")
             st.plotly_chart(segment_chart(local),width="stretch",key=f"local_segment_{sido}_{ccg}_{industry}")
