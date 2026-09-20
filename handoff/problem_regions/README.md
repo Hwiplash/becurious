@@ -106,6 +106,31 @@ region_key = df["SIDO_NM"].str.strip() + "|" + df["CCG_NM"].str.strip()
 
 밴드는 실제값이 아니라 구간 중심을 둘러싸도록 그린다. `prediction_interval_available=false`이면 밴드를 표시하지 않으며, `calibration_ok_amt` 또는 `calibration_ok_cnt`가 거짓이면 툴팁에 보정 주의를 표시한다. 이 구간은 미래 월 예측이 아니라 같은 월의 지역 간 구조 차이를 반영한 진단용 split-conformal 구간이다.
 
+### 부분관측 지역의 밴드
+
+6개월 중 4개월 이상 관측되고 1~3월과 4~6월에 각각 최소 1개월이 있으며 M9 설명변수가 모두 준비된 지역×업종은 서비스용 부분관측 추론을 제공한다. 문제지역 후보 판정에는 계속 6개월 완전관측 자료만 사용하므로 기존 후보 결과는 바뀌지 않는다.
+
+- 관측 월: 실제값, 기대값, 90% 밴드를 함께 표시한다.
+- 미관측 월: 실제값을 `null`로 유지하고 기대값과 90% 밴드만 표시한다. 실제선은 앞뒤 월을 연결하지 않는다.
+- `band_status=partial_observation_inference`: 위 기준을 통과한 부분관측 시계열이다.
+- `band_status=insufficient_observation`: 1~3개월만 관측되어 밴드를 만들지 않은 시계열이다.
+- `band_status=no_observation`: 6개월 모두 관측되지 않아 밴드를 만들지 않은 시계열이다.
+- `extrapolation_warning=true`: 일부 설명변수가 해당 업종 학습자료의 관측 범위를 벗어난 경우다. 밴드는 표시하되 `band_message`를 툴팁에 함께 보여준다.
+
+부분관측 밴드는 다른 완전관측 지역에서 학습·보정한 M9 모형을 적용한 구조 기반 예상범위다. 부분관측 집단에서 별도로 90% 포함률이 검증됐다는 의미는 아니다.
+
+```javascript
+if (row.prediction_interval_available) {
+  drawBand(row.lower90_amt, row.upper90_amt);
+}
+if (row.data_available) {
+  drawActualPoint(row.actual_amt);
+}
+if (row.band_message) {
+  showTooltip(row.band_message);
+}
+```
+
 ## LLM 연결
 
 LLM에는 전체 파일을 전달하지 않고 사용자가 선택한 지역 한 행과 선택 업종에 해당하는 신호만 전달한다. `final_signals`, 선택 업종의 `industry_signals`, `customer_composition`, `grocery_context`, `model_warnings`, `interpretation_boundary`를 정량 진단 컨텍스트로 사용한다.
