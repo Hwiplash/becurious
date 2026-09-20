@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import re
 
 import pandas as pd
@@ -18,9 +19,102 @@ AGE_LABELS = {
     "5": "50대", "6": "60대 이상", "X": "미상",
 }
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+CORE9 = {
+    "4004": "대형할인점", "4010": "편의점", "4020": "슈퍼마켓",
+    "8001": "일반한식", "8004": "일식회집", "8005": "중국음식",
+    "8006": "서양음식", "8021": "스넥", "8301": "제과점",
+}
+PERSONAL_POPULATION = "내국인 개인 BC"
+POPULATION_NOTE = (
+    "실제값과 기대구간은 성별·연령이 확인되는 내국인 개인 결제를 동일하게 집계해 비교합니다. "
+    "외국인 및 법인·미상 결제는 이 비교에서 제외됩니다."
+)
+
+
+def normalize_code(values: pd.Series) -> pd.Series:
+    """CSV 문자열과 숫자형 코드(1, 1.0, ' 1 ')를 같은 코드로 읽는다."""
+    return values.astype("string").str.strip().str.upper().str.replace(r"^(\d+)\.0+$", r"\1", regex=True)
+
+
+def personal_consumption(df: pd.DataFrame) -> pd.DataFrame:
+    """M9의 고객·업종·기간 범위. 관측 행만 남기며 결측 셀을 만들지 않는다."""
+    return df.loc[
+        normalize_code(df["GENDER_CD"]).isin(["1", "2"])
+        & normalize_code(df["AGE_CD"]).isin(list("123456"))
+        & normalize_code(df["TP_BUZ_NO"]).isin(CORE9)
+        & normalize_code(df["STRD_YYMM"]).isin([f"20260{i}" for i in range(1, 7)])
+    ].copy()
+
+
+@st.cache_data(show_spinner=False)
+def load_problem_regions(path: str | None = None) -> dict[str, dict]:
+    source = Path(path) if path else REPO_ROOT / "handoff/problem_regions/problem_regions.jsonl"
+    regions = {}
+    with source.open(encoding="utf-8") as stream:
+        for line in stream:
+            if not line.strip():
+                continue
+            region = json.loads(line)
+            key = region["region_key"]
+            if key != f"{region['sido']}|{region['sigungu']}" or key in regions:
+                raise ValueError(f"문제지역 키 중복 또는 불일치: {key}")
+            regions[key] = region
+    return regions
+
+
+def comparison_monthly(regions: dict[str, dict], sido: str, ccg: str, scope: str = "core9") -> pd.DataFrame:
+    """하나의 JSON 지역×업종 시계열을 그대로 사용한다. 원본 전 코드로 대체하지 않는다."""
+    if scope not in CORE9 and scope != "core9":
+        raise ValueError(f"M9 분석 범위 밖 업종: {scope}")
+    key = f"{sido.strip()}|{ccg.strip()}"
+    region = regions.get(key)
+    if region is None:
+        return pd.DataFrame()
+    frame = pd.DataFrame([row for row in region["monthly"] if row["scope"] == scope])
+    if frame.empty:
+        return frame
+    frame["month"] = pd.to_datetime(frame["month"].astype(str), format="%Y%m", errors="raise")
+    if frame["month"].duplicated().any():
+        raise ValueError(f"월별 키 중복: {key} / {scope}")
+    if (frame.loc[~frame["data_available"], ["actual_amt", "actual_cnt"]].notna().any().any()):
+        raise ValueError(f"미관측 실제값이 null이 아닙니다: {key} / {scope}")
+    frame["region_key"] = key
+    frame["population"] = PERSONAL_POPULATION
+    return frame.sort_values("month").reset_index(drop=True)
+
+
+def comparison_details(monthly: pd.DataFrame) -> pd.DataFrame:
+    """비율·경로는 JSON 권위값을 유지하고, 없는 차이·객단가·증감률만 같은 행에서 파생한다."""
+    frame = monthly.copy()
+    for target in ("amt", "cnt"):
+        actual = pd.to_numeric(frame[f"actual_{target}"], errors="coerce")
+        expected = pd.to_numeric(frame[f"expected_{target}"], errors="coerce")
+        ratio = frame.get(f"I_{target}", frame.get(f"ratio_{target}"))
+        frame[f"ratio_{target}"] = ratio if ratio is not None else actual.div(expected.where(expected.ne(0)))
+        if f"gap_{target}" not in frame:
+            frame[f"gap_{target}"] = actual - expected
+        # 미관측 월을 건너뛴 전월비와 앞선 값으로 채우기를 금지한다.
+        previous = actual.shift()
+        adjacent = frame["month"].dt.to_period("M").astype("int64").diff().eq(1)
+        frame[f"mom_{target}"] = actual.div(previous.where(previous.ne(0))).sub(1).where(adjacent)
+        band_available = frame["prediction_interval_available"] & frame["data_available"]
+        for side, operator in (("below", "lt"), ("above", "gt")):
+            field = f"{side}90_{target}"
+            if field not in frame:
+                bound = pd.to_numeric(frame[f"{'lower' if side == 'below' else 'upper'}90_{target}"], errors="coerce")
+                frame[field] = getattr(actual, operator)(bound).astype("boolean").where(band_available & bound.notna())
+    count = pd.to_numeric(frame["actual_cnt"], errors="coerce")
+    frame["actual_ticket"] = pd.to_numeric(frame["actual_amt"], errors="coerce").div(count.where(count.ne(0)))
+    expected_count = pd.to_numeric(frame["expected_cnt"], errors="coerce")
+    frame["expected_ticket"] = pd.to_numeric(frame["expected_amt"], errors="coerce").div(expected_count.where(expected_count.ne(0)))
+    return frame
+
 
 def default_data_path() -> Path | None:
     candidates = [
+        REPO_ROOT / "data/raw/ABP_CONTEST_DATA.csv",
+        REPO_ROOT.parent / "data/ABP_CONTEST_DATA.csv",
         Path("data/raw/ABP_CONTEST_DATA.csv"),
         Path("../ABP_CONTEST_DATA.csv"),
         Path("ABP_CONTEST_DATA.csv"),
@@ -82,6 +176,8 @@ def prepare(df: pd.DataFrame) -> pd.DataFrame:
     text_columns = ["STRD_YYMM", "SIDO_NM", "CCG_NM", "GENDER_CD", "AGE_CD", "TP_BUZ_NO", "TP_BUZ_NM"]
     for column in text_columns:
         df[column] = df[column].fillna("X").astype(str).str.strip()
+    for column in ["STRD_YYMM", "GENDER_CD", "AGE_CD", "TP_BUZ_NO"]:
+        df[column] = normalize_code(df[column])
     for column in ["amt", "cnt"]:
         df[column] = pd.to_numeric(df[column], errors="coerce").fillna(0)
     df["TP_BUZ_NM"] = df["TP_BUZ_NM"].str.replace(r"\s+", "", regex=True)

@@ -7,6 +7,8 @@ import streamlit as st
 
 from src.agent import EVIDENCE_GROUP_LABELS, generate_proposal, retrieve_evidence_groups
 from src.analytics import diagnose_region, find_similar_districts
+from src.data import (CORE9, POPULATION_NOTE, comparison_monthly,
+                      load_problem_regions, personal_consumption)
 
 
 @st.dialog("✨ AI 상권 부흥 정책 제안", width="large")
@@ -18,6 +20,9 @@ def policy_dialog(
     default_industry: str | None = None,
     initial_question: str = "",
 ) -> None:
+    # 정책 설명에 쓰는 실제 소비도 M9와 동일한 개인·9업종 범위로 제한한다.
+    data = personal_consumption(data)
+    st.caption(POPULATION_NOTE)
     sido_options = sorted(data["SIDO_NM"].unique())
     sido = st.selectbox(
         "시도", sido_options,
@@ -53,6 +58,28 @@ def policy_dialog(
     if st.button("SWOT 기반 정책 분석 시작", type="primary", width="stretch"):
         diagnosis = diagnose_region(data, sido, ccg, industry)
         diagnosis_payload = diagnosis.to_dict()
+        diagnosis_payload["population"] = POPULATION_NOTE
+        problem_regions = load_problem_regions()
+        problem = problem_regions.get(f"{sido}|{ccg}")
+        if problem:
+            scope = next(code for code, name in CORE9.items() if name == industry)
+            monthly = comparison_monthly(problem_regions, sido, ccg, scope)
+            diagnosis_payload["m9_comparison"] = {
+                "region_key": problem["region_key"],
+                "monthly": [row for row in problem["monthly"] if row["scope"] == scope],
+                "region_status": problem["region_status"],
+                "industry_signals": [row for row in problem["industry_signals"] if row["scope"] == scope],
+                "final_signals": problem["final_signals"],
+                "interpretation_boundary": problem["interpretation_boundary"],
+                "usage": "M9 실제·기대비율·구간·거래경로·문제지역 판정은 이 JSON을 우선 사용한다. 지역 최종 신호를 선택 업종의 최종 신호로 바꾸지 않는다. 기존 상권지수는 M9 기대값이 아니다.",
+            }
+            # 진단 화면의 기간과 같은 JSON 양 끝 월로 증감률을 계산한다.
+            first, last = monthly.iloc[0], monthly.iloc[-1]
+            for field, values in [("sales_change", monthly.actual_amt), ("transaction_change", monthly.actual_cnt), ("ticket_change", monthly.actual_amt.div(monthly.actual_cnt.where(monthly.actual_cnt.ne(0))))]:
+                start, end = values.iloc[0], values.iloc[-1]
+                diagnosis_payload[field] = float(end / start - 1) if pd.notna(start) and pd.notna(end) and start != 0 else None
+            diagnosis_payload["start_month"] = first.month.strftime("%Y-%m")
+            diagnosis_payload["end_month"] = last.month.strftime("%Y-%m")
         if indices:
             diagnosis_payload["similar_districts"] = find_similar_districts(
                 data, indices, sido, ccg, industry, top_k=5

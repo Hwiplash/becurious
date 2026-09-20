@@ -7,9 +7,12 @@ import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
 from src.charts import industry_bar, monthly_trend, regional_ranking, segment_chart
-from src.data import compact_won, default_data_path, default_indices_path, load_csv, load_indices
+from src.data import (CORE9, compact_won, comparison_monthly, default_data_path,
+                      default_indices_path, load_csv, load_indices, load_problem_regions,
+                      personal_consumption)
 from src.maps import sido_map, sigungu_map
 from src.policy_ui import render_chat_launcher
+from src.problem_ui import render_comparison
 
 load_dotenv()
 st.set_page_config(page_title="상권 활성화 대책 제안 AI", page_icon="✦", layout="wide", initial_sidebar_state="collapsed")
@@ -111,7 +114,7 @@ def render_signals(frame: pd.DataFrame, index_context: dict | None = None) -> No
 def render_metrics(frame: pd.DataFrame) -> None:
     amount, count, ticket, rate = summary_metrics(frame)
     cols = st.columns(4)
-    cols[0].metric("총 매출", compact_won(amount)); cols[1].metric("이용 건수", f"{count:,.0f}건")
+    cols[0].metric("전체 BC카드 이용금액", compact_won(amount)); cols[1].metric("전체 BC카드 이용건수", f"{count:,.0f}건")
     cols[2].metric("건당 결제", f"{ticket:,.0f}원"); cols[3].metric("1월 → 6월 변화", f"{rate:+.1%}")
 
 def go_to(view: str, sido: str | None = None, ccg: str | None = None) -> None:
@@ -122,9 +125,11 @@ def go_to(view: str, sido: str | None = None, ccg: str | None = None) -> None:
     st.rerun()
 
 def render_disclaimer() -> None:
-    st.caption("BC카드 관측 소비를 기반으로 한 상대 비교이며, 2026년 1월에서 6월까지의 변화를 표시합니다.")
+    st.caption("전체 BC카드 이용금액·이용건수는 외국인 및 법인·미상 결제를 포함합니다. 2026년 1~6월 관측값이며, 내국인 개인 M9 기대값과 직접 비교하지 않습니다.")
 
 def index_snapshot(sido: str, ccg: str | None = None, industry: str | None = None) -> dict:
+    if not indices:
+        return {}
     base = indices["지역지수"]
     premium = indices["프리미엄"]
     population = indices["인구보정"]
@@ -158,6 +163,8 @@ def index_snapshot(sido: str, ccg: str | None = None, industry: str | None = Non
     return result
 
 def render_index_cards(context: dict, regional: bool = False) -> None:
+    if not context:
+        return
     st.markdown("<div class='section-kicker'>COMMERCIAL VITALITY INDEX</div><div class='section-title'>상권 체력 지수</div>", unsafe_allow_html=True)
     st.markdown(
         "<div class='index-note'>해당 시도 내 시군구 중앙값 · 전국 기준 100</div>" if regional
@@ -214,9 +221,12 @@ def industry_picker(industries: list[str]) -> str:
 
 try:
     raw_path, index_path = default_data_path(), default_indices_path()
-    if raw_path is None or index_path is None:
-        st.error("필수 데이터 파일을 찾지 못했습니다."); st.stop()
-    data = load_csv(str(raw_path.resolve())); indices = load_indices(str(index_path.resolve()))
+    if raw_path is None:
+        st.error("BC 원본 데이터 파일을 찾지 못했습니다."); st.stop()
+    data = load_csv(str(raw_path.resolve()))
+    indices = load_indices(str(index_path.resolve())) if index_path else {}
+    problem_regions = load_problem_regions()
+    personal_data = personal_consumption(data)
 except Exception as exc:
     st.error(f"데이터를 읽지 못했습니다: {exc}"); st.stop()
 
@@ -237,7 +247,7 @@ if mode == "지역별":
         st.markdown("<div class='section-kicker'>NATIONAL OVERVIEW</div><div class='section-title'>어느 지역의 가능성을 살펴볼까요?</div>", unsafe_allow_html=True)
         map_col, table_col = st.columns([1.16, .84], gap="large"); ranking = regional_ranking(data, "SIDO_NM")
         with map_col:
-            chart_label("전국 시도별 매출 분포")
+            chart_label("전국 시도별 전체 BC카드 이용금액 분포")
             map_event = st.plotly_chart(sido_map(data), width="stretch", on_select="rerun", key="home_sido_map")
         with table_col:
             chart_label("시도별 소비 규모 순위")
@@ -281,19 +291,30 @@ if mode == "지역별":
         with nav2:
             if st.button(f"← {sido}",width="stretch"): go_to("regional", sido=sido)
         st.markdown(f"<div class='crumb'>{html.escape(sido)} &nbsp;/&nbsp; <b>{html.escape(ccg)}</b></div><div class='section-title'>{html.escape(ccg)} 상권 진단</div>",unsafe_allow_html=True)
-        render_metrics(local)
-        local_indices = index_snapshot(sido, ccg)
-        render_index_cards(local_indices)
-        st.markdown("<div class='section-kicker'>LOCAL SIGNALS</div><div class='section-title'>강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(local, local_indices)
-        chart_label("월별 매출·이용 건수 추이")
-        st.plotly_chart(monthly_trend(local),width="stretch",key=f"local_trend_{sido}_{ccg}"); left,right=st.columns(2,gap="large")
+        industry = industry_picker(list(CORE9.values()))
+        scope = "core9" if industry == "업종 전체" else next(code for code, name in CORE9.items() if name == industry)
+        monthly = comparison_monthly(problem_regions, sido, ccg, scope)
+        if monthly.empty:
+            st.info("이 지역은 M9 비교 자료의 지역 범위에 포함되지 않습니다.")
+        else:
+            render_comparison(problem_regions[f"{sido}|{ccg}"], monthly)
+        if indices:
+            with st.expander("기존 상권 지수 참고"):
+                st.caption("기존 지수 파일의 정의에 따른 참고값입니다. 위의 내국인 개인 M9 기대값·예측구간과 별도 지표입니다.")
+                render_index_cards(index_snapshot(sido, ccg, industry))
+        local = personal_data[(personal_data["SIDO_NM"] == sido) & (personal_data["CCG_NM"] == ccg)]
+        if scope != "core9":
+            local = local[local["TP_BUZ_NO"] == scope]
+        left,right=st.columns(2,gap="large")
         with left:
-            chart_label("업종별 매출 TOP 10")
-            st.plotly_chart(industry_bar(local),width="stretch",key=f"local_industry_{sido}_{ccg}")
+            chart_label("내국인 개인 BC 업종별 이용금액")
+            if not local.empty:
+                st.plotly_chart(industry_bar(local),width="stretch",key=f"local_industry_{sido}_{ccg}")
         with right:
-            chart_label("연령·성별 소비 구성")
-            st.plotly_chart(segment_chart(local),width="stretch",key=f"local_segment_{sido}_{ccg}")
-        render_disclaimer(); render_chat_launcher(data,indices,sido,ccg)
+            chart_label("내국인 개인 BC 연령·성별 소비 구성")
+            if not local.empty:
+                st.plotly_chart(segment_chart(local),width="stretch",key=f"local_segment_{sido}_{ccg}")
+        render_chat_launcher(personal_data,{},sido,ccg,industry=industry)
 else:
     industries=sorted(data["TP_BUZ_NM"].unique()); industry=industry_picker(industries); frame=data if industry=="업종 전체" else data[data["TP_BUZ_NM"]==industry]
     heading="업종별 전국 비교" if industry=="업종 전체" else f"{industry} 전국 분석"
@@ -303,9 +324,15 @@ else:
     st.plotly_chart(monthly_trend(frame),width="stretch",key=f"industry_trend_{industry}")
     if industry == "업종 전체":
         ranking=regional_ranking(frame,"SIDO_NM")
-    else:
+    elif indices:
         rank_source = indices["업종순위"]
         ranking = rank_source[rank_source["업종"] == industry].sort_values("전국 동일업종 지역순위").rename(columns={"시도":"SIDO_NM"})
+    else:
+        ranking = frame.groupby(["SIDO_NM", "CCG_NM"], as_index=False).agg(매출액=("amt", "sum"), 이용건수=("cnt", "sum"))
+        ranking["건당결제"] = ranking["매출액"].div(ranking["이용건수"].where(ranking["이용건수"].ne(0)))
+        ranking["전국 동일업종 지역순위"] = ranking["매출액"].rank(ascending=False, method="min")
+        ranking["광역 동일업종 지역순위"] = ranking.groupby("SIDO_NM")["매출액"].rank(ascending=False, method="min")
+        ranking = ranking.rename(columns={"CCG_NM": "시군구"}).sort_values("전국 동일업종 지역순위")
     left,right=st.columns([.95,1.05],gap="large")
     with left:
         chart_label("지역별 매출 순위" if industry == "업종 전체" else "동일 업종 전국 상위 지역")

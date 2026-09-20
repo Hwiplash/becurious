@@ -46,11 +46,11 @@ def style(fig: go.Figure, height: int = 340) -> go.Figure:
     return fig
 
 
-def monthly_trend(df: pd.DataFrame) -> go.Figure:
+def monthly_trend(df: pd.DataFrame, population: str = "전체 BC카드") -> go.Figure:
     monthly = df.groupby("month", as_index=False).agg(매출액=("amt", "sum"), 이용건수=("cnt", "sum"))
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["매출액"], name="매출액", mode="lines+markers", line=dict(color=PALETTE[0], width=3), fill="tozeroy", fillcolor="rgba(34,211,167,.10)"))
-    fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["이용건수"], name="이용건수", mode="lines+markers", line=dict(color=PALETTE[1], width=2), yaxis="y2"))
+    fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["매출액"], name=f"{population} 이용금액", mode="lines+markers", line=dict(color=PALETTE[0], width=3), fill="tozeroy", fillcolor="rgba(34,211,167,.10)"))
+    fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["이용건수"], name=f"{population} 이용건수", mode="lines+markers", line=dict(color=PALETTE[1], width=2), yaxis="y2"))
     tickvals, ticktext, money_unit = _axis_ticks(float(monthly["매출액"].max()), "money")
     countvals, counttext, count_unit = _axis_ticks(float(monthly["이용건수"].max()), "count")
     fig.update_layout(
@@ -63,6 +63,46 @@ def monthly_trend(df: pd.DataFrame) -> go.Figure:
         legend=dict(orientation="h", yanchor="bottom", y=1.2, xanchor="left", x=0),
         margin=dict(l=12, r=12, t=96, b=24),
     )
+    return fig
+
+
+def prediction_trend(monthly: pd.DataFrame, target: str = "amt") -> go.Figure:
+    """comparison_monthly의 단일 지역·업종 JSON 행만 차트로 그린다."""
+    if target not in ("amt", "cnt"):
+        raise ValueError("target must be amt or cnt")
+    if (monthly.empty or monthly["region_key"].nunique() != 1
+            or monthly["scope"].nunique() != 1
+            or not monthly["population"].eq("내국인 개인 BC").all()):
+        raise ValueError("예측구간은 동일한 지역·업종·개인 모집단만 비교할 수 있습니다.")
+    frame = monthly.sort_values("month").copy()
+    # 생략된 월도 공백으로 표시하여 실제선을 연결하지 않는다.
+    frame = frame.set_index("month").reindex(pd.date_range(frame["month"].min(), frame["month"].max(), freq="MS"))
+    band = frame["prediction_interval_available"].eq(True)
+    actual = frame[f"actual_{target}"].where(frame["data_available"].eq(True))
+    lower = frame[f"lower90_{target}"].where(band)
+    upper = frame[f"upper90_{target}"].where(band)
+    center = frame[f"pi_center_{target}"].where(band)
+    label, unit = ("금액", "원") if target == "amt" else ("건수", "건")
+    warnings = []
+    for _, row in frame.iterrows():
+        notes = [str(row["band_message"])] if pd.notna(row.get("band_message")) else []
+        if pd.notna(row.get(f"calibration_ok_{target}")) and not row[f"calibration_ok_{target}"]:
+            notes.append("보정 주의: 이 비교집단에서 조건부 정확도 미확인")
+        if pd.notna(row.get("extrapolation_warning")) and row["extrapolation_warning"]:
+            notes.append("일부 지역 구조값이 학습자료 범위를 벗어납니다.")
+        warnings.append("<br>".join(notes))
+    hover = f"%{{x|%Y년 %m월}}<br>%{{y:,.0f}}{unit}<br>%{{customdata}}<extra>%{{fullData.name}}</extra>"
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=frame.index, y=lower, name="90% 예측구간 하단", mode="lines", line=dict(width=0), showlegend=False, connectgaps=False, customdata=warnings, hovertemplate=hover))
+    fig.add_trace(go.Scatter(x=frame.index, y=upper, name="내국인 개인 소비의 90% 예측구간", mode="lines", line=dict(width=0), fill="tonexty", fillcolor="rgba(77,163,255,.18)", connectgaps=False, customdata=warnings, hovertemplate=hover))
+    fig.add_trace(go.Scatter(x=frame.index, y=center, name=f"지역 구조를 고려한 기대{label} (구간 중심)", mode="lines", line=dict(color=PALETTE[1], dash="dash"), connectgaps=False, customdata=warnings, hovertemplate=hover))
+    fig.add_trace(go.Scatter(x=frame.index, y=frame[f"expected_{target}"], name=f"진단 비율 기준 기대{label} (반복 평균)", mode="lines", line=dict(color="#667085", dash="dot"), visible="legendonly", connectgaps=False, customdata=warnings, hovertemplate=hover))
+    fig.add_trace(go.Scatter(x=frame.index, y=actual, name=f"내국인 개인 BC 이용{label}", mode="lines+markers", line=dict(color=PALETTE[0], width=3), connectgaps=False, customdata=warnings, hovertemplate=hover))
+    maximum = pd.concat([actual, upper, center]).max()
+    ticks, ticktext, axis_unit = _axis_ticks(float(maximum) if pd.notna(maximum) else 0, "money" if target == "amt" else "count")
+    fig = style(fig, 440)
+    fig.update_layout(yaxis=dict(title=f"이용{label} ({axis_unit})", tickvals=ticks, ticktext=ticktext), hovermode="x unified", legend=dict(orientation="h", yanchor="top", y=-.18), margin=dict(l=12, r=12, t=20, b=125))
+    fig.update_xaxes(dtick="M1", tickformat="%m월")
     return fig
 
 
