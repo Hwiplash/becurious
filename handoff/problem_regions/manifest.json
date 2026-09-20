@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "analysis_version": "final_food_problem_detection",
+  "regions": 251,
+  "final_candidate_regions": 90,
+  "final_signals": 101,
+  "inputs": [
+    {
+      "path": "analysis\\final_food_problem_detection\\tables\\candidate_handoff.csv",
+      "sha256": "169d215c256c6291f6f2be059f79bf6d03639adea5a2129dfd118f847e655065"
+    },
+    {
+      "path": "analysis\\final_food_problem_detection\\tables\\region_candidate_summary.csv",
+      "sha256": "ef912a23ea3170cba4fdab6250454d152455e361bd894ff9367f3d8ef42bb6d6"
+    },
+    {
+      "path": "analysis\\final_food_problem_detection\\tables\\food_aggregate_signals.csv",
+      "sha256": "1a611a948dcdf2ffe026ce8d8eea1f0aa713f7e66562ee441258f1b83fe7fa3d"
+    },
+    {
+      "path": "analysis\\final_food_problem_detection\\tables\\region_industry_evidence.csv",
+      "sha256": "2bd058c884e95eacd5b678ba14da4f49475525bf18b91f7210efd9ef414bd7dc"
+    },
+    {
+      "path": "analysis\\final_food_problem_detection\\tables\\monthly_signals.csv",
+      "sha256": "7cbd275a5a9bf0dd80d85f32bde801bf185a6f8d808e83ad00942d6351fa7000"
+    },
+    {
+      "path": "analysis\\final_food_problem_detection\\tables\\grocery_reference_signals.csv",
+      "sha256": "f2b478cfcdc5aba6f64ba56acc59f5dacec43c282b6a0c30751b10183159ab88"
+    },
+    {
+      "path": "analysis\\final_food_problem_detection\\tables\\who_composition_profile.csv",
+      "sha256": "fafd415d5d7e0f72488ae0bc73520e503dbfeb85a542317b72ce0026b2b1d847"
+    },
+    {
+      "path": "analysis\\service_sigungu_payload\\tables\\sigungu_summary.csv",
+      "sha256": "72104e0244fc1f773b6f2d93be4cd3c97356e31f3ee2ee891a2bde41bdad3e12"
+    },
+    {
+      "path": "analysis\\service_sigungu_payload\\tables\\sigungu_cohort_summary.csv",
+      "sha256": "1dcf049b445e7c5d6d481f97efea2b6e79c0c06b0ca9b81167bf83040d9a4bf4"
+    }
+  ],
+  "payload_sha256": "02f7d95d5d38023e9392aaf4a8fa464eaf99fac97a85fa7f949a39be7da472e1",
+  "protected_files_unchanged": 64,
+  "protected_sha256": {
+    "analysis\\final_food_problem_detection\\.mplconfig\\fontlist-v3.11.0.json": "001dd1a2c4f925566aa26aa0b74aca66c6f1e366444044c4add896e9025f1e13",
+    "analysis\\final_food_problem_detection\\data_quality.md": "78320cb4a34fa8d6c44d79a345fa735a9c161fd0aa202369501810bfb4b820f2",
+    "analysis\\final_food_problem_detection\\figures\\candidate_funnel.png": "49e0bc39a0b4504ee8e31e6cd360f03f95984624d72dfef09066fc75222fa666",
+    "analysis\\final_food_problem_detection\\figures\\candidate_tier_summary.png": "d1ab6325c26ec730f94ebf15d991bdd4c49d0c70403ab4e5fc5a2acca91d68c5",
+    "analysis\\final_food_problem_detection\\figures\\food_actual_expected.png": "8233c85e959f23b05e06661c251799ed23cf9b30fbc5f4be2274733cc27a89d9",
+    "analysis\\final_food_problem_detection\\figures\\food_grocery_quadrant.png": "f6a9e2627e8e88d2d773b315941b8ef423b428bf498074c236347a1c7fd19143",
+    "analysis\\final_food_problem_detection\\methodology.md": "03396c1bd5cf1e8f8b04ee06c53ce3f9f34fa8f96f2ab855d913c558e54eddeb",
+    "analysis\\final_food_problem_detection\\README.md": "ddb8a6d5e8399422eb30fbe1068d351041cf77ec88c0b36959c4f94f6dbb0d3a",
+    "analysis\\final_food_problem_detection\\report.md": "9f0221c6e96b90f7e4e4d5b8c20fc073b5ca08573d1b9100dd9e885691cee45d",
+    "analysis\\final_food_problem_detection\\run_analysis.py": "54fc5b27fe62724e819703d8c8f17fcc4993e9dddd1687a7580c88a4b296d6ba",
+    "analysis\\final_food_problem_detection\\tables\\aggregate_calibration_errors.csv": "e6cc9c365369f9c8c39bf3573f3b170475d6dffd986ebfb79b446a0292f76c56",
+    "analysis\\final_food_problem_detection\\tables\\artifact_manifest.csv": "dad153c1eb6eae398e643ab870ebd1eb9a2ad282e74c47f61da9722f4cdba66d",
+    "analysis\\final_food_problem_detection\\tables\\artifact_source_contract.csv": "5138bb2d0a72545456a7b64d7c7fee46ebbbc2f775ecdd883ff3e60e6c6faa78",
+    "analysis\\final_food_problem_detection\\tables\\bigbox_reference_appendix.csv": "cd72845587e21a10c5b3f70b40f67993613e0e2ad1420f37249e18af66c2c3be",
+    "analysis\\final_food_problem_detection\\tables\\bigbox_sensitivity.csv": "b2b49bff6c7f68691b876039a024b82dc0537e268f59e5e0faf1b091c79b6bca",
+    "analysis\\final_food_problem_detection\\tables\\candidate_funnel.csv": "53a65d806618b9a29a1427de7dfdd697b5298718381979b0e9042a1b1dfbdf2b",
+    "analysis\\final_food_problem_detection\\tables\\candidate_handoff.csv": "169d215c256c6291f6f2be059f79bf6d03639adea5a2129dfd118f847e655065",
+    "analysis\\final_food_problem_detection\\tables\\conformal_role_audit.csv": "9081d862fd9191fd001932f7c68165369679079d21afca1ac39c3fa69876476a",
+    "analysis\\final_food_problem_detection\\tables\\coverage_audit.csv": "b62ace7cc68a1ec92d93ebe9a6547ddae285359b4d800ddb65af0dc8792f3f23",
+    "analysis\\final_food_problem_detection\\tables\\fixed_parameters.json": "15c8437dacf615b5f47def682feb3ee1582065b4cc103b2b3dc4da4059c156a7",
+    "analysis\\final_food_problem_detection\\tables\\food_aggregate_signals.csv": "1a611a948dcdf2ffe026ce8d8eea1f0aa713f7e66562ee441258f1b83fe7fa3d",
+    "analysis\\final_food_problem_detection\\tables\\grocery_reference_signals.csv": "f2b478cfcdc5aba6f64ba56acc59f5dacec43c282b6a0c30751b10183159ab88",
+    "analysis\\final_food_problem_detection\\tables\\industry_coverage.csv": "45136c0c748903e25bae0ab40d01775129efb2eb84a95bc6f2505f85fe586d49",
+    "analysis\\final_food_problem_detection\\tables\\industry_interval_reproduction.csv": "1b5d0bd35daaeb5b92b2c6f9bbb3fd953e5ff5123eebb84d99da6c51debc474e",
+    "analysis\\final_food_problem_detection\\tables\\industry_name_normalization.csv": "06e605499ac0227dd999490a256b9093f91d4e3b67a9ae8d337046446c51bca9",
+    "analysis\\final_food_problem_detection\\tables\\input_hashes.csv": "5087e4ab0a4827a3537cc9be35e0aa24a0c5896cc5983f77ba89a57fc5ae81df",
+    "analysis\\final_food_problem_detection\\tables\\monitoring_and_hold_evidence.csv": "f0d7d798b19bb36c40cb348d0c7a80a968c1f45589d45b781d202c204167f1a6",
+    "analysis\\final_food_problem_detection\\tables\\monthly_signals.csv": "7cbd275a5a9bf0dd80d85f32bde801bf185a6f8d808e83ad00942d6351fa7000",
+    "analysis\\final_food_problem_detection\\tables\\prediction_interval_evidence.csv": "ec23581295c8f7c76f6bd8cb92d6e12658c64ce0043d08e871b0b1f89e7bcac3",
+    "analysis\\final_food_problem_detection\\tables\\protected_hashes_before.json": "8c5694ce5c61259ab3f1d33577878fe971fd18155ec12ffe855be2c4418f3ce0",
+    "analysis\\final_food_problem_detection\\tables\\region_candidate_summary.csv": "ef912a23ea3170cba4fdab6250454d152455e361bd894ff9367f3d8ef42bb6d6",
+    "analysis\\final_food_problem_detection\\tables\\region_industry_evidence.csv": "2bd058c884e95eacd5b678ba14da4f49475525bf18b91f7210efd9ef414bd7dc",
+    "analysis\\final_food_problem_detection\\tables\\repeat_signals.csv": "0c8ce5de315cd0b3c2e2929cf650f2303d088c76c7246f4569ad09c972e51d97",
+    "analysis\\final_food_problem_detection\\tables\\report_metrics.json": "dc0713c957a8d313984c0b0a3fab7fac6c00234f008b262e799f47fab4695294",
+    "analysis\\final_food_problem_detection\\tables\\saved_artifact_recheck.csv": "930587525cb407bdebe947d81c4a414820493001706cb14106bed9c814ad4b02",
+    "analysis\\final_food_problem_detection\\tables\\supply_context.csv": "96a420801f79ef50f3b7cec3b7643666cf6483180893ef335fa5d061bc3afe60",
+    "analysis\\final_food_problem_detection\\tables\\threshold_region_changes.csv": "bd4f639ae2b1a87045f4bf359231623044f81d0daf6d34dc1e47ef3d8122ae3e",
+    "analysis\\final_food_problem_detection\\tables\\threshold_sensitivity.csv": "e8729ebf83a29440ba2a2a8b7f23f041fb056c345e74d4631801d4f805f0887a",
+    "analysis\\final_food_problem_detection\\tables\\validation_checks.csv": "303bfa28ded561da0a1a1079a9f4c614b4708bd79ed10d5679c415ba8edb9d16",
+    "analysis\\final_food_problem_detection\\tables\\who_composition_monthly.csv": "b22909c60d71609a524ec017097e1862286f2cd2646b7802c565e370f6a24ee3",
+    "analysis\\final_food_problem_detection\\tables\\who_composition_profile.csv": "fafd415d5d7e0f72488ae0bc73520e503dbfeb85a542317b72ce0026b2b1d847",
+    "analysis\\final_food_problem_detection\\verify_outputs.py": "61f58a4cfd2ef4e4a0aa86f6c995484350567347d9b70385fcbc099aed624e9e",
+    "analysis\\service_sigungu_payload\\artifact_manifest.csv": "c275e0e3b36bd1edd1f88d7c29ff19ff9143dab2a6c1d586bfc9e2ae22e7d503",
+    "analysis\\service_sigungu_payload\\build_payload.py": "87da05c7825d922b272d0d56ee4f821dc3928ee1264c0e0d605ffe03a5fc70d3",
+    "analysis\\service_sigungu_payload\\json\\service_metadata.json": "5955e5c6d22ff1337fedeac7354469ed039bb4b587eca8d666034c025fa6b475",
+    "analysis\\service_sigungu_payload\\json\\sigungu_service_payload.jsonl": "368a7f83404df15793de1c0c2e892145d67801d744f4b5c1c106dfdc68778c00",
+    "analysis\\service_sigungu_payload\\protected_hashes_before.json": "484792cc151fc3d696e811d7a73b82b8aad9d85ab871413280716e5b96c17871",
+    "analysis\\service_sigungu_payload\\README.md": "f69133f2d544c7878a5b28dd58fb9de642c797ae5e24eccbf7ae6b234aa49208",
+    "analysis\\service_sigungu_payload\\report.md": "a5a75be1727d15d84ac698162f3a660f9fa10c98da78728f32cb323b98aa23e3",
+    "analysis\\service_sigungu_payload\\schema.md": "cc565e02274c14560add504ca6693f6567b03ec2142fcaabe34a6eb251330348",
+    "analysis\\service_sigungu_payload\\tables\\core8_sensitivity.csv": "d2b7086e8e083fea4e4d1bffbe9d5987b481a44a128428a1b3aa74f141ea0173",
+    "analysis\\service_sigungu_payload\\tables\\field_dictionary.csv": "3d316fc8aa40e791217ced7d8906cb1c26e1510de5d573eadefd1ed19257f05b",
+    "analysis\\service_sigungu_payload\\tables\\input_audit.csv": "41c6f5745ab5309fb7b31bbf8d2284b0005359057e94767a9ce4934221254eac",
+    "analysis\\service_sigungu_payload\\tables\\input_column_audit.csv": "baa8755e1f495ed9111df4d5f51cf21ce9c411d72d38d296ff4deaa7b33dba15",
+    "analysis\\service_sigungu_payload\\tables\\protected_file_hashes.csv": "076e8698cc7c6fa0ce990621ccded98c74601e20b19eb5aea3fbf1bc01e46307",
+    "analysis\\service_sigungu_payload\\tables\\sigungu_cohort.csv": "6d9a3a4577ff923b1bb722957d499d0c56826989757ca2747d65d0553beb1b62",
+    "analysis\\service_sigungu_payload\\tables\\sigungu_cohort_summary.csv": "1dcf049b445e7c5d6d481f97efea2b6e79c0c06b0ca9b81167bf83040d9a4bf4",
+    "analysis\\service_sigungu_payload\\tables\\sigungu_industry.csv": "178634ee6b3a4971501f05cde33079bdb4adbc4096ecad3b92a2802d19877b43",
+    "analysis\\service_sigungu_payload\\tables\\sigungu_monthly.csv": "627f8986913ec3a4ba89909b537d3b8dbdb3c2085e7d5f43992bb90e2e31653e",
+    "analysis\\service_sigungu_payload\\tables\\sigungu_summary.csv": "72104e0244fc1f773b6f2d93be4cd3c97356e31f3ee2ee891a2bde41bdad3e12",
+    "analysis\\service_sigungu_payload\\tables\\validation_checks.csv": "394299d53cd77b5144eee498d929ad96fc2ca523183361da1885bd53c01f026e",
+    "analysis\\service_sigungu_payload\\validate_outputs.py": "531fac2e036d7e5f381e16f6a1a7a26ff80127ce6842ac09a33b1b7ac13c6cf3",
+    "analysis\\service_sigungu_payload\\validation_summary.json": "fad246c36241da9c457057a22f89ff458d25f680403c7db1c697a4d204a6c899",
+    "data\\ABP_CONTEST_DATA.csv": "031c3a5ca96d4873a7b7f17869458e4f2ca3452c45cf4c45ff46baca44058c26"
+  },
+  "geometry_missing": [
+    "경기도|부천시 소사구",
+    "경기도|부천시 오정구",
+    "경기도|부천시 원미구",
+    "대구광역시|군위군",
+    "세종특별자치시|세종특별자치시"
+  ],
+  "authority": [
+    "candidate_handoff.csv",
+    "region_candidate_summary.csv"
+  ],
+  "notes": [
+    "No model fitting or candidate recalculation",
+    "Legacy service candidate flags are never imported",
+    "Nulls are preserved; monetary unit KRW, counts transactions",
+    "Food aggregate sums industry expectations; legacy core9 direct aggregate is a distinct model and is not substituted"
+  ]
+}
