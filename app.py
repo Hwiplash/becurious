@@ -5,7 +5,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
-from src.charts import industry_bar, monthly_trend, regional_ranking, segment_chart
+from src.charts import industry_bar, monthly_count_trend, monthly_sales_trend, regional_ranking, segment_chart
 from src.data import default_data_path, default_indices_path, load_csv, load_indices
 from src.dashboard_components import (
     chart_label,
@@ -126,8 +126,11 @@ if mode == "지역별":
         region_indices = index_snapshot(indices, sido, industry=industry)
         render_index_cards(region_indices, regional=True)
         st.markdown("<div class='section-kicker'>REGIONAL SIGNALS</div><div class='section-title'>강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(region, region_indices)
-        chart_label("월별 매출·이용 건수 추이")
-        st.plotly_chart(monthly_trend(region),width="stretch",key=f"region_trend_{sido}_{industry}"); left,right=st.columns(2,gap="large")
+        chart_label("월별 매출액 추이")
+        st.plotly_chart(monthly_sales_trend(region),width="stretch",key=f"region_sales_trend_{sido}_{industry}")
+        chart_label("월별 이용건수 추이")
+        st.plotly_chart(monthly_count_trend(region),width="stretch",key=f"region_count_trend_{sido}_{industry}")
+        left,right=st.columns(2,gap="large")
         with left:
             chart_label("업종별 매출 TOP 10" if industry == "업종 전체" else f"{industry} 매출 규모")
             st.plotly_chart(industry_bar(region),width="stretch",key=f"region_industry_{sido}_{industry}")
@@ -149,11 +152,13 @@ if mode == "지역별":
         local_indices = index_snapshot(indices, sido, ccg, industry)
         render_index_cards(local_indices)
         st.markdown("<div class='section-kicker'>LOCAL SIGNALS</div><div class='section-title'>강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(local, local_indices)
-        chart_label("월별 매출·이용 건수 추이")
         forecast = prediction_band(sido, ccg, industry)
-        st.plotly_chart(monthly_trend(local, forecast),width="stretch",key=f"local_trend_{sido}_{ccg}_{industry}")
+        chart_label("월별 매출액 및 회귀 기대범위")
+        st.plotly_chart(monthly_sales_trend(local, forecast),width="stretch",key=f"local_sales_trend_{sido}_{ccg}_{industry}")
         if forecast is not None:
-            st.caption("점선은 구조보정 회귀 기대매출입니다. 음영은 6개월 합계의 90% 예측범위를 월별 기대매출 비중으로 배분한 참고 범위이며, 월별 독립 예측구간은 아닙니다.")
+            st.caption("초록 실선은 실제 매출, 주황 점선은 구조보정 회귀 기대매출입니다. 주황 음영은 6개월 합계의 90% 예측범위를 월별 기대매출 비중으로 배분한 참고 범위이며, 월별 독립 예측구간은 아닙니다.")
+        chart_label("월별 이용건수 추이")
+        st.plotly_chart(monthly_count_trend(local),width="stretch",key=f"local_count_trend_{sido}_{ccg}_{industry}")
         left,right=st.columns(2,gap="large")
         with left:
             chart_label("업종별 매출 TOP 10" if industry == "업종 전체" else f"{industry} 매출 규모")
@@ -167,8 +172,10 @@ else:
     heading="업종별 전국 비교" if industry=="업종 전체" else f"{industry} 전국 분석"
     st.markdown(f"<div class='section-kicker'>INDUSTRY VIEW</div><div class='section-title'>{html.escape(heading)}</div>",unsafe_allow_html=True)
     render_metrics(frame); st.markdown("<div class='section-kicker'>INDUSTRY SIGNALS</div><div class='section-title'>업종의 강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(frame)
-    chart_label("월별 매출·이용 건수 추이")
-    st.plotly_chart(monthly_trend(frame),width="stretch",key=f"industry_trend_{industry}")
+    chart_label("월별 매출액 추이")
+    st.plotly_chart(monthly_sales_trend(frame),width="stretch",key=f"industry_sales_trend_{industry}")
+    chart_label("월별 이용건수 추이")
+    st.plotly_chart(monthly_count_trend(frame),width="stretch",key=f"industry_count_trend_{industry}")
     if industry == "업종 전체":
         ranking=regional_ranking(frame,"SIDO_NM")
     else:

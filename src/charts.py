@@ -46,7 +46,7 @@ def style(fig: go.Figure, height: int = 340) -> go.Figure:
     return fig
 
 
-def monthly_trend(df: pd.DataFrame, forecast: pd.DataFrame | None = None) -> go.Figure:
+def monthly_sales_trend(df: pd.DataFrame, forecast: pd.DataFrame | None = None) -> go.Figure:
     monthly = df.groupby("month", as_index=False).agg(매출액=("amt", "sum"), 이용건수=("cnt", "sum"))
     fig = go.Figure()
     if forecast is not None and not forecast.empty:
@@ -65,22 +65,37 @@ def monthly_trend(df: pd.DataFrame, forecast: pd.DataFrame | None = None) -> go.
             hovertemplate="회귀 기대매출 %{y:,.0f}원<extra></extra>",
         ))
     fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["매출액"], name="매출액", mode="lines+markers", line=dict(color=PALETTE[0], width=3), fill="tozeroy", fillcolor="rgba(34,211,167,.10)"))
-    fig.add_trace(go.Scatter(x=monthly["month"], y=monthly["이용건수"], name="이용건수", mode="lines+markers", line=dict(color=PALETTE[1], width=2), yaxis="y2"))
     money_max = float(monthly["매출액"].max())
     if forecast is not None and not forecast.empty:
         money_max = max(money_max, float(forecast["upper90_amt"].max()))
     tickvals, ticktext, money_unit = _axis_ticks(money_max, "money")
-    countvals, counttext, count_unit = _axis_ticks(float(monthly["이용건수"].max()), "count")
     fig.update_layout(
         yaxis=dict(title=f"매출액 ({money_unit})", tickvals=tickvals, ticktext=ticktext),
-        yaxis2=dict(title=f"이용건수 ({count_unit})", overlaying="y", side="right", tickvals=countvals, ticktext=counttext),
         hovermode="x unified",
+        showlegend=False,
     )
-    fig = style(fig, 390)
+    fig = style(fig, 340)
+    fig.update_layout(margin=dict(l=12, r=12, t=30, b=24))
+    return fig
+
+
+def monthly_count_trend(df: pd.DataFrame) -> go.Figure:
+    monthly = df.groupby("month", as_index=False).agg(이용건수=("cnt", "sum"))
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=monthly["month"], y=monthly["이용건수"], name="이용건수",
+        mode="lines+markers", line=dict(color=PALETTE[1], width=3),
+        fill="tozeroy", fillcolor="rgba(77,163,255,.10)",
+        hovertemplate="이용건수 %{y:,.0f}건<extra></extra>",
+    ))
+    countvals, counttext, count_unit = _axis_ticks(float(monthly["이용건수"].max()), "count")
     fig.update_layout(
-        legend=dict(orientation="h", yanchor="bottom", y=1.2, xanchor="left", x=0),
-        margin=dict(l=12, r=12, t=96, b=24),
+        yaxis=dict(title=f"이용건수 ({count_unit})", tickvals=countvals, ticktext=counttext),
+        hovermode="x unified",
+        showlegend=False,
     )
+    fig = style(fig, 300)
+    fig.update_layout(margin=dict(l=12, r=12, t=30, b=24))
     return fig
 
 
