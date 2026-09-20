@@ -75,7 +75,7 @@ region_key = df["SIDO_NM"].str.strip() + "|" + df["CCG_NM"].str.strip()
 - `food_aggregate`: 외식 합계의 실제·기대 금액과 건수
 - `final_signals`: 최종 외식 전반·특정 업종 신호
 - `industry_signals`: 외식업종별 구조보정 결과
-- `monthly`: 월별 실제·기대 소비와 90% 예측구간 중심·하한·상한
+- `monthly`: 전체 9개 업종·전체 업종 합계·외식 합계의 월별 실제·기대 소비와 90% 예측구간
 - `customer_composition`: 연령·성별 결제 구성
 - `grocery_context`: 장보기 업종과의 동반 저조 여부
 - `model_warnings`: 보정과 해석 시 주의사항
@@ -85,7 +85,24 @@ region_key = df["SIDO_NM"].str.strip() + "|" + df["CCG_NM"].str.strip()
 
 ### 월별 그래프와 예측구간 밴드
 
-월별 실제금액·건수 선에는 `actual_amt`, `actual_cnt`를 사용한다. 90% 예측구간 밴드는 각각 `lower90_amt`~`upper90_amt`, `lower90_cnt`~`upper90_cnt`를 사용하고, 밴드 중심선은 `pi_center_amt`, `pi_center_cnt`를 사용한다. 기존 `expected_amt`, `expected_cnt`는 반복 OOF 평균이므로 구간 중심과 정확히 같지 않다.
+모든 지역 객체의 `monthly`에는 지역당 66개 행이 있다. 구성은 `core9` 전체 업종 합계 6개월, 외식 합계 6개월, 9개 개별 업종 54개 행이다. 따라서 251개 지역 전체에는 16,566개 월별 행이 존재한다.
+
+| scope | 화면 표시 |
+|---|---|
+| `core9` | 전체 업종(9개) |
+| `4004` | 대형할인점 |
+| `4010` | 편의점 |
+| `4020` | 슈퍼마켓 |
+| `8001` | 일반한식 |
+| `8004` | 일식회집 |
+| `8005` | 중국음식 |
+| `8006` | 서양음식 |
+| `8021` | 스넥 |
+| `8301` | 제과점 |
+
+관측되지 않은 지역×업종×월 조합도 행을 유지한다. 이 경우 `data_available=false`, 실제·기대값과 구간값은 `null`이며 0으로 바꾸지 않는다.
+
+월별 실제금액·건수 선에는 `actual_amt`, `actual_cnt`를 사용한다. 90% 예측구간 밴드는 각각 `lower90_amt`~`upper90_amt`, `lower90_cnt`~`upper90_cnt`를 사용하고, 밴드 중심선은 `pi_center_amt`, `pi_center_cnt`를 사용한다. `scope=core9` 행을 사용하면 시군구별 전체 9개 업종 합계의 월별 상·하한을 그릴 수 있다. 전체 업종 구간은 개별 업종 상·하한의 합이 아니라 별도 합계모형에서 산출한 값이다. 기존 `expected_amt`, `expected_cnt`는 반복 OOF 평균이므로 구간 중심과 정확히 같지 않다.
 
 밴드는 실제값이 아니라 구간 중심을 둘러싸도록 그린다. `prediction_interval_available=false`이면 밴드를 표시하지 않으며, `calibration_ok_amt` 또는 `calibration_ok_cnt`가 거짓이면 툴팁에 보정 주의를 표시한다. 이 구간은 미래 월 예측이 아니라 같은 월의 지역 간 구조 차이를 반영한 진단용 split-conformal 구간이다.
 

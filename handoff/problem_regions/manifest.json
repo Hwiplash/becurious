@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "analysis_version": "final_food_problem_detection",
   "regions": 251,
   "final_candidate_regions": 90,
@@ -56,9 +56,13 @@
     {
       "path": "analysis\\problem_region_detection\\tables\\intervals_by_repeat.csv.gz",
       "sha256": "6fcc70d1b8ba984ac04d0bd51c0e93b257883520e37b815443bcaf48d769aaa0"
+    },
+    {
+      "path": "analysis\\problem_region_detection\\tables\\monthly_signals.csv",
+      "sha256": "9d3bf6891b19475bc8d92d845f50a597be3942e37c5e0bd4727670d4c2ab014f"
     }
   ],
-  "payload_sha256": "68171c84c1a4dc27ff9fe7e5204c384c8ba5f422db4dd3da37231d4ff2c18693",
+  "payload_sha256": "369db2fefefa7762eea62a58a1daffed61aeae8578592381416e9e3f21eeaa4d",
   "protected_files_unchanged": 64,
   "protected_sha256": {
     "analysis\\final_food_problem_detection\\.mplconfig\\fontlist-v3.11.0.json": "001dd1a2c4f925566aa26aa0b74aca66c6f1e366444044c4add896e9025f1e13",
@@ -142,12 +146,13 @@
     "Legacy service candidate flags are never imported",
     "Nulls are preserved; monetary unit KRW, counts transactions",
     "Food aggregate sums industry expectations; legacy core9 direct aggregate is a distinct model and is not substituted",
-    "Monthly amount and count bands are calibrated at region-scope-month level; aggregate bands are not sums of industry endpoints"
+    "Monthly amount and count bands are calibrated at region-scope-month level; aggregate bands are not sums of industry endpoints",
+    "Full 251-region x 9-industry x 6-month grid is retained; unobserved cells are null, never zero"
   ],
   "monthly_prediction_intervals": {
     "level": 0.9,
-    "rows": 10464,
-    "available_rows": 10458,
+    "rows": 16566,
+    "available_rows": 16134,
     "period": "202601-202606",
     "amount_fields": [
       "pi_center_amt",
@@ -160,6 +165,23 @@
       "upper90_cnt"
     ],
     "individual_source": "existing M9 monthly split-conformal intervals",
-    "aggregate_source": "sum held-out M9 predictions before monthly split-conformal calibration"
+    "aggregate_source": "sum held-out M9 predictions before monthly split-conformal calibration",
+    "regions": 251,
+    "months": 6,
+    "industry_grid_rows": 13554,
+    "core9_aggregate_rows": 1506,
+    "food_aggregate_rows": 1506,
+    "industry_scopes": [
+      "4004",
+      "4010",
+      "4020",
+      "8001",
+      "8004",
+      "8005",
+      "8006",
+      "8021",
+      "8301"
+    ],
+    "core9_interval_source": "existing M9 monthly split-conformal aggregate model"
   }
 }

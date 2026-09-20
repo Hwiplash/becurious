@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Completed M9 food diagnosis with monthly prediction intervals: one sigungu",
+  "title": "Completed M9 food diagnosis with full monthly industry grid and prediction intervals: one sigungu",
   "type": "object",
   "required": [
     "schema_version",
@@ -22,7 +22,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "1.1"
+      "const": "1.2"
     },
     "analysis_version": {
       "const": "final_food_problem_detection"
@@ -140,7 +140,10 @@
           "upper90_cnt",
           "prediction_interval_level",
           "prediction_interval_available",
-          "prediction_interval_source"
+          "prediction_interval_source",
+          "actual_cnt",
+          "expected_cnt",
+          "data_available"
         ],
         "properties": {
           "month": {
@@ -210,6 +213,24 @@
           "prediction_interval_source": {
             "type": "string",
             "minLength": 1
+          },
+          "scope": {
+            "type": "string"
+          },
+          "food_scope": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string"
+          },
+          "actual_cnt": {
+            "$ref": "#/$defs/nullableNumber"
+          },
+          "expected_cnt": {
+            "$ref": "#/$defs/nullableNumber"
+          },
+          "data_available": {
+            "type": "boolean"
           }
         }
       }
