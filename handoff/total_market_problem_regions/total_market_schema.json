@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "region_key",
+    "population_scope",
+    "monthly",
+    "population_comparison",
+    "personal_customer_structure"
+  ],
+  "properties": {
+    "population_scope": {
+      "const": "all_customer_codes"
+    },
+    "monthly": {
+      "type": "array",
+      "minItems": 60,
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "required": [
+          "month",
+          "scope",
+          "population_scope",
+          "actual_amt",
+          "expected_amt",
+          "pi_center_amt",
+          "lower90_amt",
+          "upper90_amt",
+          "actual_cnt",
+          "expected_cnt",
+          "pi_center_cnt",
+          "lower90_cnt",
+          "upper90_cnt",
+          "prediction_interval_available",
+          "band_status",
+          "band_message",
+          "ratio_amt",
+          "ratio_cnt",
+          "gap_amt",
+          "gap_cnt",
+          "ticket_ratio",
+          "amount_count_ticket_path"
+        ],
+        "properties": {
+          "actual_amt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "expected_amt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "pi_center_amt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lower90_amt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "upper90_amt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "actual_cnt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "expected_cnt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "pi_center_cnt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lower90_cnt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "upper90_cnt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "ratio_amt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "ratio_cnt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "gap_amt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "gap_cnt": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "ticket_ratio": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "population_scope": {
+            "const": "all_customer_codes"
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 202601,
+            "maximum": 202606
+          },
+          "prediction_interval_available": {
+            "type": "boolean"
+          },
+          "band_status": {
+            "enum": [
+              "available",
+              "calibration_caution",
+              "unavailable"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2512 @@
+[
+  {
+    "region_key": "강원특별자치도|강릉시",
+    "line": 0,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07668465758251489
+  },
+  {
+    "region_key": "강원특별자치도|고성군",
+    "line": 1,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.1056634964598848
+  },
+  {
+    "region_key": "강원특별자치도|동해시",
+    "line": 2,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06596243457690339
+  },
+  {
+    "region_key": "강원특별자치도|삼척시",
+    "line": 3,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06319215174257649
+  },
+  {
+    "region_key": "강원특별자치도|속초시",
+    "line": 4,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.07467531281820074
+  },
+  {
+    "region_key": "강원특별자치도|양구군",
+    "line": 5,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10607019111903007
+  },
+  {
+    "region_key": "강원특별자치도|양양군",
+    "line": 6,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08226595719150812
+  },
+  {
+    "region_key": "강원특별자치도|영월군",
+    "line": 7,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08131355830193035
+  },
+  {
+    "region_key": "강원특별자치도|원주시",
+    "line": 8,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08947641941383232
+  },
+  {
+    "region_key": "강원특별자치도|인제군",
+    "line": 9,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.052503312224234544
+  },
+  {
+    "region_key": "강원특별자치도|정선군",
+    "line": 10,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1607517637381177
+  },
+  {
+    "region_key": "강원특별자치도|철원군",
+    "line": 11,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.05601640988976733
+  },
+  {
+    "region_key": "강원특별자치도|춘천시",
+    "line": 12,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07622661418566767
+  },
+  {
+    "region_key": "강원특별자치도|태백시",
+    "line": 13,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08916122624362505
+  },
+  {
+    "region_key": "강원특별자치도|평창군",
+    "line": 14,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10385762432088436
+  },
+  {
+    "region_key": "강원특별자치도|홍천군",
+    "line": 15,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.07956601608297666
+  },
+  {
+    "region_key": "강원특별자치도|화천군",
+    "line": 16,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.0788219533783902
+  },
+  {
+    "region_key": "강원특별자치도|횡성군",
+    "line": 17,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08741677152690394
+  },
+  {
+    "region_key": "경기도|가평군",
+    "line": 18,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08196248066807228
+  },
+  {
+    "region_key": "경기도|고양시 덕양구",
+    "line": 19,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06440105704767213
+  },
+  {
+    "region_key": "경기도|고양시 일산동구",
+    "line": 20,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.07715662656331064
+  },
+  {
+    "region_key": "경기도|고양시 일산서구",
+    "line": 21,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07764253050727661
+  },
+  {
+    "region_key": "경기도|과천시",
+    "line": 22,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08374826787095878
+  },
+  {
+    "region_key": "경기도|광명시",
+    "line": 23,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.06508099828032197
+  },
+  {
+    "region_key": "경기도|광주시",
+    "line": 24,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10609007608704016
+  },
+  {
+    "region_key": "경기도|구리시",
+    "line": 25,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06047414194010287
+  },
+  {
+    "region_key": "경기도|군포시",
+    "line": 26,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09082357654613914
+  },
+  {
+    "region_key": "경기도|김포시",
+    "line": 27,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.16368797670124932
+  },
+  {
+    "region_key": "경기도|남양주시",
+    "line": 28,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.06542255918111384
+  },
+  {
+    "region_key": "경기도|동두천시",
+    "line": 29,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08916027980806772
+  },
+  {
+    "region_key": "경기도|부천시 소사구",
+    "line": 30,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.13982383460037853
+  },
+  {
+    "region_key": "경기도|부천시 오정구",
+    "line": 31,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06557749588729865
+  },
+  {
+    "region_key": "경기도|부천시 원미구",
+    "line": 32,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09473592670866492
+  },
+  {
+    "region_key": "경기도|성남시 분당구",
+    "line": 33,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08807163519026072
+  },
+  {
+    "region_key": "경기도|성남시 수정구",
+    "line": 34,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10793742493219576
+  },
+  {
+    "region_key": "경기도|성남시 중원구",
+    "line": 35,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.0654445837873399
+  },
+  {
+    "region_key": "경기도|수원시 권선구",
+    "line": 36,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09353450793704716
+  },
+  {
+    "region_key": "경기도|수원시 영통구",
+    "line": 37,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09387286775038914
+  },
+  {
+    "region_key": "경기도|수원시 장안구",
+    "line": 38,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10039108654568649
+  },
+  {
+    "region_key": "경기도|수원시 팔달구",
+    "line": 39,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1661769573460985
+  },
+  {
+    "region_key": "경기도|시흥시",
+    "line": 40,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.20357848197832148
+  },
+  {
+    "region_key": "경기도|안산시 단원구",
+    "line": 41,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.22895431093394322
+  },
+  {
+    "region_key": "경기도|안산시 상록구",
+    "line": 42,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14582021236701376
+  },
+  {
+    "region_key": "경기도|안성시",
+    "line": 43,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.1575533006171454
+  },
+  {
+    "region_key": "경기도|안양시 동안구",
+    "line": 44,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06708106257459623
+  },
+  {
+    "region_key": "경기도|안양시 만안구",
+    "line": 45,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08352323851583307
+  },
+  {
+    "region_key": "경기도|양주시",
+    "line": 46,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09410912410304909
+  },
+  {
+    "region_key": "경기도|양평군",
+    "line": 47,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.062093572336884374
+  },
+  {
+    "region_key": "경기도|여주시",
+    "line": 48,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.11479048443229463
+  },
+  {
+    "region_key": "경기도|연천군",
+    "line": 49,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.06541167200625524
+  },
+  {
+    "region_key": "경기도|오산시",
+    "line": 50,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1468265542450562
+  },
+  {
+    "region_key": "경기도|용인시 기흥구",
+    "line": 51,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08385464410058854
+  },
+  {
+    "region_key": "경기도|용인시 수지구",
+    "line": 52,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08602092960434513
+  },
+  {
+    "region_key": "경기도|용인시 처인구",
+    "line": 53,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.10410941629641968
+  },
+  {
+    "region_key": "경기도|의왕시",
+    "line": 54,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07253397575217994
+  },
+  {
+    "region_key": "경기도|의정부시",
+    "line": 55,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08075416834198426
+  },
+  {
+    "region_key": "경기도|이천시",
+    "line": 56,
+    "status": {
+      "is_final_candidate": false,
+      "label": "지속성 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12818850588077174
+  },
+  {
+    "region_key": "경기도|파주시",
+    "line": 57,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09349332400609602
+  },
+  {
+    "region_key": "경기도|평택시",
+    "line": 58,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1292691200518756
+  },
+  {
+    "region_key": "경기도|포천시",
+    "line": 59,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14509556535528995
+  },
+  {
+    "region_key": "경기도|하남시",
+    "line": 60,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06430995130944449
+  },
+  {
+    "region_key": "경상남도|거제시",
+    "line": 61,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 2
+    },
+    "nonpersonal_share_amount": 0.20929147749292845
+  },
+  {
+    "region_key": "경상남도|거창군",
+    "line": 62,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14559424300228413
+  },
+  {
+    "region_key": "경상남도|고성군",
+    "line": 63,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.16927688125520046
+  },
+  {
+    "region_key": "경상남도|김해시",
+    "line": 64,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.1559309825122358
+  },
+  {
+    "region_key": "경상남도|남해군",
+    "line": 65,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.16827897949428006
+  },
+  {
+    "region_key": "경상남도|밀양시",
+    "line": 66,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09642319326794635
+  },
+  {
+    "region_key": "경상남도|사천시",
+    "line": 67,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12106490503269958
+  },
+  {
+    "region_key": "경상남도|산청군",
+    "line": 68,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.06996828684542238
+  },
+  {
+    "region_key": "경상남도|양산시",
+    "line": 69,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08080253090612921
+  },
+  {
+    "region_key": "경상남도|의령군",
+    "line": 70,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10076147096166788
+  },
+  {
+    "region_key": "경상남도|진주시",
+    "line": 71,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10161855537434317
+  },
+  {
+    "region_key": "경상남도|창녕군",
+    "line": 72,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.15104113688189721
+  },
+  {
+    "region_key": "경상남도|창원시 마산합포구",
+    "line": 73,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1082547788947241
+  },
+  {
+    "region_key": "경상남도|창원시 마산회원구",
+    "line": 74,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14836731082724375
+  },
+  {
+    "region_key": "경상남도|창원시 성산구",
+    "line": 75,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12565828322614117
+  },
+  {
+    "region_key": "경상남도|창원시 의창구",
+    "line": 76,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.13492296402370718
+  },
+  {
+    "region_key": "경상남도|창원시 진해구",
+    "line": 77,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.19181131090024023
+  },
+  {
+    "region_key": "경상남도|통영시",
+    "line": 78,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12166032094089504
+  },
+  {
+    "region_key": "경상남도|하동군",
+    "line": 79,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.13239507864845498
+  },
+  {
+    "region_key": "경상남도|함안군",
+    "line": 80,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14897063072860675
+  },
+  {
+    "region_key": "경상남도|함양군",
+    "line": 81,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10240851745255458
+  },
+  {
+    "region_key": "경상남도|합천군",
+    "line": 82,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.13257420002400758
+  },
+  {
+    "region_key": "경상북도|경산시",
+    "line": 83,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14393259554445054
+  },
+  {
+    "region_key": "경상북도|경주시",
+    "line": 84,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.13439327396525713
+  },
+  {
+    "region_key": "경상북도|고령군",
+    "line": 85,
+    "status": {
+      "is_final_candidate": false,
+      "label": "지속성 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.2112049059724415
+  },
+  {
+    "region_key": "경상북도|구미시",
+    "line": 86,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08040807087180013
+  },
+  {
+    "region_key": "경상북도|김천시",
+    "line": 87,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.15146516701582888
+  },
+  {
+    "region_key": "경상북도|문경시",
+    "line": 88,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.07764898548654411
+  },
+  {
+    "region_key": "경상북도|봉화군",
+    "line": 89,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09298090163723631
+  },
+  {
+    "region_key": "경상북도|상주시",
+    "line": 90,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.04857963421662274
+  },
+  {
+    "region_key": "경상북도|성주군",
+    "line": 91,
+    "status": {
+      "is_final_candidate": false,
+      "label": "지속성 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.17297258970305235
+  },
+  {
+    "region_key": "경상북도|안동시",
+    "line": 92,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09563684991516909
+  },
+  {
+    "region_key": "경상북도|영덕군",
+    "line": 93,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09813451962507323
+  },
+  {
+    "region_key": "경상북도|영양군",
+    "line": 94,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.3985647288808515
+  },
+  {
+    "region_key": "경상북도|영주시",
+    "line": 95,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09821363777543621
+  },
+  {
+    "region_key": "경상북도|영천시",
+    "line": 96,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1233136206453238
+  },
+  {
+    "region_key": "경상북도|예천군",
+    "line": 97,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09291944439532457
+  },
+  {
+    "region_key": "경상북도|울릉군",
+    "line": 98,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.03864362848293374
+  },
+  {
+    "region_key": "경상북도|울진군",
+    "line": 99,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08371671419820984
+  },
+  {
+    "region_key": "경상북도|의성군",
+    "line": 100,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09854754851055997
+  },
+  {
+    "region_key": "경상북도|청도군",
+    "line": 101,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.0626259786646993
+  },
+  {
+    "region_key": "경상북도|청송군",
+    "line": 102,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07196910204606137
+  },
+  {
+    "region_key": "경상북도|칠곡군",
+    "line": 103,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.13201651013089433
+  },
+  {
+    "region_key": "경상북도|포항시 남구",
+    "line": 104,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.33396676518284835
+  },
+  {
+    "region_key": "경상북도|포항시 북구",
+    "line": 105,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.3672876229954542
+  },
+  {
+    "region_key": "광주광역시|광산구",
+    "line": 106,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.24027129001319195
+  },
+  {
+    "region_key": "광주광역시|남구",
+    "line": 107,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.27417025954814156
+  },
+  {
+    "region_key": "광주광역시|동구",
+    "line": 108,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.2507041413734164
+  },
+  {
+    "region_key": "광주광역시|북구",
+    "line": 109,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.2555378957260638
+  },
+  {
+    "region_key": "광주광역시|서구",
+    "line": 110,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.20272218858383
+  },
+  {
+    "region_key": "대구광역시|군위군",
+    "line": 111,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.17158919979643536
+  },
+  {
+    "region_key": "대구광역시|남구",
+    "line": 112,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.21669948327819885
+  },
+  {
+    "region_key": "대구광역시|달서구",
+    "line": 113,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.19387659798378062
+  },
+  {
+    "region_key": "대구광역시|달성군",
+    "line": 114,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.21633709823900504
+  },
+  {
+    "region_key": "대구광역시|동구",
+    "line": 115,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1984690863241897
+  },
+  {
+    "region_key": "대구광역시|북구",
+    "line": 116,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.18193793340824999
+  },
+  {
+    "region_key": "대구광역시|서구",
+    "line": 117,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.18794707628794655
+  },
+  {
+    "region_key": "대구광역시|수성구",
+    "line": 118,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1961023884379646
+  },
+  {
+    "region_key": "대구광역시|중구",
+    "line": 119,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1870500364459307
+  },
+  {
+    "region_key": "대전광역시|대덕구",
+    "line": 120,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10955047672462143
+  },
+  {
+    "region_key": "대전광역시|동구",
+    "line": 121,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10921897543877211
+  },
+  {
+    "region_key": "대전광역시|서구",
+    "line": 122,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.10312484329610173
+  },
+  {
+    "region_key": "대전광역시|유성구",
+    "line": 123,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 2
+    },
+    "nonpersonal_share_amount": 0.10960580733170214
+  },
+  {
+    "region_key": "대전광역시|중구",
+    "line": 124,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08958362245958536
+  },
+  {
+    "region_key": "부산광역시|강서구",
+    "line": 125,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1182069580256472
+  },
+  {
+    "region_key": "부산광역시|금정구",
+    "line": 126,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12296147759117139
+  },
+  {
+    "region_key": "부산광역시|기장군",
+    "line": 127,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.1044276713616018
+  },
+  {
+    "region_key": "부산광역시|남구",
+    "line": 128,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1391720635414216
+  },
+  {
+    "region_key": "부산광역시|동구",
+    "line": 129,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1387504582301784
+  },
+  {
+    "region_key": "부산광역시|동래구",
+    "line": 130,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09938571167030999
+  },
+  {
+    "region_key": "부산광역시|부산진구",
+    "line": 131,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.11389525563542074
+  },
+  {
+    "region_key": "부산광역시|북구",
+    "line": 132,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09701775292716781
+  },
+  {
+    "region_key": "부산광역시|사상구",
+    "line": 133,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 2
+    },
+    "nonpersonal_share_amount": 0.1214380793044073
+  },
+  {
+    "region_key": "부산광역시|사하구",
+    "line": 134,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.13263153458626945
+  },
+  {
+    "region_key": "부산광역시|서구",
+    "line": 135,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.15564708710070918
+  },
+  {
+    "region_key": "부산광역시|수영구",
+    "line": 136,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.12415771666972346
+  },
+  {
+    "region_key": "부산광역시|연제구",
+    "line": 137,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09933685205067301
+  },
+  {
+    "region_key": "부산광역시|영도구",
+    "line": 138,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.16044026181155965
+  },
+  {
+    "region_key": "부산광역시|중구",
+    "line": 139,
+    "status": {
+      "is_final_candidate": false,
+      "label": "지속성 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.13831798783858837
+  },
+  {
+    "region_key": "부산광역시|해운대구",
+    "line": 140,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12553989345470293
+  },
+  {
+    "region_key": "서울특별시|강남구",
+    "line": 141,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10900588248053004
+  },
+  {
+    "region_key": "서울특별시|강동구",
+    "line": 142,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07189044121809512
+  },
+  {
+    "region_key": "서울특별시|강북구",
+    "line": 143,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06031020730687128
+  },
+  {
+    "region_key": "서울특별시|강서구",
+    "line": 144,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07488014639233945
+  },
+  {
+    "region_key": "서울특별시|관악구",
+    "line": 145,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09856389099419373
+  },
+  {
+    "region_key": "서울특별시|광진구",
+    "line": 146,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.1090032342615026
+  },
+  {
+    "region_key": "서울특별시|구로구",
+    "line": 147,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.15111334005266816
+  },
+  {
+    "region_key": "서울특별시|금천구",
+    "line": 148,
+    "status": {
+      "is_final_candidate": false,
+      "label": "지속성 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14910941035530723
+  },
+  {
+    "region_key": "서울특별시|노원구",
+    "line": 149,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.05988085868958603
+  },
+  {
+    "region_key": "서울특별시|도봉구",
+    "line": 150,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.05624018653293155
+  },
+  {
+    "region_key": "서울특별시|동대문구",
+    "line": 151,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09133332799372061
+  },
+  {
+    "region_key": "서울특별시|동작구",
+    "line": 152,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10219524912594584
+  },
+  {
+    "region_key": "서울특별시|마포구",
+    "line": 153,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.10551921619694818
+  },
+  {
+    "region_key": "서울특별시|서대문구",
+    "line": 154,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09782878846096162
+  },
+  {
+    "region_key": "서울특별시|서초구",
+    "line": 155,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10455156445442834
+  },
+  {
+    "region_key": "서울특별시|성동구",
+    "line": 156,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09707791177882646
+  },
+  {
+    "region_key": "서울특별시|성북구",
+    "line": 157,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08847784906604003
+  },
+  {
+    "region_key": "서울특별시|송파구",
+    "line": 158,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08239574898854024
+  },
+  {
+    "region_key": "서울특별시|양천구",
+    "line": 159,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.07263080414437519
+  },
+  {
+    "region_key": "서울특별시|영등포구",
+    "line": 160,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.14828996863996313
+  },
+  {
+    "region_key": "서울특별시|용산구",
+    "line": 161,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.12038404064605247
+  },
+  {
+    "region_key": "서울특별시|은평구",
+    "line": 162,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.05887726401710749
+  },
+  {
+    "region_key": "서울특별시|종로구",
+    "line": 163,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1032608605516283
+  },
+  {
+    "region_key": "서울특별시|중구",
+    "line": 164,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12500758125523437
+  },
+  {
+    "region_key": "서울특별시|중랑구",
+    "line": 165,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06750547177658986
+  },
+  {
+    "region_key": "세종특별자치시|세종특별자치시",
+    "line": 166,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.12195262728474777
+  },
+  {
+    "region_key": "울산광역시|남구",
+    "line": 167,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.08433652905812583
+  },
+  {
+    "region_key": "울산광역시|동구",
+    "line": 168,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14230643073548033
+  },
+  {
+    "region_key": "울산광역시|북구",
+    "line": 169,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 3
+    },
+    "nonpersonal_share_amount": 0.10543711950172169
+  },
+  {
+    "region_key": "울산광역시|울주군",
+    "line": 170,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14451163080399862
+  },
+  {
+    "region_key": "울산광역시|중구",
+    "line": 171,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07873537088654302
+  },
+  {
+    "region_key": "인천광역시|강화군",
+    "line": 172,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06894984123046843
+  },
+  {
+    "region_key": "인천광역시|계양구",
+    "line": 173,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.0754211910966307
+  },
+  {
+    "region_key": "인천광역시|남동구",
+    "line": 174,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09759443730957837
+  },
+  {
+    "region_key": "인천광역시|동구",
+    "line": 175,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.09223374863034137
+  },
+  {
+    "region_key": "인천광역시|미추홀구",
+    "line": 176,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10373112640215028
+  },
+  {
+    "region_key": "인천광역시|부평구",
+    "line": 177,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.11813723427411676
+  },
+  {
+    "region_key": "인천광역시|서구",
+    "line": 178,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1048054946687846
+  },
+  {
+    "region_key": "인천광역시|연수구",
+    "line": 179,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1702579543590873
+  },
+  {
+    "region_key": "인천광역시|옹진군",
+    "line": 180,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.05062896008591373
+  },
+  {
+    "region_key": "인천광역시|중구",
+    "line": 181,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.11823130453732227
+  },
+  {
+    "region_key": "전라남도|강진군",
+    "line": 182,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.08320508156812267
+  },
+  {
+    "region_key": "전라남도|고흥군",
+    "line": 183,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09929907462945406
+  },
+  {
+    "region_key": "전라남도|곡성군",
+    "line": 184,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1958801840402386
+  },
+  {
+    "region_key": "전라남도|광양시",
+    "line": 185,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.07572426938827284
+  },
+  {
+    "region_key": "전라남도|구례군",
+    "line": 186,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.05099811481548434
+  },
+  {
+    "region_key": "전라남도|나주시",
+    "line": 187,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12106138251713164
+  },
+  {
+    "region_key": "전라남도|담양군",
+    "line": 188,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07436068203840877
+  },
+  {
+    "region_key": "전라남도|목포시",
+    "line": 189,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.15666694124945443
+  },
+  {
+    "region_key": "전라남도|무안군",
+    "line": 190,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.098325642089253
+  },
+  {
+    "region_key": "전라남도|보성군",
+    "line": 191,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.0803949435902053
+  },
+  {
+    "region_key": "전라남도|순천시",
+    "line": 192,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.07799992265748869
+  },
+  {
+    "region_key": "전라남도|신안군",
+    "line": 193,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.11728085064003543
+  },
+  {
+    "region_key": "전라남도|여수시",
+    "line": 194,
+    "status": {
+      "is_final_candidate": false,
+      "label": "지속성 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09134680928768107
+  },
+  {
+    "region_key": "전라남도|영광군",
+    "line": 195,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.0975466683232239
+  },
+  {
+    "region_key": "전라남도|영암군",
+    "line": 196,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.3297169579487142
+  },
+  {
+    "region_key": "전라남도|완도군",
+    "line": 197,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12529114469921168
+  },
+  {
+    "region_key": "전라남도|장성군",
+    "line": 198,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09830266779404347
+  },
+  {
+    "region_key": "전라남도|장흥군",
+    "line": 199,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06238181709477258
+  },
+  {
+    "region_key": "전라남도|진도군",
+    "line": 200,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1304298808465965
+  },
+  {
+    "region_key": "전라남도|함평군",
+    "line": 201,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09004170094364598
+  },
+  {
+    "region_key": "전라남도|해남군",
+    "line": 202,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12928973871981742
+  },
+  {
+    "region_key": "전라남도|화순군",
+    "line": 203,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07087445370370896
+  },
+  {
+    "region_key": "전북특별자치도|고창군",
+    "line": 204,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10021157817352455
+  },
+  {
+    "region_key": "전북특별자치도|군산시",
+    "line": 205,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12516601831718643
+  },
+  {
+    "region_key": "전북특별자치도|김제시",
+    "line": 206,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.12373489640341089
+  },
+  {
+    "region_key": "전북특별자치도|남원시",
+    "line": 207,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10493913167142153
+  },
+  {
+    "region_key": "전북특별자치도|무주군",
+    "line": 208,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07689285927934754
+  },
+  {
+    "region_key": "전북특별자치도|부안군",
+    "line": 209,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.07516235323055659
+  },
+  {
+    "region_key": "전북특별자치도|순창군",
+    "line": 210,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.199918444404623
+  },
+  {
+    "region_key": "전북특별자치도|완주군",
+    "line": 211,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.1304268417338345
+  },
+  {
+    "region_key": "전북특별자치도|익산시",
+    "line": 212,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.10527133280767359
+  },
+  {
+    "region_key": "전북특별자치도|임실군",
+    "line": 213,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.06933354949404882
+  },
+  {
+    "region_key": "전북특별자치도|장수군",
+    "line": 214,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.2621201281837693
+  },
+  {
+    "region_key": "전북특별자치도|전주시 덕진구",
+    "line": 215,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.10732279041569069
+  },
+  {
+    "region_key": "전북특별자치도|전주시 완산구",
+    "line": 216,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.10659692495338173
+  },
+  {
+    "region_key": "전북특별자치도|정읍시",
+    "line": 217,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09923909059643964
+  },
+  {
+    "region_key": "전북특별자치도|진안군",
+    "line": 218,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.057984170868947256
+  },
+  {
+    "region_key": "제주특별자치도|서귀포시",
+    "line": 219,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.36946028472361503
+  },
+  {
+    "region_key": "제주특별자치도|제주시",
+    "line": 220,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.4235199212821372
+  },
+  {
+    "region_key": "충청남도|계룡시",
+    "line": 221,
+    "status": {
+      "is_final_candidate": true,
+      "label": "외식 전반 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.11414518377048087
+  },
+  {
+    "region_key": "충청남도|공주시",
+    "line": 222,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.11454992287632403
+  },
+  {
+    "region_key": "충청남도|금산군",
+    "line": 223,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1250126411466041
+  },
+  {
+    "region_key": "충청남도|논산시",
+    "line": 224,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14142448622171142
+  },
+  {
+    "region_key": "충청남도|당진시",
+    "line": 225,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.14283819608282708
+  },
+  {
+    "region_key": "충청남도|보령시",
+    "line": 226,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10541091332556979
+  },
+  {
+    "region_key": "충청남도|부여군",
+    "line": 227,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.17384191593102927
+  },
+  {
+    "region_key": "충청남도|서산시",
+    "line": 228,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.11357951410953834
+  },
+  {
+    "region_key": "충청남도|서천군",
+    "line": 229,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.11072609503102776
+  },
+  {
+    "region_key": "충청남도|아산시",
+    "line": 230,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.18560803219905278
+  },
+  {
+    "region_key": "충청남도|예산군",
+    "line": 231,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.10369560472348546
+  },
+  {
+    "region_key": "충청남도|천안시 동남구",
+    "line": 232,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.13639778362179553
+  },
+  {
+    "region_key": "충청남도|천안시 서북구",
+    "line": 233,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.13396477513090765
+  },
+  {
+    "region_key": "충청남도|청양군",
+    "line": 234,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.2721595293578332
+  },
+  {
+    "region_key": "충청남도|태안군",
+    "line": 235,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.1550246725048259
+  },
+  {
+    "region_key": "충청남도|홍성군",
+    "line": 236,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.11167501922414022
+  },
+  {
+    "region_key": "충청북도|괴산군",
+    "line": 237,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.24782996357421436
+  },
+  {
+    "region_key": "충청북도|단양군",
+    "line": 238,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.09077439105738955
+  },
+  {
+    "region_key": "충청북도|보은군",
+    "line": 239,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10259424981595616
+  },
+  {
+    "region_key": "충청북도|영동군",
+    "line": 240,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.10433952880764683
+  },
+  {
+    "region_key": "충청북도|옥천군",
+    "line": 241,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.0975788419210523
+  },
+  {
+    "region_key": "충청북도|음성군",
+    "line": 242,
+    "status": {
+      "is_final_candidate": false,
+      "label": "선정 기준 미충족",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.28009248446298496
+  },
+  {
+    "region_key": "충청북도|제천시",
+    "line": 243,
+    "status": {
+      "is_final_candidate": false,
+      "label": "자료·모형 확인 필요",
+      "final_signal_count": 0
+    },
+    "nonpersonal_share_amount": 0.0903660978914877
+  },
+  {
+    "region_key": "충청북도|증평군",
+    "line": 244,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.14522521062191132
+  },
+  {
+    "region_key": "충청북도|진천군",
+    "line": 245,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.25151213007213136
+  },
+  {
+    "region_key": "충청북도|청주시 상당구",
+    "line": 246,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.11141584840975573
+  },
+  {
+    "region_key": "충청북도|청주시 서원구",
+    "line": 247,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 2
+    },
+    "nonpersonal_share_amount": 0.12371763979644526
+  },
+  {
+    "region_key": "충청북도|청주시 청원구",
+    "line": 248,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.12332645750951056
+  },
+  {
+    "region_key": "충청북도|청주시 흥덕구",
+    "line": 249,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.13873931396619574
+  },
+  {
+    "region_key": "충청북도|충주시",
+    "line": 250,
+    "status": {
+      "is_final_candidate": true,
+      "label": "일부 업종 저조형",
+      "final_signal_count": 1
+    },
+    "nonpersonal_share_amount": 0.11778063920996015
+  }
+]

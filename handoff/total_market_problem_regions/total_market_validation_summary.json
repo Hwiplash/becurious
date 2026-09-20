@@ -1,0 +1,221 @@
+{
+  "required_task_checks_passed": true,
+  "all_repository_tests_passed": false,
+  "analysis_tests": 13,
+  "population_revalidation_tests": 3,
+  "new_ui_tests": 7,
+  "chart_checks": 5020,
+  "protected_files": 5914,
+  "protected_files_unchanged": true,
+  "existing_rag_test_failures": [
+    "test_rag.LocalRagTest.test_industry_alias_search_returns_standard_category",
+    "test_rag.LocalRagTest.test_local_corpus_is_ready",
+    "test_rag.LocalRagTest.test_local_search_returns_cited_results",
+    "test_rag.LocalRagTest.test_specialty_search_returns_regional_product"
+  ],
+  "rag_corpus_available": false,
+  "live_llm_api_tested": false,
+  "analysis": {
+    "passed": true,
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "checks": [
+      {
+        "test": "__main__.AnalysisTests.test_01_raw_amount_all_codes",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_02_raw_count_all_codes",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_03_personal_nonpersonal_identity",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_04_keys_unique",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_05_missing_is_not_zero",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_06_regions_disjoint_and_fixed",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_07_preprocessing_and_independent_total_refit",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_08_oof_all_rows_covered",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_09_conformal_recalibration_and_coverage",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_10_json_analysis_same_population_and_schema",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_13_aggregate_equals_observed_sum",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_14_protected_input_hashes",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_15_candidates_reproducible",
+        "passed": true
+      }
+    ],
+    "ui_tests": "pending until total-market-handoff integration"
+  },
+  "population_revalidation": {
+    "passed": true,
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "checks": [
+      {
+        "test": "__main__.AnalysisTests.test_03_personal_nonpersonal_identity",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_10_json_analysis_same_population_and_schema",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_13_aggregate_equals_observed_sum",
+        "passed": true
+      }
+    ],
+    "ui_tests": "pending until total-market-handoff integration"
+  },
+  "ui": {
+    "passed": false,
+    "new_ui_passed": true,
+    "tests": 25,
+    "new_tests": 7,
+    "failures": 4,
+    "checks": [
+      {
+        "test": "test_agent_roles.RoleInstructionsTest.test_combined_role_is_rejected",
+        "passed": true
+      },
+      {
+        "test": "test_agent_roles.RoleInstructionsTest.test_local_government_format_is_policy_specific",
+        "passed": true
+      },
+      {
+        "test": "test_agent_roles.RoleInstructionsTest.test_owner_format_is_store_specific",
+        "passed": true
+      },
+      {
+        "test": "test_agent_specialties.SpecialtyPolicyEvidenceTest.test_excludes_non_specialty_chunks",
+        "passed": true
+      },
+      {
+        "test": "test_agent_specialties.SpecialtyPolicyEvidenceTest.test_prefers_same_region_specialty_with_food_evidence",
+        "passed": true
+      },
+      {
+        "test": "test_industry_taxonomy.IndustryTaxonomyTest.test_ambiguous_alias_returns_candidates",
+        "passed": true
+      },
+      {
+        "test": "test_industry_taxonomy.IndustryTaxonomyTest.test_code_lookup",
+        "passed": true
+      },
+      {
+        "test": "test_industry_taxonomy.IndustryTaxonomyTest.test_specific_alias_resolution",
+        "passed": true
+      },
+      {
+        "test": "test_performance_compare.PerformanceCompareChartTest.test_compares_selected_industry_with_region",
+        "passed": true
+      },
+      {
+        "test": "test_problem_regions.ProblemRegionHandoffTest.test_all_industries_uses_core9_monthly_band",
+        "passed": true
+      },
+      {
+        "test": "test_problem_regions.ProblemRegionHandoffTest.test_handoff_has_unique_region_records",
+        "passed": true
+      },
+      {
+        "test": "test_problem_regions.ProblemRegionHandoffTest.test_prediction_band_uses_monthly_handoff_bounds",
+        "passed": true
+      },
+      {
+        "test": "test_problem_regions.ProblemRegionHandoffTest.test_sales_and_count_charts_are_separate_without_legends",
+        "passed": true
+      },
+      {
+        "test": "test_rag.LocalRagTest.test_industry_alias_search_returns_standard_category",
+        "passed": false,
+        "error": "Traceback (most recent call last):\n  File \"C:\\Users\\Yang\\Desktop\\독수리\\와빅\\26-2 DA\\BC카드 공모전\\becurious_repo\\tests\\test_rag.py\", line 31, in test_industry_alias_search_returns_standard_category\n    self.assertEqual(results[0].get(\"industry_code\"), \"8005\")\n                     ~~~~~~~^^^\nIndexError: list index out of range\n"
+      },
+      {
+        "test": "test_rag.LocalRagTest.test_local_corpus_is_ready",
+        "passed": false,
+        "error": "Traceback (most recent call last):\n  File \"C:\\Users\\Yang\\Desktop\\독수리\\와빅\\26-2 DA\\BC카드 공모전\\becurious_repo\\tests\\test_rag.py\", line 10, in test_local_corpus_is_ready\n    self.assertTrue(local_corpus_ready())\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true\n"
+      },
+      {
+        "test": "test_rag.LocalRagTest.test_local_search_returns_cited_results",
+        "passed": false,
+        "error": "Traceback (most recent call last):\n  File \"C:\\Users\\Yang\\Desktop\\독수리\\와빅\\26-2 DA\\BC카드 공모전\\becurious_repo\\tests\\test_rag.py\", line 14, in test_local_search_returns_cited_results\n    self.assertTrue(results)\n    ~~~~~~~~~~~~~~~^^^^^^^^^\nAssertionError: [] is not true\n"
+      },
+      {
+        "test": "test_rag.LocalRagTest.test_rrf_merge_rewards_results_found_by_both_searches",
+        "passed": true
+      },
+      {
+        "test": "test_rag.LocalRagTest.test_specialty_search_returns_regional_product",
+        "passed": false,
+        "error": "Traceback (most recent call last):\n  File \"C:\\Users\\Yang\\Desktop\\독수리\\와빅\\26-2 DA\\BC카드 공모전\\becurious_repo\\tests\\test_rag.py\", line 27, in test_specialty_search_returns_regional_product\n    self.assertTrue(any(item.get(\"specialty\") == \"망개떡\" for item in results))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true\n"
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_11_12_all_total_actual_expected_chart_traces_match_json",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_bad_workbook_sheet_is_not_loaded",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_customer_composition_excludes_foreign_and_corporate",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_mixed_population_chart_is_rejected",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_personal_series_preserves_personal_actual_expected_and_center",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_rag_has_separate_populations_and_limits",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_streamlit_total_default_and_personal_switch",
+        "passed": true
+      }
+    ],
+    "rag_corpus_files": {
+      "data/processed/chunks.json": false,
+      "data/processed/case_cards.json": false,
+      "data/processed/specialty_chunks.json": false,
+      "data/processed/industry_taxonomy_chunks.json": false
+    },
+    "status": "기존 RAG 말뭉치 부재 실패 포함; 세부 테스트 확인",
+    "note": "src/rag.py 및 tests/test_rag.py는 main과 동일. 말뭉치는 작업 전부터 없음. 실패를 skip하거나 더미 데이터로 대체하지 않음."
+  }
+}

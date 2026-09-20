@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "population_scope": "all_customer_codes",
+  "display_name": "전체 고객코드 BC 이용금액",
+  "regions": 251,
+  "monthly_rows": 15060,
+  "industry_codes": [
+    "4004",
+    "4010",
+    "4020",
+    "8001",
+    "8004",
+    "8005",
+    "8006",
+    "8021",
+    "8301"
+  ],
+  "analysis_period": [
+    "202601",
+    "202606"
+  ],
+  "point_prediction": "mean of 10 region-held-out OOF M9; monthly pooled daily targets with month effect",
+  "interval": "repeat 0 split conformal, proper_train / calibration / outer test disjoint regions",
+  "detection_monthly": "inherited per-month static-feature M9; separate from pooled monthly display model",
+  "candidate_regions": 82,
+  "payload_sha256": "e71bf9b55877af824eaeee4eba02919068093f364aeb730d174973aa5a44bfd1",
+  "interpretation_limits": [
+    "전체 고객코드 BC 관측 이용금액·건수이며 전체 카드시장 또는 실제 지역 총매출이 아닙니다.",
+    "고객코드 1·2는 내국인 개인, 3은 성별 구분 없는 외국인, x는 법인입니다. AGE_CD x는 법인의 연령 미적용 코드입니다.",
+    "전체 상권은 내국인 개인·외국인·법인을 포함합니다. 연령·성별 고객구조는 내국인 개인만 분석합니다.",
+    "외국인·법인 이용금액은 분리 집계했으나 각 집단의 인과효과를 분리 추정한 모형은 아닙니다.",
+    "주민등록인구는 지역 구조 설명변수이며 BC 이용자의 거주지 또는 동일 모집단을 뜻하지 않습니다.",
+    "잔차와 낮은 소비는 추가 검증 신호이며 정책 문제나 상권 쇠퇴의 확정 판정이 아닙니다.",
+    "월별 구간은 지역 OOF 진단용 90% 예측구간이며 미래 전망 또는 평균의 신뢰구간이 아닙니다."
+  ],
+  "validation_status": "required_task_checks_passed",
+  "ui_default_population": "all_customer_codes",
+  "all_repository_tests_passed": false,
+  "existing_rag_test_failures": 4,
+  "population_definitions": {
+    "domestic_personal": [
+      "1",
+      "2"
+    ],
+    "foreign": [
+      "3"
+    ],
+    "corporate": [
+      "x"
+    ],
+    "total_market": [
+      "1",
+      "2",
+      "3",
+      "x"
+    ]
+  },
+  "population_aliases": {
+    "personal": "domestic_personal",
+    "all_customer_codes": "total_market"
+  },
+  "source_branch": "total-market-handoff",
+  "base_commit": "affc75d67069b20a5a784fd6dcc99544c0e33005",
+  "committed": false,
+  "pushed": false
+}
