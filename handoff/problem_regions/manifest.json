@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "analysis_version": "final_food_problem_detection",
   "regions": 251,
   "final_candidate_regions": 90,
@@ -40,9 +40,25 @@
     {
       "path": "analysis\\service_sigungu_payload\\tables\\sigungu_cohort_summary.csv",
       "sha256": "1dcf049b445e7c5d6d481f97efea2b6e79c0c06b0ca9b81167bf83040d9a4bf4"
+    },
+    {
+      "path": "analysis\\residual_analysis\\tables\\monthly_analysis_input.csv.gz",
+      "sha256": "8ee2b5fafb0a674c34834cb436f3456af07b8880166bc1acfcfdee42cdcd93a2"
+    },
+    {
+      "path": "analysis\\residual_analysis\\tables\\monthly_conformal_region_roles.csv.gz",
+      "sha256": "295fc4a22158d42c58df0b71977d8219aa0e03d09a7d46058298833b5f5104ec"
+    },
+    {
+      "path": "analysis\\structural_baseline_model\\tables\\model_feature_dictionary.csv",
+      "sha256": "bb0ca56924b652f8db423b208796becb12c893f20b30217a38fd16ee169ac0e7"
+    },
+    {
+      "path": "analysis\\problem_region_detection\\tables\\intervals_by_repeat.csv.gz",
+      "sha256": "6fcc70d1b8ba984ac04d0bd51c0e93b257883520e37b815443bcaf48d769aaa0"
     }
   ],
-  "payload_sha256": "02f7d95d5d38023e9392aaf4a8fa464eaf99fac97a85fa7f949a39be7da472e1",
+  "payload_sha256": "68171c84c1a4dc27ff9fe7e5204c384c8ba5f422db4dd3da37231d4ff2c18693",
   "protected_files_unchanged": 64,
   "protected_sha256": {
     "analysis\\final_food_problem_detection\\.mplconfig\\fontlist-v3.11.0.json": "001dd1a2c4f925566aa26aa0b74aca66c6f1e366444044c4add896e9025f1e13",
@@ -125,6 +141,25 @@
     "No model fitting or candidate recalculation",
     "Legacy service candidate flags are never imported",
     "Nulls are preserved; monetary unit KRW, counts transactions",
-    "Food aggregate sums industry expectations; legacy core9 direct aggregate is a distinct model and is not substituted"
-  ]
+    "Food aggregate sums industry expectations; legacy core9 direct aggregate is a distinct model and is not substituted",
+    "Monthly amount and count bands are calibrated at region-scope-month level; aggregate bands are not sums of industry endpoints"
+  ],
+  "monthly_prediction_intervals": {
+    "level": 0.9,
+    "rows": 10464,
+    "available_rows": 10458,
+    "period": "202601-202606",
+    "amount_fields": [
+      "pi_center_amt",
+      "lower90_amt",
+      "upper90_amt"
+    ],
+    "count_fields": [
+      "pi_center_cnt",
+      "lower90_cnt",
+      "upper90_cnt"
+    ],
+    "individual_source": "existing M9 monthly split-conformal intervals",
+    "aggregate_source": "sum held-out M9 predictions before monthly split-conformal calibration"
+  }
 }

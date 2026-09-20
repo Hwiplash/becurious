@@ -75,13 +75,19 @@ region_key = df["SIDO_NM"].str.strip() + "|" + df["CCG_NM"].str.strip()
 - `food_aggregate`: 외식 합계의 실제·기대 금액과 건수
 - `final_signals`: 최종 외식 전반·특정 업종 신호
 - `industry_signals`: 외식업종별 구조보정 결과
-- `monthly`: 월별 실제·기대 소비
+- `monthly`: 월별 실제·기대 소비와 90% 예측구간 중심·하한·상한
 - `customer_composition`: 연령·성별 결제 구성
 - `grocery_context`: 장보기 업종과의 동반 저조 여부
 - `model_warnings`: 보정과 해석 시 주의사항
 - `interpretation_boundary`: 화면과 LLM에 함께 전달할 해석 한계
 
 값이 없는 경우는 JSON `null`이다. `null`을 숫자 0으로 바꾸지 않는다. 금액 단위는 원, 거래건수 단위는 건이다.
+
+### 월별 그래프와 예측구간 밴드
+
+월별 실제금액·건수 선에는 `actual_amt`, `actual_cnt`를 사용한다. 90% 예측구간 밴드는 각각 `lower90_amt`~`upper90_amt`, `lower90_cnt`~`upper90_cnt`를 사용하고, 밴드 중심선은 `pi_center_amt`, `pi_center_cnt`를 사용한다. 기존 `expected_amt`, `expected_cnt`는 반복 OOF 평균이므로 구간 중심과 정확히 같지 않다.
+
+밴드는 실제값이 아니라 구간 중심을 둘러싸도록 그린다. `prediction_interval_available=false`이면 밴드를 표시하지 않으며, `calibration_ok_amt` 또는 `calibration_ok_cnt`가 거짓이면 툴팁에 보정 주의를 표시한다. 이 구간은 미래 월 예측이 아니라 같은 월의 지역 간 구조 차이를 반영한 진단용 split-conformal 구간이다.
 
 ## LLM 연결
 

@@ -1,11 +1,16 @@
 {
-  "tests_run": 18,
-  "passed": 18,
+  "tests_run": 26,
+  "passed": 26,
   "failed": 0,
   "errors": 0,
   "skipped": 0,
   "failures": [],
-  "network_calls": "mocked; no paid LLM calls",
+  "network_calls": "none",
   "success": true,
-  "scope": "final_food_integration"
+  "scope": "final_food_integration_with_monthly_prediction_intervals",
+  "monthly_rows": 10464,
+  "monthly_interval_available_rows": 10458,
+  "monthly_interval_coverage": 0.9994266055045872,
+  "max_actual_amount_reconciliation_error": 6.5503158452884236e-15,
+  "max_actual_count_reconciliation_error": 6.328271240363392e-15
 }
