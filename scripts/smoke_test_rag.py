@@ -13,6 +13,8 @@ from src.rag import search_knowledge
 
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="replace")
     parser = argparse.ArgumentParser(description="RAG 검색 결과와 출처를 간단히 점검합니다.")
     parser.add_argument("query")
     parser.add_argument("--top-k", type=int, default=6)

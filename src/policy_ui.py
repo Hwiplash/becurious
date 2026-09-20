@@ -7,6 +7,7 @@ import streamlit as st
 
 from src.agent import EVIDENCE_GROUP_LABELS, generate_proposal, retrieve_evidence_groups
 from src.analytics import diagnose_region, find_similar_districts
+from src.industry_taxonomy import resolve_industry_name
 
 
 @st.dialog("✨ AI 상권 부흥 정책 제안", width="large")
@@ -39,7 +40,13 @@ def policy_dialog(
         key="policy_industry",
     )
     role_col, budget_col = st.columns(2)
-    role = role_col.segmented_control("제안 대상", ["지자체", "점주", "둘 다"], default="둘 다")
+    role = role_col.segmented_control(
+        "답변 형식",
+        ["지자체", "점주"],
+        default="지자체",
+        key="policy_role_v2",
+        help="지자체는 정책·집행 중심, 점주는 매장 운영·메뉴 실행 중심으로 답변합니다.",
+    )
     budget = budget_col.select_slider("실행 여건", ["최소", "낮음", "중간", "높음"], value="중간")
     question = st.text_area(
         "추가 요청",
@@ -92,7 +99,7 @@ def policy_dialog(
             )
             proposal = generate_proposal(
                 diagnosis_payload, evidence,
-                {"지자체": "지자체 정책담당자", "점주": "가게 사장님", "둘 다": "지자체와 점주"}[role or "둘 다"],
+                {"지자체": "지자체 정책담당자", "점주": "가게 사장님"}[role or "지자체"],
                 budget, question,
             )
         st.markdown(proposal)
@@ -139,7 +146,9 @@ def render_chat_launcher(
     prompt = st.chat_input("지역과 업종의 문제를 입력하면 근거 기반 정책을 제안해드려요")
     prompt = selected_question or prompt
     if prompt:
-        matched_industry = next((name for name in sorted(data["TP_BUZ_NM"].unique(), key=len, reverse=True) if name in prompt), industry)
+        allowed_industries = set(data["TP_BUZ_NM"].unique())
+        matched_industry = resolve_industry_name(prompt, allowed_industries)
+        matched_industry = matched_industry or next((name for name in sorted(allowed_industries, key=len, reverse=True) if name in prompt), industry)
         matched_sido = next((name for name in sorted(data["SIDO_NM"].unique(), key=len, reverse=True) if name in prompt), sido)
         search_scope = data[data["SIDO_NM"] == matched_sido] if matched_sido else data
         matched_ccg = next((name for name in sorted(search_scope["CCG_NM"].unique(), key=len, reverse=True) if name in prompt), ccg)

@@ -60,8 +60,14 @@ becurious/
 ├─ app.py                 # Streamlit 화면 및 사용자 흐름
 ├─ src/
 │  ├─ data.py             # 데이터 검증·전처리·캐시
+│  ├─ dashboard_components.py # 공통 필터·지표·상권 카드 UI
 │  ├─ maps.py             # 전국/시군구 지도
-│  └─ charts.py           # 추이·업종·고객군 차트
+│  ├─ charts.py           # 추이·업종·고객군 차트
+│  ├─ analytics.py        # 지역·업종 진단 및 유사상권 계산
+│  ├─ rag.py              # 정책·특산품·업종분류 통합 검색
+│  ├─ agent.py            # 역할별 정책 제안 생성
+│  ├─ policy_ui.py        # RAG 챗봇 및 정책 제안 대화상자
+│  └─ industry_taxonomy.py # 업종 코드·별칭 정규화
 ├─ data/
 │  ├─ geo/                # 앱에 포함된 행정구역 경계
 │  ├─ pdfs/               # 정책·사례 원본 PDF
@@ -69,8 +75,9 @@ becurious/
 │  ├─ qa/                 # PDF 및 수집 품질 점검 결과
 │  ├─ rag_index/          # 제출 시 포함할 사전 생성 검색 인덱스
 │  └─ raw/                # 원본/추가 CSV (Git 제외)
-├─ scripts/build_rag_index.py
-├─ config/                # 수집·검색 기본 설정
+├─ output/                # 크롤링 PDF 등 재생성 가능한 결과물 (Git 제외)
+├─ scripts/               # 수집·말뭉치·인덱스 생성 및 점검 명령
+├─ config/                # 업종분류 등 검색 기본 설정
 ├─ docs/                  # 구축 및 제출 문서
 ├─ src/ingestion/         # 자동 PDF 프로파일링·추출·청킹·검수
 ├─ tests/                 # 전처리 및 검색 회귀 테스트

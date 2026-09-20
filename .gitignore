@@ -17,3 +17,5 @@ data/cache/*
 *.pyc
 node_modules/
 *.inspect.ndjson
+output/
+tmp/

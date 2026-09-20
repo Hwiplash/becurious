@@ -40,7 +40,13 @@ def render_ai_agent(data: pd.DataFrame) -> None:
     industry = c3.selectbox("업종", sorted(local["TP_BUZ_NM"].unique()), key="ai_industry")
 
     c4, c5 = st.columns(2)
-    role = c4.radio("제안 대상", ["지자체 정책담당자", "가게 사장님", "둘 다"], horizontal=True)
+    role = c4.radio(
+        "답변 형식",
+        ["지자체 정책담당자", "가게 사장님"],
+        horizontal=True,
+        key="ai_role_v2",
+        help="선택한 대상의 권한과 실행 범위에 맞춰 답변 구조가 달라집니다.",
+    )
     budget = c5.select_slider("실행 예산", ["최소", "낮음", "중간", "높음"], value="중간")
     question = st.text_input("추가 요청", placeholder="예: 40대 가족 고객을 다시 유입할 수 있는 전략을 제안해줘")
 

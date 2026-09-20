@@ -12,6 +12,8 @@ from openai import OpenAI
 
 INDEX_DIR = Path(__file__).resolve().parents[1] / "data" / "rag_index"
 PROCESSED_DIR = Path(__file__).resolve().parents[1] / "data" / "processed"
+SPECIALTY_CHUNKS = PROCESSED_DIR / "specialty_chunks.json"
+INDUSTRY_CHUNKS = PROCESSED_DIR / "industry_taxonomy_chunks.json"
 
 
 def index_ready(index_dir: Path = INDEX_DIR) -> bool:
@@ -23,10 +25,12 @@ def local_corpus_ready(processed_dir: Path = PROCESSED_DIR) -> bool:
 
 
 @lru_cache(maxsize=1)
-def _local_corpus() -> tuple[list[dict], dict[str, dict]]:
+def _local_corpus() -> tuple[list[dict], dict[str, dict], list[dict]]:
     cards = json.loads((PROCESSED_DIR / "case_cards.json").read_text(encoding="utf-8"))
     chunks = json.loads((PROCESSED_DIR / "chunks.json").read_text(encoding="utf-8"))
-    return cards, {chunk["id"]: chunk for chunk in chunks}
+    specialties = json.loads(SPECIALTY_CHUNKS.read_text(encoding="utf-8")) if SPECIALTY_CHUNKS.exists() else []
+    industries = json.loads(INDUSTRY_CHUNKS.read_text(encoding="utf-8")) if INDUSTRY_CHUNKS.exists() else []
+    return cards, {chunk["id"]: chunk for chunk in chunks}, specialties + industries
 
 
 def _tokens(text: str) -> set[str]:
@@ -36,7 +40,7 @@ def _tokens(text: str) -> set[str]:
 def search_local_knowledge(query: str, top_k: int = 6) -> list[dict]:
     if not local_corpus_ready():
         return []
-    cards, chunks = _local_corpus()
+    cards, chunks, specialties = _local_corpus()
     query_tokens = _tokens(query)
     scored: list[tuple[float, dict]] = []
     for card in cards:
@@ -52,6 +56,26 @@ def search_local_knowledge(query: str, top_k: int = 6) -> list[dict]:
         score = len(overlap) / max(len(query_tokens), 1) + exact_bonus * 0.02 + card.get("quality_score", 0) * 0.002
         chunk = chunks.get(card["chunk_id"], {})
         scored.append((score, {**chunk, **card, "score": score, "keyword_score": score, "search_type": "local-keyword"}))
+    for chunk in specialties:
+        haystack = " ".join([
+            chunk.get("specialty", ""), chunk.get("industry_name", ""), chunk.get("source", ""), chunk.get("section", ""),
+            " ".join(chunk.get("topics", [])), " ".join(chunk.get("regions", [])), chunk.get("text", ""),
+        ])
+        overlap = query_tokens & _tokens(haystack)
+        alias_hits = []
+        if chunk.get("chunk_type") == "industry-taxonomy":
+            compact_query = re.sub(r"\s+", "", query.lower())
+            alias_hits = [alias for alias in [chunk.get("industry_name", ""), *chunk.get("aliases", [])] if alias and re.sub(r"\s+", "", alias.lower()) in compact_query]
+        if not overlap and not alias_hits:
+            continue
+        exact_bonus = sum(1 for token in query_tokens if token in haystack.lower())
+        confidence_bonus = {"high": 0.08, "medium": 0.04, "low": 0.0}.get(chunk.get("extraction_confidence"), 0.0)
+        alias_bonus = 1.5 + max((len(alias) for alias in alias_hits), default=0) * 0.01 if alias_hits else 0.0
+        score = len(overlap) / max(len(query_tokens), 1) + exact_bonus * 0.03 + confidence_bonus + alias_bonus
+        scored.append((score, {
+            **chunk, "chunk_id": chunk["id"], "source_pages": [1],
+            "score": score, "keyword_score": score, "search_type": "local-keyword",
+        }))
     scored.sort(key=lambda item: item[0], reverse=True)
     return [item[1] for item in scored[:top_k]]
 

@@ -22,6 +22,14 @@ class LocalRagTest(unittest.TestCase):
         self.assertEqual(results[0]["chunk_id"], "shared")
         self.assertEqual(results[0]["matched_by"], ["dense", "keyword"])
 
+    def test_specialty_search_returns_regional_product(self) -> None:
+        results = search_local_knowledge("의령군 망개떡 특징", top_k=5)
+        self.assertTrue(any(item.get("specialty") == "망개떡" for item in results))
+
+    def test_industry_alias_search_returns_standard_category(self) -> None:
+        results = search_local_knowledge("짜장면 업종 코드는 무엇인가", top_k=5)
+        self.assertEqual(results[0].get("industry_code"), "8005")
+
 
 if __name__ == "__main__":
     unittest.main()
