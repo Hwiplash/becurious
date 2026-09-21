@@ -217,5 +217,97 @@
     },
     "status": "기존 RAG 말뭉치 부재 실패 포함; 세부 테스트 확인",
     "note": "src/rag.py 및 tests/test_rag.py는 main과 동일. 말뭉치는 작업 전부터 없음. 실패를 skip하거나 더미 데이터로 대체하지 않음."
-  }
+  },
+  "partial_observation_fix": {
+    "passed": true,
+    "checks": {
+      "eligibility_threshold_and_missing_features_checked": true,
+      "complete_rows_exactly_unchanged": 14652,
+      "all_actuals_customer_breakdowns_and_nonmonthly_records_exactly_unchanged": true,
+      "candidate_regions": 82,
+      "candidate_signals": 88,
+      "raw_eligibility_actuals_and_six_month_grid": true,
+      "conformal_predictions_reproduce_existing_total_model": true,
+      "independent_sklearn_refit_all_partial_repeats_centers_quantiles_no_leakage": true,
+      "protected_raw_personal_json_detection_and_existing_ui_changes_preserved": true,
+      "eligible_series": 7,
+      "band_month_rows": 42,
+      "metric_bands": 84
+    },
+    "changed_existing_files": [
+      "becurious_repo/app.py"
+    ],
+    "partial_coverage_validated": false
+  },
+  "partial_payload_revalidation": {
+    "passed": true,
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "checks": [
+      {
+        "test": "__main__.AnalysisTests.test_03_personal_nonpersonal_identity",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_10_json_analysis_same_population_and_schema",
+        "passed": true
+      },
+      {
+        "test": "__main__.AnalysisTests.test_13_aggregate_equals_observed_sum",
+        "passed": true
+      }
+    ],
+    "ui_tests": "pending until total-market-handoff integration"
+  },
+  "partial_ui_validation": {
+    "passed": true,
+    "tests": 9,
+    "checks": [
+      {
+        "test": "test_total_market.TotalMarketTests.test_11_12_all_total_actual_expected_chart_traces_match_json",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_bad_workbook_sheet_is_not_loaded",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_customer_composition_excludes_foreign_and_corporate",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_mixed_population_chart_is_rejected",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_personal_series_preserves_personal_actual_expected_and_center",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_rag_has_separate_populations_and_limits",
+        "passed": true
+      },
+      {
+        "test": "test_total_market.TotalMarketTests.test_streamlit_total_default_and_personal_switch",
+        "passed": true
+      },
+      {
+        "test": "test_total_market_partial.PartialMarketTests.test_partial_adapter_band_and_missing_actual_gaps",
+        "passed": true
+      },
+      {
+        "test": "test_total_market_partial.PartialMarketTests.test_partial_warning_displayed_in_streamlit",
+        "passed": true
+      }
+    ]
+  },
+  "personal_partial_method_comparison": {
+    "passed": true,
+    "industry_series": 10,
+    "monthly_rows": 60,
+    "max_relative_error": 3.108624468950438e-14,
+    "used_as_total_prediction_input": false
+  },
+  "partial_validation_note": "This update reran partial inference, payload and total-market UI checks. Other analysis/RAG results are retained from the previous validation."
 }

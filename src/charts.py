@@ -5,6 +5,8 @@ import math
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from src.period_change import format_change, jan_jun_change
+from src.total_market import personal_rows, POPULATION_LABELS
 
 PALETTE = ["#22D3A7", "#4DA3FF", "#F3B75B", "#E76F8A", "#A78BFA", "#75D5E8"]
 
@@ -109,36 +111,41 @@ def industry_bar(df: pd.DataFrame, n: int = 10) -> go.Figure:
     return style(fig, 380)
 
 
-def performance_change_compare(df: pd.DataFrame, industry: str, scope_label: str) -> go.Figure:
+def performance_change_compare(df: pd.DataFrame, industry: str, scope_label: str,
+                               required_industries: tuple[str, ...] | None = None) -> go.Figure:
     """선택 업종과 같은 지역 전체의 기간 변화를 매출·건수·객단가로 비교한다."""
-    def changes(frame: pd.DataFrame) -> list[float]:
-        monthly = frame.groupby("month", as_index=False).agg(amt=("amt", "sum"), cnt=("cnt", "sum")).sort_values("month")
+    def changes(frame: pd.DataFrame, require_scope: bool = False) -> list[float | None]:
+        monthly = frame.groupby("month").agg(amt=("amt", "sum"), cnt=("cnt", "sum"))
+        if require_scope and required_industries:
+            complete = frame.groupby("month")["TP_BUZ_NO"].nunique().eq(len(required_industries))
+            monthly.loc[~complete, ["amt", "cnt"]] = float("nan")
         monthly["ticket"] = monthly["amt"].div(monthly["cnt"].replace(0, pd.NA))
-
-        def rate(column: str) -> float:
-            valid = monthly[column].dropna()
-            return float(valid.iloc[-1] / valid.iloc[0] - 1) if len(valid) > 1 and valid.iloc[0] else 0.0
-
-        return [rate("amt"), rate("cnt"), rate("ticket")]
+        return [jan_jun_change(monthly[column]) for column in ("amt", "cnt", "ticket")]
 
     selected = df[df["TP_BUZ_NM"] == industry]
     metrics = ["매출액", "이용건수", "건당결제"]
     figure = go.Figure()
     for name, values, color in (
         (industry, changes(selected), PALETTE[0]),
-        (scope_label, changes(df), "#A7B4AE"),
+        (scope_label, changes(df, require_scope=True), "#A7B4AE"),
     ):
         figure.add_trace(go.Bar(
             x=metrics,
             y=values,
             name=name,
             marker_color=color,
-            text=[f"{value:+.1%}" for value in values],
+            text=[format_change(value) for value in values],
             textposition="outside",
             cliponaxis=False,
             hovertemplate=f"<b>{name}</b><br>%{{x}} %{{y:+.1%}}<extra></extra>",
         ))
-    all_values = [float(value) for trace in figure.data for value in trace.y]
+    for trace_index, trace in enumerate(figure.data):
+        for metric, value in zip(metrics, trace.y):
+            if value is None:
+                figure.add_annotation(x=metric, y=0, text="산출 불가", showarrow=False,
+                                      xshift=-42 if trace_index == 0 else 42, yshift=14,
+                                      font=dict(size=9, color="#66756f"))
+    all_values = [float(value) for trace in figure.data for value in trace.y if value is not None]
     extent = max([abs(value) for value in all_values] or [0.1])
     figure.add_hline(y=0, line_color="#98A2B3", line_width=1)
     figure.update_layout(
@@ -152,14 +159,46 @@ def performance_change_compare(df: pd.DataFrame, industry: str, scope_label: str
 
 
 def segment_chart(df: pd.DataFrame) -> go.Figure:
+    df = personal_rows(df)
     grouped = df.groupby(["age", "gender"], as_index=False).agg(매출액=("amt", "sum"))
     age_order = ["20대 이하", "20대", "30대", "40대", "50대", "60대 이상", "미상", "기타"]
     fig = px.bar(grouped, x="age", y="매출액", color="gender", barmode="group", color_discrete_sequence=PALETTE, category_orders={"age": age_order})
-    tickvals, ticktext, unit = _axis_ticks(float(grouped["매출액"].max()), "money")
-    fig.update_layout(xaxis_title=None, yaxis_title=f"매출액 ({unit})")
+    tickvals, ticktext, unit = _axis_ticks(float(grouped["매출액"].max()) if not grouped.empty else 0, "money")
+    fig.update_layout(xaxis_title=None, yaxis_title=f"내국인 개인 BC 이용금액 ({unit})")
     fig.update_yaxes(tickvals=tickvals, ticktext=ticktext)
     fig.update_traces(hovertemplate="%{x} · %{fullData.name}<br>%{y:,.0f}원<extra></extra>")
     return style(fig, 380)
+
+
+def consumption_diagnostic_chart(frame: pd.DataFrame, target: str = "amt") -> go.Figure:
+    """Actual, expected and band all come from one population-tagged handoff."""
+    if target not in ("amt", "cnt") or frame["population_scope"].nunique() != 1 or frame["scope"].nunique() != 1:
+        raise ValueError("진단 차트는 한 모집단·한 업종 범위만 표시합니다.")
+    population = frame["population_scope"].iloc[0]
+    label = POPULATION_LABELS[population]
+    metric = "이용금액" if target == "amt" else "이용건수"
+    unit = "원" if target == "amt" else "건"
+    comparable = frame.get("aggregate_scope_complete", pd.Series(True, index=frame.index)).fillna(False).astype(bool)
+    valid = frame["prediction_interval_available"].eq(True) & comparable
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=frame["month"], y=frame["lower90_" + target].where(valid), name="90% 하한", mode="lines", line=dict(width=0), hoverinfo="skip", showlegend=False, connectgaps=False))
+    fig.add_trace(go.Scatter(x=frame["month"], y=frame["upper90_" + target].where(valid), name=f"{label} 90% 예측구간", mode="lines", line=dict(width=0), fill="tonexty", fillcolor="rgba(243,183,91,.20)", connectgaps=False, customdata=frame[["pi_center_" + target]], hovertemplate=f"90% 상한 %{{y:,.0f}}{unit}<br>구간 보정중심 %{{customdata[0]:,.0f}}{unit}<extra></extra>"))
+    fig.add_trace(go.Scatter(x=frame["month"], y=frame["expected_" + target].where(comparable), name=f"{label} 구조적 기대{metric}", mode="lines", line=dict(color="#D89A32", width=2, dash="dash"), connectgaps=False))
+    fig.add_trace(go.Scatter(x=frame["month"], y=frame["actual_" + target].where(comparable), name=f"{label} {metric}", mode="lines+markers", line=dict(color=PALETTE[0 if target == "amt" else 1], width=3), connectgaps=False))
+    if (~comparable).any():
+        incomplete = frame.loc[~comparable]
+        fig.add_trace(go.Scatter(x=incomplete["month"], y=incomplete["actual_" + target],
+                                 name="관측 업종 합계 · 비교 제외", mode="markers",
+                                 marker=dict(color="#89958f", size=9, symbol="x"),
+                                 customdata=incomplete[["observed_industries", "missing_industries"]],
+                                 hovertemplate=f"관측 합계 %{{y:,.0f}}{unit}<br>관측 업종 %{{customdata[0]}}/9<br>미관측: %{{customdata[1]}}<extra></extra>"))
+    values = pd.concat((frame["actual_" + target], frame["expected_" + target].where(comparable),
+                        frame["upper90_" + target].where(valid))).dropna()
+    maximum = float(values.max()) if not values.empty else 0
+    ticks, labels, scaled_unit = _axis_ticks(maximum, "money" if target == "amt" else "count")
+    fig = style(fig, 360)
+    fig.update_layout(yaxis=dict(title=f"{metric} ({scaled_unit})", tickvals=ticks, ticktext=labels), hovermode="x unified", showlegend=True, legend=dict(orientation="h", y=1.2, font=dict(size=10)))
+    return fig
 
 
 def regional_ranking(df: pd.DataFrame, column: str) -> pd.DataFrame:

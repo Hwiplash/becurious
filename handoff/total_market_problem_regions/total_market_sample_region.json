@@ -855,7 +855,14 @@
       "foreign_amt": 3080000.0,
       "foreign_cnt": 169.0,
       "corporate_amt": 790000.0,
-      "corporate_cnt": 42.0
+      "corporate_cnt": 42.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -892,7 +899,14 @@
       "foreign_amt": 2980000.0,
       "foreign_cnt": 146.0,
       "corporate_amt": 1250000.0,
-      "corporate_cnt": 51.0
+      "corporate_cnt": 51.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -929,7 +943,14 @@
       "foreign_amt": 2780000.0,
       "foreign_cnt": 155.0,
       "corporate_amt": 1300000.0,
-      "corporate_cnt": 67.0
+      "corporate_cnt": 67.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -966,7 +987,14 @@
       "foreign_amt": 2800000.0,
       "foreign_cnt": 180.0,
       "corporate_amt": 1590000.0,
-      "corporate_cnt": 69.0
+      "corporate_cnt": 69.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -1003,7 +1031,14 @@
       "foreign_amt": 4450000.0,
       "foreign_cnt": 214.0,
       "corporate_amt": 3160000.0,
-      "corporate_cnt": 120.0
+      "corporate_cnt": 120.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -1040,7 +1075,14 @@
       "foreign_amt": 3790000.0,
       "foreign_cnt": 202.0,
       "corporate_amt": 1060000.0,
-      "corporate_cnt": 83.0
+      "corporate_cnt": 83.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -1077,7 +1119,14 @@
       "foreign_amt": 18340000.0,
       "foreign_cnt": 1802.0,
       "corporate_amt": 1540000.0,
-      "corporate_cnt": 189.0
+      "corporate_cnt": 189.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -1114,7 +1163,14 @@
       "foreign_amt": 18220000.0,
       "foreign_cnt": 1594.0,
       "corporate_amt": 2170000.0,
-      "corporate_cnt": 258.0
+      "corporate_cnt": 258.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -1151,7 +1207,14 @@
       "foreign_amt": 21950000.0,
       "foreign_cnt": 2307.0,
       "corporate_amt": 1810000.0,
-      "corporate_cnt": 286.0
+      "corporate_cnt": 286.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -1188,7 +1251,14 @@
       "foreign_amt": 25730000.0,
       "foreign_cnt": 2906.0,
       "corporate_amt": 2680000.0,
-      "corporate_cnt": 342.0
+      "corporate_cnt": 342.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -1225,7 +1295,14 @@
       "foreign_amt": 28810000.0,
       "foreign_cnt": 3420.0,
       "corporate_amt": 3600000.0,
-      "corporate_cnt": 448.0
+      "corporate_cnt": 448.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -1262,7 +1339,14 @@
       "foreign_amt": 36820000.0,
       "foreign_cnt": 3784.0,
       "corporate_amt": 2740000.0,
-      "corporate_cnt": 402.0
+      "corporate_cnt": 402.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -1299,7 +1383,14 @@
       "foreign_amt": 6780000.0,
       "foreign_cnt": 360.0,
       "corporate_amt": 310000.0,
-      "corporate_cnt": 18.0
+      "corporate_cnt": 18.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -1336,7 +1427,14 @@
       "foreign_amt": 8370000.0,
       "foreign_cnt": 407.0,
       "corporate_amt": 510000.0,
-      "corporate_cnt": 37.0
+      "corporate_cnt": 37.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -1373,7 +1471,14 @@
       "foreign_amt": 7140000.0,
       "foreign_cnt": 389.0,
       "corporate_amt": 650000.0,
-      "corporate_cnt": 38.0
+      "corporate_cnt": 38.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -1410,7 +1515,14 @@
       "foreign_amt": 8750000.0,
       "foreign_cnt": 461.0,
       "corporate_amt": 470000.0,
-      "corporate_cnt": 43.0
+      "corporate_cnt": 43.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -1447,7 +1559,14 @@
       "foreign_amt": 9630000.0,
       "foreign_cnt": 512.0,
       "corporate_amt": 1050000.0,
-      "corporate_cnt": 57.0
+      "corporate_cnt": 57.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -1484,7 +1603,14 @@
       "foreign_amt": 11050000.0,
       "foreign_cnt": 591.0,
       "corporate_amt": 760000.0,
-      "corporate_cnt": 48.0
+      "corporate_cnt": 48.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -1521,7 +1647,14 @@
       "foreign_amt": 19280000.0,
       "foreign_cnt": 603.0,
       "corporate_amt": 5500000.0,
-      "corporate_cnt": 183.0
+      "corporate_cnt": 183.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -1558,7 +1691,14 @@
       "foreign_amt": 25920000.0,
       "foreign_cnt": 635.0,
       "corporate_amt": 8560000.0,
-      "corporate_cnt": 265.0
+      "corporate_cnt": 265.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -1595,7 +1735,14 @@
       "foreign_amt": 27610000.0,
       "foreign_cnt": 842.0,
       "corporate_amt": 9630000.0,
-      "corporate_cnt": 307.0
+      "corporate_cnt": 307.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -1632,7 +1779,14 @@
       "foreign_amt": 31490000.0,
       "foreign_cnt": 832.0,
       "corporate_amt": 12330000.0,
-      "corporate_cnt": 350.0
+      "corporate_cnt": 350.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -1669,7 +1823,14 @@
       "foreign_amt": 37310000.0,
       "foreign_cnt": 1046.0,
       "corporate_amt": 14440000.0,
-      "corporate_cnt": 435.0
+      "corporate_cnt": 435.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -1706,7 +1867,14 @@
       "foreign_amt": 34170000.0,
       "foreign_cnt": 1009.0,
       "corporate_amt": 11050000.0,
-      "corporate_cnt": 365.0
+      "corporate_cnt": 365.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -1743,7 +1911,14 @@
       "foreign_amt": 0.0,
       "foreign_cnt": 0.0,
       "corporate_amt": 0.0,
-      "corporate_cnt": 0.0
+      "corporate_cnt": 0.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -1780,7 +1955,14 @@
       "foreign_amt": 0.0,
       "foreign_cnt": 0.0,
       "corporate_amt": 0.0,
-      "corporate_cnt": 0.0
+      "corporate_cnt": 0.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -1817,7 +1999,14 @@
       "foreign_amt": 0.0,
       "foreign_cnt": 0.0,
       "corporate_amt": 0.0,
-      "corporate_cnt": 0.0
+      "corporate_cnt": 0.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -1854,7 +2043,14 @@
       "foreign_amt": 0.0,
       "foreign_cnt": 0.0,
       "corporate_amt": 0.0,
-      "corporate_cnt": 0.0
+      "corporate_cnt": 0.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -1891,7 +2087,14 @@
       "foreign_amt": 0.0,
       "foreign_cnt": 0.0,
       "corporate_amt": 0.0,
-      "corporate_cnt": 0.0
+      "corporate_cnt": 0.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -1928,7 +2131,14 @@
       "foreign_amt": 0.0,
       "foreign_cnt": 0.0,
       "corporate_amt": 0.0,
-      "corporate_cnt": 0.0
+      "corporate_cnt": 0.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -1965,7 +2175,14 @@
       "foreign_amt": 820000.0,
       "foreign_cnt": 44.0,
       "corporate_amt": 0.0,
-      "corporate_cnt": 0.0
+      "corporate_cnt": 0.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -2002,7 +2219,14 @@
       "foreign_amt": 1520000.0,
       "foreign_cnt": 64.0,
       "corporate_amt": 380000.0,
-      "corporate_cnt": 17.0
+      "corporate_cnt": 17.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -2039,7 +2263,14 @@
       "foreign_amt": 1580000.0,
       "foreign_cnt": 90.0,
       "corporate_amt": 770000.0,
-      "corporate_cnt": 30.0
+      "corporate_cnt": 30.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -2076,7 +2307,14 @@
       "foreign_amt": 1620000.0,
       "foreign_cnt": 69.0,
       "corporate_amt": 630000.0,
-      "corporate_cnt": 25.0
+      "corporate_cnt": 25.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -2113,7 +2351,14 @@
       "foreign_amt": 1450000.0,
       "foreign_cnt": 67.0,
       "corporate_amt": 790000.0,
-      "corporate_cnt": 23.0
+      "corporate_cnt": 23.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -2150,7 +2395,14 @@
       "foreign_amt": 2470000.0,
       "foreign_cnt": 103.0,
       "corporate_amt": 440000.0,
-      "corporate_cnt": 17.0
+      "corporate_cnt": 17.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -2187,7 +2439,14 @@
       "foreign_amt": 2030000.0,
       "foreign_cnt": 181.0,
       "corporate_amt": 1440000.0,
-      "corporate_cnt": 136.0
+      "corporate_cnt": 136.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -2224,7 +2483,14 @@
       "foreign_amt": 3750000.0,
       "foreign_cnt": 271.0,
       "corporate_amt": 2430000.0,
-      "corporate_cnt": 231.0
+      "corporate_cnt": 231.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -2261,7 +2527,14 @@
       "foreign_amt": 3860000.0,
       "foreign_cnt": 312.0,
       "corporate_amt": 2690000.0,
-      "corporate_cnt": 260.0
+      "corporate_cnt": 260.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -2298,7 +2571,14 @@
       "foreign_amt": 5930000.0,
       "foreign_cnt": 437.0,
       "corporate_amt": 3580000.0,
-      "corporate_cnt": 353.0
+      "corporate_cnt": 353.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -2335,7 +2615,14 @@
       "foreign_amt": 7460000.0,
       "foreign_cnt": 569.0,
       "corporate_amt": 4270000.0,
-      "corporate_cnt": 383.0
+      "corporate_cnt": 383.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -2372,7 +2659,14 @@
       "foreign_amt": 5750000.0,
       "foreign_cnt": 409.0,
       "corporate_amt": 3390000.0,
-      "corporate_cnt": 326.0
+      "corporate_cnt": 326.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -2409,7 +2703,14 @@
       "foreign_amt": 1270000.0,
       "foreign_cnt": 86.0,
       "corporate_amt": 230000.0,
-      "corporate_cnt": 21.0
+      "corporate_cnt": 21.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -2446,7 +2747,14 @@
       "foreign_amt": 1510000.0,
       "foreign_cnt": 61.0,
       "corporate_amt": 350000.0,
-      "corporate_cnt": 15.0
+      "corporate_cnt": 15.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -2483,7 +2791,14 @@
       "foreign_amt": 1270000.0,
       "foreign_cnt": 69.0,
       "corporate_amt": 240000.0,
-      "corporate_cnt": 15.0
+      "corporate_cnt": 15.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -2520,7 +2835,14 @@
       "foreign_amt": 1990000.0,
       "foreign_cnt": 93.0,
       "corporate_amt": 260000.0,
-      "corporate_cnt": 19.0
+      "corporate_cnt": 19.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -2557,7 +2879,14 @@
       "foreign_amt": 3160000.0,
       "foreign_cnt": 117.0,
       "corporate_amt": 330000.0,
-      "corporate_cnt": 17.0
+      "corporate_cnt": 17.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -2594,7 +2923,14 @@
       "foreign_amt": 2040000.0,
       "foreign_cnt": 102.0,
       "corporate_amt": 310000.0,
-      "corporate_cnt": 19.0
+      "corporate_cnt": 19.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -2631,7 +2967,14 @@
       "foreign_amt": 590000.0,
       "foreign_cnt": 48.0,
       "corporate_amt": 230000.0,
-      "corporate_cnt": 18.0
+      "corporate_cnt": 18.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -2668,7 +3011,14 @@
       "foreign_amt": 1000000.0,
       "foreign_cnt": 64.0,
       "corporate_amt": 1010000.0,
-      "corporate_cnt": 78.0
+      "corporate_cnt": 78.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -2705,7 +3055,14 @@
       "foreign_amt": 1230000.0,
       "foreign_cnt": 89.0,
       "corporate_amt": 2760000.0,
-      "corporate_cnt": 141.0
+      "corporate_cnt": 141.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -2742,7 +3099,14 @@
       "foreign_amt": 1390000.0,
       "foreign_cnt": 89.0,
       "corporate_amt": 1140000.0,
-      "corporate_cnt": 100.0
+      "corporate_cnt": 100.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -2779,7 +3143,14 @@
       "foreign_amt": 1610000.0,
       "foreign_cnt": 118.0,
       "corporate_amt": 2160000.0,
-      "corporate_cnt": 130.0
+      "corporate_cnt": 130.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -2816,7 +3187,14 @@
       "foreign_amt": 1520000.0,
       "foreign_cnt": 97.0,
       "corporate_amt": 1340000.0,
-      "corporate_cnt": 107.0
+      "corporate_cnt": 107.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202601,
@@ -2853,7 +3231,14 @@
       "foreign_amt": 52190000.0,
       "foreign_cnt": 3293.0,
       "corporate_amt": 10040000.0,
-      "corporate_cnt": 607.0
+      "corporate_cnt": 607.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202602,
@@ -2890,7 +3275,14 @@
       "foreign_amt": 63270000.0,
       "foreign_cnt": 3242.0,
       "corporate_amt": 16660000.0,
-      "corporate_cnt": 952.0
+      "corporate_cnt": 952.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202603,
@@ -2927,7 +3319,14 @@
       "foreign_amt": 67420000.0,
       "foreign_cnt": 4253.0,
       "corporate_amt": 19850000.0,
-      "corporate_cnt": 1144.0
+      "corporate_cnt": 1144.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202604,
@@ -2964,7 +3363,14 @@
       "foreign_amt": 79700000.0,
       "foreign_cnt": 5067.0,
       "corporate_amt": 22680000.0,
-      "corporate_cnt": 1301.0
+      "corporate_cnt": 1301.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202605,
@@ -3001,7 +3407,14 @@
       "foreign_amt": 93880000.0,
       "foreign_cnt": 6063.0,
       "corporate_amt": 29800000.0,
-      "corporate_cnt": 1613.0
+      "corporate_cnt": 1613.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     },
     {
       "month": 202606,
@@ -3038,7 +3451,14 @@
       "foreign_amt": 97610000.0,
       "foreign_cnt": 6297.0,
       "corporate_amt": 21090000.0,
-      "corporate_cnt": 1367.0
+      "corporate_cnt": 1367.0,
+      "observed_month_count": 6,
+      "observed_complete6": true,
+      "prediction_interval_source": "total_M9_monthly_split_conformal_complete6",
+      "band_exclusion_reason": null,
+      "partial_coverage_validated": false,
+      "extrapolation_warning": false,
+      "extrapolation_features": []
     }
   ],
   "personal_customer_structure": {

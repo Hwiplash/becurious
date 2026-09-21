@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from src.data import compact_won
+from src.period_change import format_change, jan_jun_change
 
 
 def selected_map_value(event) -> str | None:
@@ -25,28 +26,32 @@ def selected_table_value(event, frame: pd.DataFrame, column: str) -> str | None:
         return None
 
 
-def growth(series: pd.Series) -> float:
-    series = series.sort_index()
-    return float(series.iloc[-1] / series.iloc[0] - 1) if len(series) > 1 and series.iloc[0] else 0.0
+def growth(series: pd.Series) -> float | None:
+    return jan_jun_change(series)
 
 
-def summary_metrics(frame: pd.DataFrame) -> tuple[float, float, float, float]:
+def summary_metrics(frame: pd.DataFrame, change_allowed: bool = True) -> tuple[float, float, float, float | None]:
     amount, count = float(frame["amt"].sum()), float(frame["cnt"].sum())
-    return amount, count, amount / count if count else 0, growth(frame.groupby("month")["amt"].sum())
+    change = growth(frame.groupby("month")["amt"].sum()) if change_allowed else None
+    return amount, count, amount / count if count else 0, change
 
 
-def signal_items(frame: pd.DataFrame, index_context: dict | None = None) -> tuple[list[str], list[str]]:
-    _, _, _, sales_growth = summary_metrics(frame)
-    count_growth = growth(frame.groupby("month")["cnt"].sum())
+def signal_items(frame: pd.DataFrame, index_context: dict | None = None, change_allowed: bool = True) -> tuple[list[str], list[str]]:
+    _, _, _, sales_growth = summary_metrics(frame, change_allowed)
+    count_growth = growth(frame.groupby("month")["cnt"].sum()) if change_allowed else None
     monthly = frame.groupby("month").agg(amt=("amt", "sum"), cnt=("cnt", "sum"))
-    ticket_growth = growth(monthly["amt"].div(monthly["cnt"].replace(0, pd.NA)).fillna(0))
-    changes = sorted((str(name), growth(group.groupby("month")["amt"].sum())) for name, group in frame.groupby("TP_BUZ_NM"))
+    ticket_growth = growth(monthly["amt"].div(monthly["cnt"].replace(0, pd.NA))) if change_allowed else None
+    changes = [(str(name), rate) for name, group in frame.groupby("TP_BUZ_NM")
+               if (rate := growth(group.groupby("month")["amt"].sum())) is not None]
     changes.sort(key=lambda item: item[1])
     strengths, weaknesses = [], []
-    (strengths if sales_growth >= 0 else weaknesses).append(f"기간 매출이 {sales_growth:+.1%} {'성장했습니다.' if sales_growth >= 0 else '감소했습니다.'}")
-    (strengths if count_growth >= 0 else weaknesses).append(f"이용 건수가 {count_growth:+.1%} {'늘었습니다.' if count_growth >= 0 else '줄었습니다.'}")
-    (strengths if ticket_growth >= 0 else weaknesses).append(f"건당 결제액이 {ticket_growth:+.1%} {'상승했습니다.' if ticket_growth >= 0 else '낮아졌습니다.'}")
-    if len(changes) > 1:
+    if sales_growth is not None:
+        (strengths if sales_growth >= 0 else weaknesses).append(f"1월→6월 이용금액이 {sales_growth:+.1%} {'증가했습니다.' if sales_growth >= 0 else '감소했습니다.'}")
+    if count_growth is not None:
+        (strengths if count_growth >= 0 else weaknesses).append(f"1월→6월 이용 건수가 {count_growth:+.1%} {'늘었습니다.' if count_growth >= 0 else '줄었습니다.'}")
+    if ticket_growth is not None:
+        (strengths if ticket_growth >= 0 else weaknesses).append(f"1월→6월 건당 결제액이 {ticket_growth:+.1%} {'상승했습니다.' if ticket_growth >= 0 else '낮아졌습니다.'}")
+    if len(changes) > 1 and change_allowed:
         strengths.append(f"성장 신호가 가장 큰 업종은 {changes[-1][0]}({changes[-1][1]:+.1%})입니다.")
         weaknesses.append(f"회복이 가장 필요한 업종은 {changes[0][0]}({changes[0][1]:+.1%})입니다.")
     if index_context:
@@ -64,19 +69,21 @@ def signal_items(frame: pd.DataFrame, index_context: dict | None = None) -> tupl
     return strengths[:4], weaknesses[:4]
 
 
-def render_signals(frame: pd.DataFrame, index_context: dict | None = None) -> None:
-    strengths, weaknesses = signal_items(frame, index_context)
+def render_signals(frame: pd.DataFrame, index_context: dict | None = None, change_allowed: bool = True) -> None:
+    strengths, weaknesses = signal_items(frame, index_context, change_allowed)
+    if not change_allowed:
+        st.caption("1월·6월의 관측 업종 구성이 달라 합계 변화율과 업종 간 변화 순위를 계산하지 않았습니다.")
     listing = lambda items: "".join(f"<li>{html.escape(item)}</li>" for item in items) or "<li>뚜렷한 신호가 없습니다.</li>"
     st.markdown(f"<div class='signal-grid'><div class='signal-card strength'><div class='signal-title'>↗ Strength</div><ul>{listing(strengths)}</ul></div><div class='signal-card weakness'><div class='signal-title'>↘ Weakness</div><ul>{listing(weaknesses)}</ul></div></div>", unsafe_allow_html=True)
 
 
-def render_metrics(frame: pd.DataFrame) -> None:
-    amount, count, ticket, rate = summary_metrics(frame)
+def render_metrics(frame: pd.DataFrame, population_label: str = "전체 BC", change_allowed: bool = True) -> None:
+    amount, count, ticket, rate = summary_metrics(frame, change_allowed)
     cols = st.columns(4)
-    cols[0].metric("총 매출", compact_won(amount))
-    cols[1].metric("이용 건수", f"{count:,.0f}건")
+    cols[0].metric(f"{population_label} 이용금액", compact_won(amount))
+    cols[1].metric(f"{population_label} 이용건수", f"{count:,.0f}건")
     cols[2].metric("건당 결제", f"{ticket:,.0f}원")
-    cols[3].metric("1월 → 6월 변화", f"{rate:+.1%}")
+    cols[3].metric("1월 → 6월 변화", format_change(rate))
 
 
 def region_industry_filter(industries: list[str]) -> str:
@@ -104,7 +111,7 @@ def go_to(view: str, sido: str | None = None, ccg: str | None = None) -> None:
 
 
 def render_disclaimer() -> None:
-    st.caption("BC카드 관측 소비를 기반으로 한 상대 비교이며, 2026년 1월에서 6월까지의 변화를 표시합니다.")
+    st.caption("2026년 1~6월 BC 이용금액·이용건수의 상대 비교입니다. 전체 카드시장이나 지역 실제 총매출을 뜻하지 않습니다. 연령·성별 구성은 내국인 개인 기준입니다.")
 
 
 def index_snapshot(indices: dict[str, pd.DataFrame], sido: str, ccg: str | None = None, industry: str | None = None) -> dict:
@@ -146,6 +153,7 @@ def render_index_cards(context: dict, regional: bool = False) -> None:
     st.markdown("<div class='section-kicker'>COMMERCIAL VITALITY INDEX</div><div class='section-title'>상권 체력 지수</div>", unsafe_allow_html=True)
     note = "해당 시도 내 시군구 중앙값 · 전국 기준 100" if regional else "선택한 시군구 지수 · 전국 기준 100"
     st.markdown(f"<div class='index-note'>{note}</div>", unsafe_allow_html=True)
+    st.caption("워크북 규모·거래·프리미엄·다양성 지수는 전체 고객코드, 인구보정 지표는 내국인 개인 기준입니다.")
     if context.get("selected_industry") not in (None, "업종 전체"):
         st.caption(f"상권 체력 지수는 지역 전체 기준이며, 아래 상세 정보에 {context['selected_industry']} 동일 업종 순위를 함께 표시합니다.")
     descriptions = {
@@ -153,10 +161,10 @@ def render_index_cards(context: dict, regional: bool = False) -> None:
         "activity": "결제 건수를 바탕으로 소비 활동의 빈도와 활발함을 비교한 지수입니다. 100보다 높으면 전국 기준보다 거래가 활발합니다.",
         "premium": "거래량과 업종 구조를 고려한 기대 건당결제액 대비 실제 결제 수준입니다. 100보다 높으면 상대적으로 고액 소비 성향이 강합니다.",
         "diversity": "매출이 여러 업종에 얼마나 고르게 분포하는지 나타냅니다. 100보다 높으면 업종 구성이 비교적 다양하고, 낮으면 특정 업종 의존도가 높습니다.",
-        "population_intensity": "주민등록인구 1인당 개인 BC 결제금액을 전국 시군구와 비교한 지수입니다. 100보다 높으면 주민 수를 고려해도 소비금액이 전국 기준보다 큽니다.",
-        "transaction_intensity": "주민등록인구 1인당 개인 BC 결제건수를 전국 시군구와 비교한 지수입니다. 100보다 높으면 주민 수 대비 거래 빈도가 전국 기준보다 높습니다.",
+        "population_intensity": "내국인 개인 BC 이용금액을 주민등록인구로 나눈 상대 지수입니다. 소비자의 거주지가 해당 지역이라는 뜻은 아닙니다.",
+        "transaction_intensity": "내국인 개인 BC 이용건수를 주민등록인구로 나눈 상대 지수입니다. 소비자의 거주지나 고유 고객 수를 뜻하지 않습니다.",
     }
-    cards = [("결제규모", "scale"), ("거래활력", "activity"), ("소비 프리미엄", "premium"), ("업종다양성", "diversity"), ("주민 소비강도", "population_intensity"), ("주민 거래강도", "transaction_intensity")]
+    cards = [("결제규모", "scale"), ("거래활력", "activity"), ("소비 프리미엄", "premium"), ("업종다양성", "diversity"), ("개인 인구보정 금액", "population_intensity"), ("개인 인구보정 건수", "transaction_intensity")]
     card_html = []
     for label, key in cards:
         value = context.get(key)

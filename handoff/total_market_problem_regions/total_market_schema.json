@@ -41,7 +41,14 @@
           "gap_amt",
           "gap_cnt",
           "ticket_ratio",
-          "amount_count_ticket_path"
+          "amount_count_ticket_path",
+          "observed_month_count",
+          "observed_complete6",
+          "prediction_interval_source",
+          "band_exclusion_reason",
+          "partial_coverage_validated",
+          "extrapolation_warning",
+          "extrapolation_features"
         ],
         "properties": {
           "actual_amt": {
@@ -149,10 +156,79 @@
             "enum": [
               "available",
               "calibration_caution",
-              "unavailable"
+              "unavailable",
+              "partial_observation_inference",
+              "insufficient_observation",
+              "no_observation",
+              "missing_model_features",
+              "insufficient_calibration"
             ]
+          },
+          "observed_month_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "observed_complete6": {
+            "type": "boolean"
+          },
+          "prediction_interval_source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "전체 고객 M9 완전관측 OOF 구간 또는 완전관측 학습·보정으로 생성한 부분관측 서비스 추론"
+          },
+          "band_exclusion_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "partial_coverage_validated": {
+            "const": false,
+            "description": "부분관측 집단의 90% 포함률은 별도 검증하지 않음"
+          },
+          "extrapolation_warning": {
+            "type": "boolean"
+          },
+          "extrapolation_features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "band_status": {
+                  "const": "partial_observation_inference"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "prediction_interval_available": {
+                  "const": true
+                },
+                "observed_complete6": {
+                  "const": false
+                },
+                "observed_month_count": {
+                  "enum": [
+                    4,
+                    5
+                  ]
+                },
+                "prediction_interval_source": {
+                  "const": "total_M9_split_conformal_complete6_partial_series_inference"
+                }
+              }
+            }
+          }
+        ]
       }
     }
   }

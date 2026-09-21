@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 
 import numpy as np
 import pandas as pd
+from src.total_market import personal_rows, population_context
+from src.period_change import END_MONTH, START_MONTH, jan_jun_change
 
 
 @dataclass
@@ -12,24 +14,22 @@ class RegionDiagnosis:
     industry: str
     start_month: str
     end_month: str
-    sales_change: float
-    transaction_change: float
-    ticket_change: float
-    regional_sales_change: float
+    sales_change: float | None
+    transaction_change: float | None
+    ticket_change: float | None
+    regional_sales_change: float | None
     weak_age_groups: list[str]
     growing_age_groups: list[str]
     pain_points: list[str]
     advantages: list[str]
+    consumption_context: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return asdict(self)
 
 
-def _change(series: pd.Series) -> float:
-    series = series.sort_index()
-    if len(series) < 2 or not series.iloc[0]:
-        return 0.0
-    return float(series.iloc[-1] / series.iloc[0] - 1)
+def _change(series: pd.Series) -> float | None:
+    return jan_jun_change(series)
 
 
 def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> RegionDiagnosis:
@@ -41,51 +41,55 @@ def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> R
     monthly = target.groupby("month")[["amt", "cnt"]].sum().sort_index()
     sales_change = _change(monthly["amt"])
     transaction_change = _change(monthly["cnt"])
-    ticket = monthly["amt"].div(monthly["cnt"].replace(0, pd.NA)).fillna(0)
+    ticket = monthly["amt"].div(monthly["cnt"].replace(0, pd.NA))
     ticket_change = _change(ticket)
 
     regional_monthly = region.groupby("month")["amt"].sum().sort_index()
     regional_sales_change = _change(regional_monthly)
 
     age_changes: dict[str, float] = {}
-    for age, frame in target.groupby("age"):
-        age_changes[str(age)] = _change(frame.groupby("month")["amt"].sum())
+    for age, frame in personal_rows(target).groupby("age"):
+        value = _change(frame.groupby("month")["amt"].sum())
+        if value is not None:
+            age_changes[str(age)] = value
     ordered = sorted(age_changes.items(), key=lambda item: item[1])
     weak = [age for age, value in ordered if value <= -0.05][:3]
     growing = [age for age, value in reversed(ordered) if value >= 0.05][:3]
 
     pains: list[str] = []
     advantages: list[str] = []
-    if sales_change <= -0.05:
+    if sales_change is not None and sales_change <= -0.05:
         pains.append(f"선택 기간 업종 매출이 {sales_change:+.1%} 감소했습니다.")
-    if transaction_change <= -0.05:
+    if transaction_change is not None and transaction_change <= -0.05:
         pains.append(f"거래 건수가 {transaction_change:+.1%} 감소해 고객 유입 약화 가능성이 있습니다.")
-    if ticket_change <= -0.05:
+    if ticket_change is not None and ticket_change <= -0.05:
         pains.append(f"건당 결제액이 {ticket_change:+.1%} 감소해 메뉴 구성·가격 전략 점검이 필요합니다.")
-    if sales_change < regional_sales_change - 0.05:
+    if sales_change is not None and regional_sales_change is not None and sales_change < regional_sales_change - 0.05:
         pains.append(f"지역 전체 매출 변화({regional_sales_change:+.1%})보다 해당 업종 회복력이 낮습니다.")
     if weak:
         pains.append(f"매출 감소가 큰 고객군은 {', '.join(weak)}입니다.")
 
-    if sales_change >= 0.05:
+    if sales_change is not None and sales_change >= 0.05:
         advantages.append(f"업종 매출이 {sales_change:+.1%} 성장하고 있습니다.")
-    if ticket_change >= 0.05:
+    if ticket_change is not None and ticket_change >= 0.05:
         advantages.append(f"건당 결제액이 {ticket_change:+.1%} 증가해 소비 프리미엄이 형성되고 있습니다.")
-    if sales_change > regional_sales_change + 0.05:
+    if sales_change is not None and regional_sales_change is not None and sales_change > regional_sales_change + 0.05:
         advantages.append("지역 전체보다 해당 업종의 성장성이 높습니다.")
     if growing:
         advantages.append(f"성장 고객군은 {', '.join(growing)}입니다.")
 
     if not pains:
-        pains.append("뚜렷한 급락 신호는 없으며 세부 고객군별 편차를 추가 확인해야 합니다.")
+        pains.append("1월·6월 중 관측되지 않은 달이 있어 변화율을 산출하지 못했습니다." if sales_change is None
+                     else "뚜렷한 급락 신호는 없으며 세부 고객군별 편차를 추가 확인해야 합니다.")
     if not advantages:
-        advantages.append("현재 데이터에서 뚜렷한 성장 신호가 없어 인접 상권·유사 업종 비교가 필요합니다.")
+        advantages.append("1월·6월 변화율을 산출할 수 없어 성장 여부를 판단하지 않았습니다." if sales_change is None
+                          else "현재 데이터에서 뚜렷한 성장 신호가 없어 인접 상권·유사 업종 비교가 필요합니다.")
 
     return RegionDiagnosis(
         region=f"{sido} {ccg}",
         industry=industry,
-        start_month=monthly.index.min().strftime("%Y-%m"),
-        end_month=monthly.index.max().strftime("%Y-%m"),
+        start_month=START_MONTH.strftime("%Y-%m"),
+        end_month=END_MONTH.strftime("%Y-%m"),
         sales_change=sales_change,
         transaction_change=transaction_change,
         ticket_change=ticket_change,
@@ -94,6 +98,7 @@ def diagnose_region(data: pd.DataFrame, sido: str, ccg: str, industry: str) -> R
         growing_age_groups=growing,
         pain_points=pains,
         advantages=advantages,
+        consumption_context=population_context(sido, ccg, industry),
     )
 
 
@@ -122,13 +127,14 @@ def find_similar_districts(
         return []
     keys = ["SIDO_NM", "CCG_NM"]
     monthly = industry_data.groupby(keys + ["month"])[["amt", "cnt"]].sum().reset_index()
-    first = monthly.sort_values("month").groupby(keys).first()
-    last = monthly.sort_values("month").groupby(keys).last()
-    dynamics = pd.DataFrame(index=first.index)
-    dynamics["업종매출변화"] = last["amt"].div(first["amt"].replace(0, np.nan)).sub(1)
-    dynamics["업종거래변화"] = last["cnt"].div(first["cnt"].replace(0, np.nan)).sub(1)
-    first_ticket = first["amt"].div(first["cnt"].replace(0, np.nan))
-    last_ticket = last["amt"].div(last["cnt"].replace(0, np.nan))
+    first = monthly[monthly["month"].eq(START_MONTH)].set_index(keys)
+    last = monthly[monthly["month"].eq(END_MONTH)].set_index(keys)
+    endpoints = first.join(last, how="inner", lsuffix="_jan", rsuffix="_jun")
+    dynamics = pd.DataFrame(index=endpoints.index)
+    dynamics["업종매출변화"] = endpoints["amt_jun"].div(endpoints["amt_jan"].replace(0, np.nan)).sub(1)
+    dynamics["업종거래변화"] = endpoints["cnt_jun"].div(endpoints["cnt_jan"].replace(0, np.nan)).sub(1)
+    first_ticket = endpoints["amt_jan"].div(endpoints["cnt_jan"].replace(0, np.nan))
+    last_ticket = endpoints["amt_jun"].div(endpoints["cnt_jun"].replace(0, np.nan))
     dynamics["업종객단가변화"] = last_ticket.div(first_ticket.replace(0, np.nan)).sub(1)
     dynamics["업종관측월수"] = monthly.groupby(keys)["month"].nunique()
     dynamics = dynamics.reset_index().rename(columns={"SIDO_NM": "시도", "CCG_NM": "시군구"})
@@ -138,7 +144,7 @@ def find_similar_districts(
     share = industry_amount.div(total_amount.replace(0, np.nan)).rename("업종매출비중").reset_index()
     share = share.rename(columns={"SIDO_NM": "시도", "CCG_NM": "시군구"})
 
-    age_amount = industry_data.groupby(keys + ["age"])["amt"].sum()
+    age_amount = personal_rows(industry_data).groupby(keys + ["age"])["amt"].sum()
     age_share = age_amount.div(age_amount.groupby(level=keys).transform("sum")).unstack(fill_value=0)
     age_share.columns = [f"연령비중_{column}" for column in age_share.columns]
     age_share = age_share.reset_index().rename(columns={"SIDO_NM": "시도", "CCG_NM": "시군구"})

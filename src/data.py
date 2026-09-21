@@ -12,15 +12,16 @@ REQUIRED_COLUMNS = {
     "TP_BUZ_NO", "TP_BUZ_NM", "amt", "cnt",
 }
 
-GENDER_LABELS = {"1": "남성", "2": "여성", "3": "외국인", "X": "미상"}
+GENDER_LABELS = {"1": "내국인 남성", "2": "내국인 여성", "3": "외국인(성별 구분 없음)", "X": "법인", "x": "법인"}
 AGE_LABELS = {
     "1": "20대 이하", "2": "20대", "3": "30대", "4": "40대",
-    "5": "50대", "6": "60대 이상", "X": "미상",
+    "5": "50대", "6": "60대 이상", "X": "연령 미적용(법인)", "x": "연령 미적용(법인)",
 }
 
 
 def default_data_path() -> Path | None:
     candidates = [
+        Path(__file__).resolve().parents[2] / "data" / "ABP_CONTEST_DATA.csv",
         Path("data/raw/ABP_CONTEST_DATA.csv"),
         Path("../ABP_CONTEST_DATA.csv"),
         Path("ABP_CONTEST_DATA.csv"),
@@ -30,6 +31,7 @@ def default_data_path() -> Path | None:
 
 def default_indices_path() -> Path | None:
     candidates = [
+        Path(__file__).resolve().parents[2] / "진짜지수_20260913_월별전체_.xlsx",
         Path("data/raw/regional_indices_rank_final_v2_20260913.xlsx"),
         Path("../regional_indices_rank_final_v2_20260913.xlsx"),
         Path("regional_indices_rank_final_v2_20260913.xlsx"),
@@ -43,7 +45,6 @@ def load_indices(path: str) -> dict[str, pd.DataFrame]:
         "지역지수": ("지역별지수", 3),
         "프리미엄": ("지역별프리미엄", 3),
         "인구보정": ("202606인구보정지수", 0),
-        "소비유형": ("202606업종별인구보정", 0),
         "지역순위": ("지역총량핵심지수순위", 0),
         "업종순위": ("업종별지역순위", 0),
     }

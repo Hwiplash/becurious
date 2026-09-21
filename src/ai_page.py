@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from src.agent import EVIDENCE_GROUP_LABELS, generate_proposal, retrieve_evidence_groups
 from src.analytics import diagnose_region
+from src.period_change import format_change
 from src.rag import INDEX_DIR, index_ready, local_corpus_ready
 
 
@@ -67,10 +68,10 @@ def render_ai_agent(data: pd.DataFrame) -> None:
             st.success(item, icon="↗️")
 
     k1, k2, k3, k4 = st.columns(4)
-    k1.metric("업종 매출 변화", f"{diagnosis.sales_change:+.1%}")
-    k2.metric("거래 건수 변화", f"{diagnosis.transaction_change:+.1%}")
-    k3.metric("건당 결제 변화", f"{diagnosis.ticket_change:+.1%}")
-    k4.metric("지역 전체 변화", f"{diagnosis.regional_sales_change:+.1%}")
+    k1.metric("업종 매출 변화", format_change(diagnosis.sales_change))
+    k2.metric("거래 건수 변화", format_change(diagnosis.transaction_change))
+    k3.metric("건당 결제 변화", format_change(diagnosis.ticket_change))
+    k4.metric("지역 전체 변화", format_change(diagnosis.regional_sales_change))
 
     if not index_ready() and local_corpus_ready():
         st.info("현재 로컬 키워드 검색으로 작동합니다. API 임베딩을 만들면 의미 기반 검색이 추가됩니다.")

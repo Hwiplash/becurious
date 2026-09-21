@@ -19,11 +19,11 @@
     "202601",
     "202606"
   ],
-  "point_prediction": "mean of 10 region-held-out OOF M9; monthly pooled daily targets with month effect",
+  "point_prediction": "mean of 10 fixed region-held-out M9 predictions; complete6 OOF and service-only partial inference; pooled daily targets with month effect",
   "interval": "repeat 0 split conformal, proper_train / calibration / outer test disjoint regions",
   "detection_monthly": "inherited per-month static-feature M9; separate from pooled monthly display model",
   "candidate_regions": 82,
-  "payload_sha256": "e71bf9b55877af824eaeee4eba02919068093f364aeb730d174973aa5a44bfd1",
+  "payload_sha256": "6e9f7bdee08e6a8def75d0cc2732f1ce771aa2cde6190fa178f7015bdf64fb0f",
   "interpretation_limits": [
     "전체 고객코드 BC 관측 이용금액·건수이며 전체 카드시장 또는 실제 지역 총매출이 아닙니다.",
     "고객코드 1·2는 내국인 개인, 3은 성별 구분 없는 외국인, x는 법인입니다. AGE_CD x는 법인의 연령 미적용 코드입니다.",
@@ -33,7 +33,7 @@
     "잔차와 낮은 소비는 추가 검증 신호이며 정책 문제나 상권 쇠퇴의 확정 판정이 아닙니다.",
     "월별 구간은 지역 OOF 진단용 90% 예측구간이며 미래 전망 또는 평균의 신뢰구간이 아닙니다."
   ],
-  "validation_status": "required_task_checks_passed",
+  "validation_status": "required_task_checks_passed_including_partial_inference",
   "ui_default_population": "all_customer_codes",
   "all_repository_tests_passed": false,
   "existing_rag_test_failures": 4,
@@ -62,5 +62,140 @@
   "source_branch": "total-market-handoff",
   "base_commit": "affc75d67069b20a5a784fd6dcc99544c0e33005",
   "committed": false,
-  "pushed": false
+  "pushed": false,
+  "partial_observation_inference": {
+    "rule": "4~5 observed months; at least one in Jan-Mar and Apr-Jun; all six months M9 features ready",
+    "population_scope": "all_customer_codes",
+    "model": "M9 / log_ridge_smear / pooled monthly daily targets + month effect",
+    "expected": "mean of 10 fixed region-held-out repeat predictions",
+    "pi_center": "repeat 0 proper_train prediction; monthly split-conformal scores from complete6 calibration regions",
+    "training_and_calibration": "same-scope complete6 all-customer series only; target region excluded in full",
+    "partial_coverage_validated": false,
+    "candidate_logic_changed": false,
+    "eligible_series": [
+      {
+        "region": "인천광역시 / 옹진군",
+        "scope": "4004",
+        "industry": "대형할인점",
+        "observed_month_count": 4,
+        "observed_months": [
+          202601,
+          202602,
+          202603,
+          202604
+        ],
+        "observed_complete6": false,
+        "band_status": "partial_observation_inference",
+        "band_exclusion_reason": null
+      },
+      {
+        "region": "경상북도 / 울릉군",
+        "scope": "8004",
+        "industry": "일식회집",
+        "observed_month_count": 4,
+        "observed_months": [
+          202603,
+          202604,
+          202605,
+          202606
+        ],
+        "observed_complete6": false,
+        "band_status": "partial_observation_inference",
+        "band_exclusion_reason": null
+      },
+      {
+        "region": "전라남도 / 영광군",
+        "scope": "8004",
+        "industry": "일식회집",
+        "observed_month_count": 5,
+        "observed_months": [
+          202602,
+          202603,
+          202604,
+          202605,
+          202606
+        ],
+        "observed_complete6": false,
+        "band_status": "partial_observation_inference",
+        "band_exclusion_reason": null
+      },
+      {
+        "region": "전라남도 / 영암군",
+        "scope": "8004",
+        "industry": "일식회집",
+        "observed_month_count": 4,
+        "observed_months": [
+          202601,
+          202602,
+          202603,
+          202604
+        ],
+        "observed_complete6": false,
+        "band_status": "partial_observation_inference",
+        "band_exclusion_reason": null
+      },
+      {
+        "region": "전북특별자치도 / 무주군",
+        "scope": "8004",
+        "industry": "일식회집",
+        "observed_month_count": 4,
+        "observed_months": [
+          202601,
+          202604,
+          202605,
+          202606
+        ],
+        "observed_complete6": false,
+        "band_status": "partial_observation_inference",
+        "band_exclusion_reason": null
+      },
+      {
+        "region": "전북특별자치도 / 순창군",
+        "scope": "8004",
+        "industry": "일식회집",
+        "observed_month_count": 5,
+        "observed_months": [
+          202601,
+          202603,
+          202604,
+          202605,
+          202606
+        ],
+        "observed_complete6": false,
+        "band_status": "partial_observation_inference",
+        "band_exclusion_reason": null
+      },
+      {
+        "region": "경상북도 / 울릉군",
+        "scope": "8301",
+        "industry": "제과점",
+        "observed_month_count": 4,
+        "observed_months": [
+          202603,
+          202604,
+          202605,
+          202606
+        ],
+        "observed_complete6": false,
+        "band_status": "partial_observation_inference",
+        "band_exclusion_reason": null
+      }
+    ],
+    "band_month_rows": 42,
+    "metric_bands": 84,
+    "status_series_counts": {
+      "complete6": 2191,
+      "no_observation": 60,
+      "partial_observation_inference": 7,
+      "insufficient_observation": 1
+    },
+    "source": "total_M9_split_conformal_complete6_partial_series_inference"
+  },
+  "candidate_signals": 88,
+  "partial_inference_code_sha256": "281617b49a9db52926237b5004b3cb1abcfc2de57411892bf55df71b136c881c",
+  "partial_validation": {
+    "analysis": "partial_fix_validation.json",
+    "ui": "partial_ui_validation.json",
+    "passed": true
+  }
 }

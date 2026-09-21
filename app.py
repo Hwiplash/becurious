@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import html
+import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
-from src.charts import industry_bar, monthly_count_trend, monthly_sales_trend, performance_change_compare, regional_ranking, segment_chart
+from src.charts import industry_bar, monthly_count_trend, monthly_sales_trend, performance_change_compare, regional_ranking, segment_chart, consumption_diagnostic_chart
 from src.data import default_data_path, default_indices_path, load_csv, load_indices
 from src.dashboard_components import (
     chart_label,
@@ -23,7 +24,7 @@ from src.dashboard_components import (
 )
 from src.maps import sido_map, sigungu_map
 from src.policy_ui import render_chat_launcher
-from src.problem_regions import prediction_band
+from src.total_market import CORE_CODES, diagnostic_series, personal_rows, population_context
 
 load_dotenv()
 st.set_page_config(page_title="상권 활성화 대책 제안 AI", page_icon="✦", layout="wide", initial_sidebar_state="collapsed")
@@ -144,6 +145,7 @@ if mode == "지역별":
         render_disclaimer(); render_chat_launcher(data,indices,sido=sido,industry=industry)
     else:
         sido=st.session_state.selected_sido; ccg=st.session_state.get("selected_ccg",sorted(data[data["SIDO_NM"]==sido]["CCG_NM"].unique())[0]); local_all=data[(data["SIDO_NM"]==sido)&(data["CCG_NM"]==ccg)]
+        local_all = local_all[local_all["TP_BUZ_NO"].astype(str).isin(CORE_CODES)]
         nav1,nav2,spacer=st.columns([.55,.7,2.75])
         with nav1:
             if st.button("← 전국",width="stretch"): go_to("national")
@@ -151,18 +153,67 @@ if mode == "지역별":
             if st.button(f"← {sido}",width="stretch"): go_to("regional", sido=sido)
         st.markdown(f"<div class='crumb'>{html.escape(sido)} &nbsp;/&nbsp; <b>{html.escape(ccg)}</b></div><div class='section-title'>{html.escape(ccg)} 상권 진단</div>",unsafe_allow_html=True)
         industry = region_industry_filter(sorted(local_all["TP_BUZ_NM"].unique()))
+        population_label = st.radio("소비 분석 기준", ["전체 상권", "내국인 개인"], index=0, horizontal=True, key="local_population_scope")
+        population_scope = "all_customer_codes" if population_label == "전체 상권" else "domestic_personal"
+        if population_scope == "domestic_personal":
+            local_all = personal_rows(local_all)
         local = filter_industry(local_all, industry)
-        render_metrics(local)
+        forecast = diagnostic_series(sido, ccg, industry, population_scope)
+        scope_incomplete = bool(industry == "업종 전체" and forecast is not None
+                                and not forecast["aggregate_scope_complete"].all())
+        if industry == "업종 전체" and forecast is not None:
+            endpoints = forecast.set_index("month")["aggregate_scope_complete"]
+            scope_change_allowed = bool(endpoints.get(pd.Timestamp("2026-01-01"), False)
+                                        and endpoints.get(pd.Timestamp("2026-06-01"), False))
+        elif industry == "업종 전체":
+            counts = local_all.groupby("month")["TP_BUZ_NO"].nunique()
+            scope_change_allowed = bool(counts.get(pd.Timestamp("2026-01-01"), 0) == len(CORE_CODES)
+                                        and counts.get(pd.Timestamp("2026-06-01"), 0) == len(CORE_CODES))
+        else:
+            scope_change_allowed = True
+        st.caption("구조모형 진단은 핵심 9업종 기준입니다. 전체 상권은 내국인 개인·외국인·법인을 포함하며, 연령·성별 분석은 내국인 개인만 사용합니다.")
+        render_metrics(local, "전체 BC" if population_scope == "all_customer_codes" else "내국인 개인 BC", scope_change_allowed)
         local_indices = index_snapshot(indices, sido, ccg, industry)
         render_index_cards(local_indices)
-        st.markdown("<div class='section-kicker'>LOCAL SIGNALS</div><div class='section-title'>강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(local, local_indices)
-        forecast = prediction_band(sido, ccg, industry)
-        chart_label("월별 매출액 및 회귀 기대범위")
-        st.plotly_chart(monthly_sales_trend(local, forecast),width="stretch",key=f"local_sales_trend_{sido}_{ccg}_{industry}")
+        st.markdown("<div class='section-kicker'>LOCAL SIGNALS</div><div class='section-title'>강점과 회복 과제</div>",unsafe_allow_html=True); render_signals(local, local_indices, scope_change_allowed)
+        context = population_context(sido, ccg, industry)
+        if context.get("available"):
+            selected = context.get("selected_industry_comparison") or context["population_comparison"]
+            if scope_incomplete:
+                st.info("핵심 9업종 중 미관측 업종이 있어 전체 합계의 구조모형 상태 판정은 표시하지 않습니다.")
+            else:
+                st.info(f"전체 상권: {selected['total_model_status']} · 내국인 개인: {selected['personal_model_status']}")
+            share = selected.get("nonpersonal_share_amount")
+            if share is not None:
+                st.caption(f"선택 범위 외국인·법인 이용금액 비중 {share:.1%}. 이 신호만으로 정책 문제나 상권 쇠퇴를 확정하지 않습니다.")
+            if selected.get("model_warning"):
+                st.warning(selected["model_warning"])
+            point = selected.get("total_model" if population_scope == "all_customer_codes" else "personal_model")
+            if point and not scope_incomplete:
+                st.caption(f"선택 범위 반기 실제/기대: 금액 {point['ratio_amt']:.1%} · 건수 {point['ratio_cnt']:.1%}")
         if forecast is not None:
-            st.caption("초록 실선은 실제 매출, 주황 점선은 예측구간 중심입니다. 주황 음영은 해당 지역·월의 90% 진단용 예측구간이며 미래 매출 예측이 아닙니다.")
-        chart_label("월별 이용건수 추이")
-        st.plotly_chart(monthly_count_trend(local),width="stretch",key=f"local_count_trend_{sido}_{ccg}_{industry}")
+            if scope_incomplete:
+                missing = forecast.loc[~forecast["aggregate_scope_complete"]]
+                details = "; ".join(f"{row.month:%Y-%m} {int(row.observed_industries)}/9개 관측 (미관측: {row.missing_industries})"
+                                    for row in missing.itertuples())
+                st.warning("핵심 9업종 중 관측된 업종의 합계입니다. " + details
+                           + ". 업종 구성이 다른 달의 합계는 동일 범위의 9업종 총액과 비교할 수 없어 진단 차트의 기대값·밴드 비교에서 제외했습니다.")
+            chart_label(f"월별 {'전체 BC' if population_scope == 'all_customer_codes' else '내국인 개인 BC'} 이용금액·구조적 기대금액")
+            st.plotly_chart(consumption_diagnostic_chart(forecast, "amt"),width="stretch",key=f"local_sales_trend_{sido}_{ccg}_{industry}_{population_scope}")
+            chart_label("월별 BC 이용건수·구조적 기대건수")
+            st.plotly_chart(consumption_diagnostic_chart(forecast, "cnt"),width="stretch",key=f"local_count_trend_{sido}_{ccg}_{industry}_{population_scope}")
+            st.caption("실선은 같은 모집단의 실제 BC 이용, 점선은 구조적 기대값, 음영은 90% 진단용 예측구간입니다. 구간 보정중심은 기대선과 다를 수 있습니다. 미래 예측이 아닙니다.")
+            if "band_status" in forecast and forecast["band_status"].eq("calibration_caution").any():
+                st.caption("일부 월은 인구규모별 보정 조건을 충족하지 못했습니다. 구간을 참고용으로 해석해 주세요.")
+            if "band_status" in forecast and "band_message" in forecast:
+                partial_statuses = ["partial_observation_inference", "insufficient_observation", "no_observation", "missing_model_features", "insufficient_calibration"]
+                messages = forecast.loc[forecast["band_status"].isin(partial_statuses), "band_message"].dropna().unique()
+                for message in messages:
+                    st.caption(message)
+            if not forecast["prediction_interval_available"].all():
+                st.caption("일부 업종·월은 관측기간이 부족해 기대값 또는 구간을 제공하지 않습니다. 미관측값은 0이 아닙니다.")
+        else:
+            st.info("해당 지역·업종의 구조모형 진단 자료가 없습니다.")
         left,right=st.columns(2,gap="large")
         with left:
             if industry == "업종 전체":
@@ -170,9 +221,9 @@ if mode == "지역별":
                 st.plotly_chart(industry_bar(local),width="stretch",key=f"local_industry_{sido}_{ccg}_{industry}")
             else:
                 chart_label(f"{industry} vs {ccg} 전체 변화")
-                st.plotly_chart(performance_change_compare(local_all, industry, f"{ccg} 전체"),width="stretch",key=f"local_performance_{sido}_{ccg}_{industry}")
+                st.plotly_chart(performance_change_compare(local_all, industry, f"{ccg} 전체", required_industries=CORE_CODES),width="stretch",key=f"local_performance_{sido}_{ccg}_{industry}")
         with right:
-            chart_label("연령·성별 소비 구성")
+            chart_label("내국인 개인 연령·성별 BC 소비 구성")
             st.plotly_chart(segment_chart(local),width="stretch",key=f"local_segment_{sido}_{ccg}_{industry}")
         render_disclaimer(); render_chat_launcher(data,indices,sido,ccg,industry)
 else:
