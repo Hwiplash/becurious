@@ -10,10 +10,13 @@ data/pdfs/
 data/ocr_output/
 data/processed/*
 !data/processed/.gitkeep
+!data/processed/*.json
 data/qa/*
 !data/qa/.gitkeep
 data/rag_index/*
 !data/rag_index/.gitkeep
+!data/rag_index/*.json
+!data/rag_index/*.npy
 data/cache/*
 !data/cache/.gitkeep
 *.pyc
