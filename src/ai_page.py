@@ -77,7 +77,7 @@ def render_ai_agent(data: pd.DataFrame) -> None:
         st.info(f"PDF 말뭉치가 없습니다. `python scripts/build_local_corpus.py`를 실행하세요.\n\n인덱스 위치: {INDEX_DIR}")
     api_enabled = api_calls_enabled()
     if not api_enabled:
-        st.info("현재 공개 데모에서는 유료 API 검색과 AI 제안 생성이 비활성화되어 있습니다.")
+        st.info("AI 연결을 준비 중입니다. 앱 관리자가 Streamlit Secrets에 `OPENAI_API_KEY`를 저장한 뒤 앱을 재부팅하면 활성화됩니다.")
 
     per_group = int(os.getenv("RAG_RESULTS_PER_GROUP", "3"))
     if st.button("지역·업종·Pain·Advantage 근거 검색", width="stretch"):

@@ -58,9 +58,9 @@ def policy_dialog(
     )
     api_enabled = api_calls_enabled()
     if not api_enabled:
-        st.info("현재 공개 데모에서는 AI 분석 기능이 비활성화되어 있습니다. 지역·업종과 요청 내용을 선택해 화면 구성을 체험할 수 있습니다.")
+        st.info("AI 연결을 준비 중입니다. 앱 관리자가 Streamlit Secrets에 `OPENAI_API_KEY`를 저장한 뒤 앱을 재부팅하면 활성화됩니다.")
     if st.button(
-        "분석 시작" if api_enabled else "분석 시작 · 데모에서는 비활성화",
+        "분석 시작" if api_enabled else "분석 시작 · AI 연결 필요",
         type="primary",
         width="stretch",
         disabled=not api_enabled,
