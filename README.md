@@ -9,16 +9,15 @@ scripts\setup.ps1
 ..\.venv\Scripts\python.exe -m streamlit run app.py
 ```
 
-공개 배포의 기본값은 **API 호출 차단**입니다. 챗봇 입력창과 설정 화면은 보이지만 유료 호출은 실행되지 않습니다. 로컬에서 실제 AI 정책 제안을 사용할 때만 `.env`에 `OPENAI_API_KEY`를 넣고 `ENABLE_OPENAI_API=true`를 함께 설정하세요. 키만 등록되어 있어도 호출은 활성화되지 않습니다. 기본 조합은 Small 임베딩과 Luna 근거 재정렬·최종 제안입니다.
+AI 챗봇은 서버에 `OPENAI_API_KEY`가 설정되어 있을 때 활성화됩니다. 키는 `.env` 또는 Streamlit Community Cloud의 Secrets에만 저장하고 저장소, 화면, URL에는 넣지 마세요. 기본 조합은 Small 임베딩과 Luna 근거 재정렬·최종 제안입니다.
 
 ### Streamlit Community Cloud 공개 데모
 
-1. 저장소와 엔트리 파일을 연결합니다: `becurious/app.py`
-2. Secrets에는 `OPENAI_API_KEY`를 등록하지 않습니다.
-3. 환경 변수 또는 Secrets에 `ENABLE_OPENAI_API=false`를 유지합니다. 이 값은 기본값이라 생략해도 차단됩니다.
-4. 앱 실행에 필요한 `data/raw/ABP_CONTEST_DATA.csv`와 `data/raw/regional_indices_rank_final_v2_20260913.xlsx`는 배포 저장소에 포함되어 있습니다.
+1. 저장소와 엔트리 파일을 연결합니다: `app.py`
+2. AI 챗봇을 사용할 경우 Secrets에 `OPENAI_API_KEY`를 등록합니다. 이 값은 서버에서만 사용되며 저장소에 커밋하지 않습니다.
+3. 앱 실행에 필요한 `data/raw/ABP_CONTEST_DATA.csv`와 `data/raw/regional_indices_rank_final_v2_20260913.xlsx`는 배포 저장소에 포함되어 있습니다.
 
-API를 다시 허용하려면 서버 측에서 `ENABLE_OPENAI_API=true`와 유효한 `OPENAI_API_KEY`를 모두 설정해야 합니다. 공개 데모에는 두 설정을 넣지 않는 구성을 권장합니다.
+유효한 `OPENAI_API_KEY`가 서버에 있으면 API 호출이 자동으로 활성화됩니다. 키가 없으면 챗봇 UI는 유지되지만 유료 API 호출은 실행되지 않습니다.
 
 ## RAG 출처와 갱신
 
